@@ -10,11 +10,11 @@
 #include "MainComponent.h"
 
 //==============================================================================
-class EbeamerGUIApplication  : public juce::JUCEApplication
+class EbeamerControllerApplication  : public juce::JUCEApplication
 {
 public:
     //==============================================================================
-    EbeamerGUIApplication() {}
+    EbeamerControllerApplication() {}
 
     const juce::String getApplicationName() override       { return ProjectInfo::projectName; }
     const juce::String getApplicationVersion() override    { return ProjectInfo::versionString; }
@@ -102,4 +102,4 @@ private:
 
 //==============================================================================
 // This macro generates the main() routine that launches the app.
-START_JUCE_APPLICATION (EbeamerGUIApplication)
+START_JUCE_APPLICATION (EbeamerControllerApplication)
