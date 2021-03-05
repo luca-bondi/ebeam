@@ -7,10 +7,9 @@ MainComponent::MainComponent()
     setSize(GUI_WIDTH, GUI_HEIGHT);
     
     //==============================================================================
-    //    TODO
-    //    scene.setCallback(&p);
-    //    scene.setBeamColors(beamColours);
-    //    addAndMakeVisible(scene);
+//        scene.setCallback(&p);
+    scene.setBeamColors(beamColours);
+    addAndMakeVisible(scene);
     
     //==============================================================================
     steerLabel.setText("STEER", NotificationType::dontSendNotification);
@@ -253,7 +252,7 @@ void MainComponent::resized()
         steerBeamY2Slider.setVisible(false);
         sceneArea.removeFromRight((area.getWidth() - SCENE_WIDTH) / 2);
         sceneArea.removeFromLeft((area.getWidth() - SCENE_WIDTH) / 2);
-//        scene.setBounds(sceneArea);
+        scene.setBounds(sceneArea);
     }else{
         steerBeamY1Slider.setVisible(true);
         steerBeamY2Slider.setVisible(true);
@@ -265,7 +264,7 @@ void MainComponent::resized()
         sceneArea.removeFromRight(5);
         sceneArea.removeFromTop(10);
         sceneArea.removeFromBottom(10);
-//        scene.setBounds(sceneArea);
+        scene.setBounds(sceneArea);
     }
     
     area.removeFromLeft(LEFT_RIGHT_MARGIN);

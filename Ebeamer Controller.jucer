@@ -513,7 +513,8 @@
       <FILE id="RPqKT6" name="UmfPackSupport" compile="0" resource="1" file="Eigen/UmfPackSupport"/>
     </GROUP>
     <GROUP id="{ECC32FA5-AD80-9213-D87A-89C42AE3CB7A}" name="Source">
-      <FILE id="BiNcVU" name="ebeamerDefs.cpp" compile="1" resource="0" file="Source/ebeamerDefs.cpp"/>
+      <FILE id="EeTXfv" name="SceneComp.h" compile="0" resource="0" file="Source/SceneComp.h"/>
+      <FILE id="NFPbAN" name="SceneComp.cpp" compile="1" resource="0" file="Source/SceneComp.cpp"/>
       <FILE id="Evg5a8" name="RoundLed.cpp" compile="1" resource="0" file="Source/RoundLed.cpp"/>
       <FILE id="LBOtLY" name="RoundLed.h" compile="0" resource="0" file="Source/RoundLed.h"/>
       <FILE id="ZNLNfw" name="SingleChannelLedBar.cpp" compile="1" resource="0"
@@ -531,6 +532,7 @@
             file="Source/FrequencySlider.h"/>
       <FILE id="dalVnQ" name="DecibelSlider.h" compile="0" resource="0" file="Source/DecibelSlider.h"/>
       <FILE id="vUlf1x" name="PanSlider.h" compile="0" resource="0" file="Source/PanSlider.h"/>
+      <FILE id="BiNcVU" name="ebeamerDefs.cpp" compile="1" resource="0" file="Source/ebeamerDefs.cpp"/>
       <FILE id="ZY5Pze" name="ebeamerDefs.h" compile="0" resource="0" file="Source/ebeamerDefs.h"/>
       <FILE id="E9475a" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="OK2Wfs" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>

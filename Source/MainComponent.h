@@ -9,6 +9,7 @@
 #include "CpuLoadComp.h"
 #include "SingleChannelLedBar.h"
 #include "MultiChannelLedBar.h"
+#include "SceneComp.h"
 
 using namespace juce;
 
@@ -31,8 +32,7 @@ public:
 private:
     
     //==============================================================================
-//    TODO
-//    SceneComp scene;
+    SceneComp scene;
     
     //==============================================================================
     Label steerLabel;
