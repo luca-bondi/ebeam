@@ -15,20 +15,28 @@ using namespace juce;
 
 //==============================================================================
 /*
-    This component lives inside our window, and this is where you should put all
-    your controls and content.
-*/
-class MainComponent  : public juce::Component
+ This component lives inside our window, and this is where you should put all
+ your controls and content.
+ */
+class MainComponent  :
+public Component,
+private OSCReceiver,
+private OSCReceiver::ListenerWithOSCAddress<OSCReceiver::MessageLoopCallback>,
+private Timer,
+private Slider::Listener,
+private Button::Listener,
+private ComboBox::Listener,
+private SceneComp::Callback
 {
 public:
     //==============================================================================
     MainComponent();
     ~MainComponent() override;
-
+    
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
-
+    
 private:
     
     //==============================================================================
@@ -88,7 +96,70 @@ private:
     
     //==============================================================================
     /** State variables */
-    MicConfig config = ULA_1ESTICK;
+    std::atomic<float> config;
+    std::atomic<float> frontFacing;
+    std::atomic<float> mute[NUM_BEAMS];
+    std::atomic<float> width[NUM_BEAMS];
+    std::atomic<float> steerX[NUM_BEAMS];
+    std::atomic<float> steerY[NUM_BEAMS];
+    
+    //==============================================================================
+    /** OSC */
+    OSCSender sender;
+    bool connected = false;
+    String serverIp = "127.0.0.1";
+    int serverPort = 9001;
+    
+    TextEditor oscIp;
+    Label oscIpLabel;
+    
+    TextEditor oscPort;
+    Label oscPortLabel;
+    
+    TextButton oscConnect;
+    RoundLed oscStatus;
+    
+    //==============================================================================
+    /* Listeners and callbacks */
+    
+    void sliderValueChanged(Slider *) override;
+    
+    void buttonClicked (Button*) override;
+    void buttonStateChanged(Button *) override;
+    
+    void comboBoxChanged(ComboBox *) override;
+    
+    void oscMessageReceived (const OSCMessage&) override;
+    
+    void timerCallback() override;
+    
+    void showConnectionErrorMessage (const String&);
+    
+    const std::atomic<float> *getConfigParam() const override{
+        return &config;
+    }
+    const std::atomic<float> *getFrontFacingParam() const override{
+        return &frontFacing;
+    }
+    const std::atomic<float> *getBeamMute(int idx) const override{
+        return &(mute[idx]);
+    }
+    const std::atomic<float> *getBeamWidth(int idx) const override{
+        return &(width[idx]);
+    }
+    const std::atomic<float> *getBeamSteerX(int idx) const override{
+        return &(steerX[idx]);
+    }
+    const std::atomic<float> *getBeamSteerY(int idx) const override{
+        return &(steerY[idx]);
+    }
+    void setBeamSteerX(int idx, float newVal) override;
+    void setBeamSteerY(int idx, float newVal) override;
+    
+    void getDoaEnergy(Mtx &energy) const override{
+        //TODO: implement
+        energy.setZero();
+    }
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

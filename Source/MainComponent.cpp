@@ -3,11 +3,23 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
+    
+    //==============================================================================
+    /* Initialize parameters */
+    config = 0;
+    frontFacing = 0;
+    for (auto beamIdx = 0; beamIdx < NUM_BEAMS; beamIdx++){
+        mute[beamIdx] = 0;
+        width[beamIdx] = 0;
+        steerX[beamIdx] = 0;
+        steerY[beamIdx] = 0;
+    }
+    
     //==============================================================================
     setSize(GUI_WIDTH, GUI_HEIGHT);
     
     //==============================================================================
-//        scene.setCallback(&p);
+    scene.setCallback(this);
     scene.setBeamColors(beamColours);
     addAndMakeVisible(scene);
     
@@ -30,34 +42,29 @@ MainComponent::MainComponent()
     steerBeamX1Slider.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
     steerBeamX1Slider.setColour(Slider::thumbColourId, beamColours[0]);
     steerBeamX1Slider.setRange(-1,1,0.01);
-    //    steerBeamX1Slider.setCallback(&processor, "steerBeamX1");
+    steerBeamX1Slider.addListener(this);
     addAndMakeVisible(steerBeamX1Slider);
     
     steerBeamX2Slider.setSliderStyle(Slider::LinearHorizontal);
     steerBeamX2Slider.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
     steerBeamX2Slider.setColour(Slider::thumbColourId, beamColours[1]);
     steerBeamX2Slider.setRange(-1,1,0.01);
-    //    steerBeamX2Slider.setCallback(&processor, "steerBeamX2");
+    steerBeamX2Slider.addListener(this);
     addAndMakeVisible(steerBeamX2Slider);
     
     steerBeamY1Slider.setSliderStyle(Slider::LinearVertical);
     steerBeamY1Slider.setTextBoxStyle(Slider::TextBoxAbove, false, LABEL_WIDTH, LABEL_HEIGHT);
     steerBeamY1Slider.setColour(Slider::thumbColourId, beamColours[0]);
     steerBeamY1Slider.setRange(-1,1,0.01);
-    //    steerBeamY1Slider.setCallback(&processor, "steerBeamY1");
+    steerBeamY1Slider.addListener(this);
     addAndMakeVisible(steerBeamY1Slider);
     
     steerBeamY2Slider.setSliderStyle(Slider::LinearVertical);
     steerBeamY2Slider.setTextBoxStyle(Slider::TextBoxAbove, false, LABEL_WIDTH, LABEL_HEIGHT);
     steerBeamY2Slider.setColour(Slider::thumbColourId, beamColours[1]);
     steerBeamY2Slider.setRange(-1,1,0.01);
-    //    steerBeamY2Slider.setCallback(&processor, "steerBeamY2");
+    steerBeamY2Slider.addListener(this);
     addAndMakeVisible(steerBeamY2Slider);
-    
-    //    steerBeamX1SliderAttachment.reset(new SliderAttachment(valueTreeState, "steerBeamX1", steerBeamX1Slider));
-    //    steerBeamX2SliderAttachment.reset(new SliderAttachment(valueTreeState, "steerBeamX2", steerBeamX2Slider));
-    //    steerBeamY1SliderAttachment.reset(new SliderAttachment(valueTreeState, "steerBeamY1", steerBeamY1Slider));
-    //    steerBeamY2SliderAttachment.reset(new SliderAttachment(valueTreeState, "steerBeamY2", steerBeamY2Slider));
     
     //==============================================================================
     widthLabel.setText("WIDTH", NotificationType::dontSendNotification);
@@ -68,18 +75,16 @@ MainComponent::MainComponent()
     widthBeam1Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
     widthBeam1Knob.setColour(Slider::thumbColourId, beamColours[0]);
     widthBeam1Knob.setRange(-1,1,0.01);
-//    widthBeam1Knob.setCallback(&processor, "widthBeam1");
+    widthBeam1Knob.addListener(this);
     addAndMakeVisible(widthBeam1Knob);
     
     widthBeam2Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
     widthBeam2Knob.setTextBoxStyle(Slider::TextBoxLeft, false, LABEL_WIDTH, LABEL_HEIGHT);
     widthBeam2Knob.setColour(Slider::thumbColourId, beamColours[1]);
     widthBeam2Knob.setRange(-1,1,0.01);
-//    widthBeam2Knob.setCallback(&processor, "widthBeam2");
+    widthBeam2Knob.addListener(this);
     addAndMakeVisible(widthBeam2Knob);
     
-//    widthBeam1KnobAttachment.reset(new SliderAttachment(valueTreeState, "widthBeam1", widthBeam1Knob));
-//    widthBeam2KnobAttachment.reset(new SliderAttachment(valueTreeState, "widthBeam2", widthBeam2Knob));
     
     //==============================================================================
     panLabel.setText("PAN", NotificationType::dontSendNotification);
@@ -90,18 +95,15 @@ MainComponent::MainComponent()
     panBeam1Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
     panBeam1Knob.setColour(Slider::thumbColourId, beamColours[0]);
     panBeam1Knob.setPopupMenuEnabled(true);
-//    panBeam1Knob.setCallback(&processor, "panBeam1");
+    panBeam1Knob.addListener(this);
     addAndMakeVisible(panBeam1Knob);
     
     panBeam2Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
     panBeam2Knob.setTextBoxStyle(Slider::TextBoxLeft, false, LABEL_WIDTH, LABEL_HEIGHT);
     panBeam2Knob.setColour(Slider::thumbColourId, beamColours[1]);
     panBeam2Knob.setPopupMenuEnabled(true);
-//    panBeam2Knob.setCallback(&processor, "panBeam2");
+    panBeam2Knob.addListener(this);
     addAndMakeVisible(panBeam2Knob);
-    
-//    panBeam1KnobAttachment.reset(new SliderAttachment(valueTreeState, "panBeam1", panBeam1Knob));
-//    panBeam2KnobAttachment.reset(new SliderAttachment(valueTreeState, "panBeam2", panBeam2Knob));
     
     //==============================================================================
     
@@ -113,18 +115,16 @@ MainComponent::MainComponent()
     levelBeam1Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
     levelBeam1Knob.setColour(Slider::thumbColourId, beamColours[0]);
     levelBeam1Knob.setPopupMenuEnabled(true);
-//    levelBeam1Knob.setCallback(&processor, "levelBeam1");
+    levelBeam1Knob.addListener(this);
     addAndMakeVisible(levelBeam1Knob);
     
     levelBeam2Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
     levelBeam2Knob.setTextBoxStyle(Slider::TextBoxLeft, false, LABEL_WIDTH, LABEL_HEIGHT);
     levelBeam2Knob.setColour(Slider::thumbColourId, beamColours[1]);
     levelBeam2Knob.setPopupMenuEnabled(true);
-//    levelBeam2Knob.setCallback(&processor, "levelBeam2");
+    levelBeam2Knob.addListener(this);
     addAndMakeVisible(levelBeam2Knob);
     
-//    levelBeam1KnobAttachment.reset(new SliderAttachment(valueTreeState, "levelBeam1", levelBeam1Knob));
-//    levelBeam2KnobAttachment.reset(new SliderAttachment(valueTreeState, "levelBeam2", levelBeam2Knob));
     
     //==============================================================================
     
@@ -133,15 +133,12 @@ MainComponent::MainComponent()
     addAndMakeVisible(muteLabel);
     
     muteBeam1Button.setButtonText("1");
-//    muteBeam1Button.setCallback(&processor, "muteBeam1");
+    muteBeam1Button.addListener(this);
     addAndMakeVisible(muteBeam1Button);
     
     muteBeam2Button.setButtonText("2");
-//    muteBeam2Button.setCallback(&processor, "muteBeam2");
+    muteBeam2Button.addListener(this);
     addAndMakeVisible(muteBeam2Button);
-    
-//    beam1MuteButtonAttachment.reset(new ButtonAttachment(valueTreeState, "muteBeam1", muteBeam1Button));
-//    beam2MuteButtonAttachment.reset(new ButtonAttachment(valueTreeState, "muteBeam2", muteBeam2Button));
     
     getLookAndFeel().setColour(MuteButton::buttonOnColourId, Colours::darkred);
     
@@ -164,7 +161,7 @@ MainComponent::MainComponent()
     hpfSlider.setSliderStyle(Slider::LinearHorizontal);
     hpfSlider.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
     hpfSlider.setPopupMenuEnabled(true);
-//    hpfSlider.setCallback(&processor, "hpf");
+    hpfSlider.addListener(this);
     addAndMakeVisible(hpfSlider);
     
 //    hpfSliderAttachment.reset(new SliderAttachment(valueTreeState, "hpf", hpfSlider));
@@ -183,11 +180,8 @@ MainComponent::MainComponent()
     
     gainSlider.setSliderStyle(Slider::LinearHorizontal);
     gainSlider.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
-    gainSlider.setPopupMenuEnabled(true);
-//    gainSlider.setCallback(&processor, "gainMic");
+    gainSlider.addListener(this);
     addAndMakeVisible(gainSlider);
-    
-//    gainSliderAttachment.reset(new SliderAttachment(valueTreeState, "gainMic", gainSlider));
     
     //=====================================================
     // Add CPU Load and start its timer
@@ -199,23 +193,34 @@ MainComponent::MainComponent()
     // Add front facing toggle
     frontToggleLabel.setText("FRONT", NotificationType::dontSendNotification);
     frontToggleLabel.attachToComponent(&frontToggle, true);
-//    frontToggle.setCallback(&processor, "frontFacing");
+    frontToggle.addListener(this);
     addAndMakeVisible(frontToggle);
     
-//    frontToggleAttachment.reset(new ButtonAttachment(valueTreeState, "frontFacing", frontToggle));
     
     //=====================================================
     // Configuration selection combo
     configComboLabel.setText("SETUP", NotificationType::dontSendNotification);
     configComboLabel.attachToComponent(&configCombo, true);
     configCombo.addItemList(micConfigLabels, 10);
+    configCombo.addListener(this);
     addAndMakeVisible(configCombo);
+
     
-//    configComboLabelAttachment.reset(new ComboBoxAttachment(valueTreeState, "config", configCombo));
+    /* Initialize OSC */
+    oscIpLabel.setText("IP", NotificationType::dontSendNotification);
+    oscIpLabel.attachToComponent(&oscIp, true);
+    oscIp.setText(serverIp);
+    addAndMakeVisible(oscIp);
     
-    /* The editor needs to change its layout when the config changes */
-//    valueTreeState.addParameterListener("config", this);
-//    valueTreeState.addParameterListener("frontFacing", this);
+    oscPortLabel.setText("PORT", NotificationType::dontSendNotification);
+    oscPortLabel.attachToComponent(&oscPort, true);
+    oscPort.setText(String(serverPort));
+    addAndMakeVisible(oscPort);
+    
+    oscConnect.setButtonText("Connect");
+    oscConnect.addListener(this);
+    addAndMakeVisible(oscConnect);
+    
 }
 
 MainComponent::~MainComponent()
@@ -245,9 +250,18 @@ void MainComponent::resized()
     area.removeFromTop(TOP_BOTTOM_MARGIN);
     area.removeFromBottom(TOP_BOTTOM_MARGIN);
     
+    auto oscArea = area.removeFromTop(OSC_HEIGHT);
+    oscArea.removeFromLeft(OSC_IP_LABEL_WIDTH);
+    oscIp.setBounds(oscArea.removeFromLeft(OSC_IP_WIDTH));
+    oscArea.removeFromLeft(OSC_PORT_LABEL_WIDTH);
+    oscPort.setBounds(oscArea.removeFromLeft(OSC_PORT_WIDTH));
+    oscArea.removeFromLeft(OSC_CONNECT_MARGIN_LEFT);
+    oscConnect.setBounds(oscArea.removeFromLeft(OSC_CONNECT_WIDTH));
+    
+    area.removeFromTop(OSC_BOTTOM_MARGIN);
     auto sceneArea = area.removeFromTop(SCENE_HEIGHT);
     
-    if (isLinearArray(config)){
+    if (isLinearArray(static_cast<MicConfig>((int)config))){
         steerBeamY1Slider.setVisible(false);
         steerBeamY2Slider.setVisible(false);
         sceneArea.removeFromRight((area.getWidth() - SCENE_WIDTH) / 2);
@@ -341,4 +355,86 @@ void MainComponent::resized()
     /** Set area for config combo */
     footerArea.removeFromLeft(CONFIG_COMBO_LABEL_WIDTH);
     configCombo.setBounds(footerArea.removeFromLeft(CONFIG_COMBO_WIDTH));
+}
+
+//====================================================================
+/* Callbacks and listeners */
+
+void MainComponent::sliderValueChanged(Slider * slider){
+    //TODO: implement
+}
+
+void MainComponent::buttonClicked (Button* button){
+    if (button == &oscConnect){
+        if (connected){
+            if (sender.disconnect()){
+                oscConnect.setButtonText("Connect");
+                connected = false;
+            }else{
+                showConnectionErrorMessage ("Error: could not disconnect");
+            }
+        }else{
+            serverIp = oscIp.getTextValue().toString();
+            serverPort = oscPort.getTextValue().toString().getIntValue();
+            if (sender.connect(serverIp,serverPort)){
+                oscConnect.setButtonText("Disconnect");
+                connected = true;
+            }else{
+                std::ostringstream errMsg;
+                errMsg << "Error: could not connect to " << serverIp << " on " << serverPort;
+                showConnectionErrorMessage (errMsg.str());
+            }
+        }
+    }
+}
+
+void MainComponent::buttonStateChanged(Button * button){
+    //TODO: implement
+}
+
+void MainComponent::comboBoxChanged(ComboBox * comboBox){
+    //TODO: implement
+}
+
+void MainComponent::oscMessageReceived (const OSCMessage& message){
+    //TODO: implement
+}
+
+void MainComponent::timerCallback(){
+    //TODO: implement
+}
+
+void MainComponent::showConnectionErrorMessage (const String& messageText){
+    juce::AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                            "OSC error",
+                                            messageText,
+                                            "OK");
+}
+
+void MainComponent::setBeamSteerX(int idx, float newVal){
+    steerX[idx] = newVal;
+    if (idx==0){
+        steerBeamX1Slider.setValue(newVal,dontSendNotification);
+    }else{
+        steerBeamX2Slider.setValue(newVal,dontSendNotification);
+    }
+    if (connected){
+        OSCMessage msg(String("/ebeamer/steerX") + String(idx+1));
+        msg.addFloat32(newVal);
+        sender.send(msg);
+    }
+}
+
+void MainComponent::setBeamSteerY(int idx, float newVal){
+    steerY[idx] = newVal;
+    if (idx==0){
+        steerBeamY1Slider.setValue(newVal,dontSendNotification);
+    }else{
+        steerBeamY2Slider.setValue(newVal,dontSendNotification);
+    }
+    if (connected){
+        OSCMessage msg(String("/ebeamer/steerY") + String(idx+1));
+        msg.addFloat32(newVal);
+        sender.send(msg);
+    }
 }
