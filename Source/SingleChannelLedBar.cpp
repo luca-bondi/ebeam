@@ -27,7 +27,7 @@ SingleChannelLedBar::SingleChannelLedBar(size_t numLeds, bool isHorizontal) {
         
         auto ledThDb = ledIdx == (numLeds - 1) ? RED_LT : -((numLeds - 1 - ledIdx) * ledStep);
         th.push_back(ledThDb);
-        leds[ledIdx]->colour = dbToColour(-100, ledThDb);
+        leds[ledIdx]->setColour(dbToColour(-100, ledThDb));
         
         addAndMakeVisible(leds[ledIdx].get());
     }
@@ -62,9 +62,8 @@ void SingleChannelLedBar::timerCallback() {
 //    auto valueDb = Decibels::gainToDecibels(provider->getMeterValue(meterId, channel));
     float valueDb = 0;
     for (auto ledIdx = 0; ledIdx < leds.size(); ++ledIdx)
-        leds[ledIdx]->colour = dbToColour(valueDb, th[ledIdx]);
+        leds[ledIdx]->setColour(dbToColour(valueDb, th[ledIdx]));
     
-    repaint();
 }
 
 Colour SingleChannelLedBar::dbToColour(float valDb, float thDb) {

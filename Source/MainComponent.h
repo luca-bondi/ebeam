@@ -10,6 +10,7 @@
 #include "SingleChannelLedBar.h"
 #include "MultiChannelLedBar.h"
 #include "SceneComp.h"
+#include "RoundLed.h"
 
 using namespace juce;
 
@@ -117,7 +118,9 @@ private:
     Label oscPortLabel;
     
     TextButton oscConnect;
-    RoundLed oscStatus;
+    ActivityLed oscStatus;
+    
+    void sendOscMessage(const String& path, float value);
     
     //==============================================================================
     /* Listeners and callbacks */

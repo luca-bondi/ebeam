@@ -210,16 +210,21 @@ MainComponent::MainComponent()
     oscIpLabel.setText("IP", NotificationType::dontSendNotification);
     oscIpLabel.attachToComponent(&oscIp, true);
     oscIp.setText(serverIp);
+    oscIp.setJustification(Justification::centred);
     addAndMakeVisible(oscIp);
     
     oscPortLabel.setText("PORT", NotificationType::dontSendNotification);
     oscPortLabel.attachToComponent(&oscPort, true);
     oscPort.setText(String(serverPort));
+    oscPort.setJustification(Justification::centred);
     addAndMakeVisible(oscPort);
     
     oscConnect.setButtonText("Connect");
     oscConnect.addListener(this);
     addAndMakeVisible(oscConnect);
+    
+    oscStatus.setColours(Colours::grey,Colours::red);
+    addAndMakeVisible(oscStatus);
     
 }
 
@@ -251,12 +256,19 @@ void MainComponent::resized()
     area.removeFromBottom(TOP_BOTTOM_MARGIN);
     
     auto oscArea = area.removeFromTop(OSC_HEIGHT);
+    
+    // Center area
+    const int oscTotalWidth = OSC_IP_LABEL_WIDTH+OSC_IP_WIDTH+OSC_PORT_LABEL_WIDTH+OSC_PORT_WIDTH+OSC_CONNECT_MARGIN_LEFT+OSC_CONNECT_WIDTH+OSC_LED_MARGIN_LEFT+OSC_LED_WIDTH;
+    oscArea = oscArea.withSizeKeepingCentre(oscTotalWidth, OSC_HEIGHT);
+    
     oscArea.removeFromLeft(OSC_IP_LABEL_WIDTH);
     oscIp.setBounds(oscArea.removeFromLeft(OSC_IP_WIDTH));
     oscArea.removeFromLeft(OSC_PORT_LABEL_WIDTH);
     oscPort.setBounds(oscArea.removeFromLeft(OSC_PORT_WIDTH));
     oscArea.removeFromLeft(OSC_CONNECT_MARGIN_LEFT);
     oscConnect.setBounds(oscArea.removeFromLeft(OSC_CONNECT_WIDTH));
+    oscArea.removeFromLeft(OSC_LED_MARGIN_LEFT);
+    oscStatus.setBounds(oscArea.removeFromLeft(OSC_LED_WIDTH));
     
     area.removeFromTop(OSC_BOTTOM_MARGIN);
     auto sceneArea = area.removeFromTop(SCENE_HEIGHT);
@@ -361,7 +373,19 @@ void MainComponent::resized()
 /* Callbacks and listeners */
 
 void MainComponent::sliderValueChanged(Slider * slider){
-    //TODO: implement
+    if (slider == &steerBeamX1Slider){
+        setBeamSteerX(0,slider->getValue());
+        //TODO: notify SceneComp about the change
+    }else if(slider == &steerBeamX2Slider){
+        setBeamSteerX(1,slider->getValue());
+        //TODO: notify SceneComp about the change
+    }else if (slider == &steerBeamY1Slider){
+        setBeamSteerY(0,slider->getValue());
+        //TODO: notify SceneComp about the change
+    }else if(slider == &steerBeamY2Slider){
+        setBeamSteerY(1,slider->getValue());
+        //TODO: notify SceneComp about the change
+    }
 }
 
 void MainComponent::buttonClicked (Button* button){
@@ -369,7 +393,10 @@ void MainComponent::buttonClicked (Button* button){
         if (connected){
             if (sender.disconnect()){
                 oscConnect.setButtonText("Connect");
+                oscIp.setEnabled(true);
+                oscPort.setEnabled(true);
                 connected = false;
+                oscStatus.setColours(Colours::grey,Colours::red);
             }else{
                 showConnectionErrorMessage ("Error: could not disconnect");
             }
@@ -378,7 +405,10 @@ void MainComponent::buttonClicked (Button* button){
             serverPort = oscPort.getTextValue().toString().getIntValue();
             if (sender.connect(serverIp,serverPort)){
                 oscConnect.setButtonText("Disconnect");
+                oscIp.setEnabled(false);
+                oscPort.setEnabled(false);
                 connected = true;
+                oscStatus.setColours(Colours::grey,Colours::green);
             }else{
                 std::ostringstream errMsg;
                 errMsg << "Error: could not connect to " << serverIp << " on " << serverPort;
@@ -418,11 +448,8 @@ void MainComponent::setBeamSteerX(int idx, float newVal){
     }else{
         steerBeamX2Slider.setValue(newVal,dontSendNotification);
     }
-    if (connected){
-        OSCMessage msg(String("/ebeamer/steerX") + String(idx+1));
-        msg.addFloat32(newVal);
-        sender.send(msg);
-    }
+    sendOscMessage(String("/ebeamer/steerX") + String(idx+1),newVal);
+    
 }
 
 void MainComponent::setBeamSteerY(int idx, float newVal){
@@ -432,9 +459,17 @@ void MainComponent::setBeamSteerY(int idx, float newVal){
     }else{
         steerBeamY2Slider.setValue(newVal,dontSendNotification);
     }
+    sendOscMessage(String("/ebeamer/steerY") + String(idx+1),newVal);
+}
+
+void MainComponent::sendOscMessage(const String& path, float value){
+    
     if (connected){
-        OSCMessage msg(String("/ebeamer/steerY") + String(idx+1));
-        msg.addFloat32(newVal);
+        OSCMessage msg(path);
+        msg.addFloat32(value);
         sender.send(msg);
     }
+    // Toggle status even if not connect, to show that something should have happened
+    oscStatus.toggle();
+    
 }

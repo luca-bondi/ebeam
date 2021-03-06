@@ -30,7 +30,7 @@ void MultiChannelLedBar::makeLayout() {
     auto num = values.size();
     for (auto ledIdx = 0; ledIdx < num; ++ledIdx) {
         leds.push_back(std::make_unique<RoundLed>());
-        leds[ledIdx]->colour = Colours::grey;
+        leds[ledIdx]->setColour(Colours::grey);
         addAndMakeVisible(leds[ledIdx].get());
     }
     resized();
@@ -102,9 +102,8 @@ void MultiChannelLedBar::timerCallback() {
         makeLayout();
     
     for (auto ledIdx = 0; ledIdx < leds.size(); ++ledIdx)
-        leds[ledIdx]->colour = dbToColor(Decibels::gainToDecibels(values.at(ledIdx)));
+        leds[ledIdx]->setColour(dbToColor(Decibels::gainToDecibels(values.at(ledIdx))));
     
-    repaint();
 }
 
 //void MultiChannelLedBar::setCallback(MeterDecay::Callback *cb, int metId) {
