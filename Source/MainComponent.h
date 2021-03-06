@@ -22,7 +22,7 @@ using namespace juce;
 class MainComponent  :
 public Component,
 private OSCReceiver,
-private OSCReceiver::ListenerWithOSCAddress<OSCReceiver::MessageLoopCallback>,
+private OSCReceiver::Listener<OSCReceiver::MessageLoopCallback>,
 private Timer,
 private Slider::Listener,
 private Button::Listener,

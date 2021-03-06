@@ -227,7 +227,11 @@ MainComponent::MainComponent()
     addAndMakeVisible(oscStatus);
     
     //=====================================================
+    /* Set polling timer to fetch updates from VST */
     startTimerHz(10);
+    
+    /* Set this as a listener for OSC messages */
+    OSCReceiver::addListener(this);
     
 }
 
@@ -405,11 +409,17 @@ void MainComponent::buttonClicked (Button* button){
 
 void MainComponent::oscConnect(){
     if (sender.connect(serverIp,serverPort)){
-        oscConnectButton.setButtonText("Disconnect");
-        oscIp.setEnabled(false);
-        oscPort.setEnabled(false);
-        connected = true;
-        oscStatus.setColours(Colours::green,Colours::grey);
+        if (connect(ownPort)){
+            oscConnectButton.setButtonText("Disconnect");
+            oscIp.setEnabled(false);
+            oscPort.setEnabled(false);
+            connected = true;
+            oscStatus.setColours(Colours::green,Colours::grey);
+        }else{
+            std::ostringstream errMsg;
+            errMsg << "Error: could not listen on port " << ownPort;
+            showConnectionErrorMessage (errMsg.str());
+        }
     }else{
         std::ostringstream errMsg;
         errMsg << "Error: could not connect to " << serverIp << " on " << serverPort;
@@ -419,13 +429,17 @@ void MainComponent::oscConnect(){
 
 void MainComponent::oscDisconnect(){
     if (sender.disconnect()){
-        oscConnectButton.setButtonText("Connect");
-        oscIp.setEnabled(true);
-        oscPort.setEnabled(true);
-        connected = false;
-        oscStatus.setColours(Colours::red,Colours::grey);
+        if (disconnect()){
+            oscConnectButton.setButtonText("Connect");
+            oscIp.setEnabled(true);
+            oscPort.setEnabled(true);
+            connected = false;
+            oscStatus.setColours(Colours::red,Colours::grey);
+        }else{
+            showConnectionErrorMessage ("Error: could not disconnect receiver");
+        }
     }else{
-        showConnectionErrorMessage ("Error: could not disconnect");
+        showConnectionErrorMessage ("Error: could not disconnect sender");
     }
 }
 
@@ -438,7 +452,15 @@ void MainComponent::comboBoxChanged(ComboBox * comboBox){
 }
 
 void MainComponent::oscMessageReceived (const OSCMessage& message){
-    //TODO: implement
+    
+    if ((message.size() == 1) && (message[0].isFloat32())){
+        auto val = message[0].getFloat32();
+        if (message.getAddressPattern() == "/ebeamer/steerBeamX1"){
+            steerBeamX1Slider.setValue(val,dontSendNotification);
+        }else if (message.getAddressPattern() == "/ebeamer/steerBeamX2"){
+            steerBeamX2Slider.setValue(val,dontSendNotification);
+        }
+    }
 }
 
 void MainComponent::timerCallback(){
