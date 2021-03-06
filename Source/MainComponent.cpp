@@ -74,14 +74,14 @@ MainComponent::MainComponent()
     widthBeam1Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
     widthBeam1Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
     widthBeam1Knob.setColour(Slider::thumbColourId, beamColours[0]);
-    widthBeam1Knob.setRange(-1,1,0.01);
+    widthBeam1Knob.setRange(0,1,0.01);
     widthBeam1Knob.addListener(this);
     addAndMakeVisible(widthBeam1Knob);
     
     widthBeam2Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
     widthBeam2Knob.setTextBoxStyle(Slider::TextBoxLeft, false, LABEL_WIDTH, LABEL_HEIGHT);
     widthBeam2Knob.setColour(Slider::thumbColourId, beamColours[1]);
-    widthBeam2Knob.setRange(-1,1,0.01);
+    widthBeam2Knob.setRange(0,1,0.01);
     widthBeam2Knob.addListener(this);
     addAndMakeVisible(widthBeam2Knob);
     
@@ -94,14 +94,14 @@ MainComponent::MainComponent()
     panBeam1Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
     panBeam1Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
     panBeam1Knob.setColour(Slider::thumbColourId, beamColours[0]);
-    panBeam1Knob.setPopupMenuEnabled(true);
+    panBeam1Knob.setRange(-1,1,0.01);
     panBeam1Knob.addListener(this);
     addAndMakeVisible(panBeam1Knob);
     
     panBeam2Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
     panBeam2Knob.setTextBoxStyle(Slider::TextBoxLeft, false, LABEL_WIDTH, LABEL_HEIGHT);
     panBeam2Knob.setColour(Slider::thumbColourId, beamColours[1]);
-    panBeam2Knob.setPopupMenuEnabled(true);
+    panBeam2Knob.setRange(-1,1,0.01);
     panBeam2Knob.addListener(this);
     addAndMakeVisible(panBeam2Knob);
     
@@ -114,14 +114,14 @@ MainComponent::MainComponent()
     levelBeam1Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
     levelBeam1Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
     levelBeam1Knob.setColour(Slider::thumbColourId, beamColours[0]);
-    levelBeam1Knob.setPopupMenuEnabled(true);
+    levelBeam1Knob.setRange(-10,10,0.1);
     levelBeam1Knob.addListener(this);
     addAndMakeVisible(levelBeam1Knob);
     
     levelBeam2Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
     levelBeam2Knob.setTextBoxStyle(Slider::TextBoxLeft, false, LABEL_WIDTH, LABEL_HEIGHT);
     levelBeam2Knob.setColour(Slider::thumbColourId, beamColours[1]);
-    levelBeam2Knob.setPopupMenuEnabled(true);
+    levelBeam2Knob.setRange(-10,10,0.1);
     levelBeam2Knob.addListener(this);
     addAndMakeVisible(levelBeam2Knob);
     
@@ -144,12 +144,12 @@ MainComponent::MainComponent()
     
     //==============================================================================
     
-//    beam1Meter.setCallback(&processor, 1, 0);
-//    beam1Meter.startTimerHz(BEAM_METER_UPDATE_FREQ);
+    //    beam1Meter.setCallback(&processor, 1, 0);
+    //    beam1Meter.startTimerHz(BEAM_METER_UPDATE_FREQ);
     addAndMakeVisible(beam1Meter);
     
-//    beam2Meter.setCallback(&processor, 1, 1);
-//    beam2Meter.startTimerHz(BEAM_METER_UPDATE_FREQ);
+    //    beam2Meter.setCallback(&processor, 1, 1);
+    //    beam2Meter.startTimerHz(BEAM_METER_UPDATE_FREQ);
     addAndMakeVisible(beam2Meter);
     
     //==============================================================================
@@ -160,16 +160,16 @@ MainComponent::MainComponent()
     
     hpfSlider.setSliderStyle(Slider::LinearHorizontal);
     hpfSlider.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
-    hpfSlider.setPopupMenuEnabled(true);
+    hpfSlider.setRange(20,500,1);
     hpfSlider.addListener(this);
     addAndMakeVisible(hpfSlider);
     
-//    hpfSliderAttachment.reset(new SliderAttachment(valueTreeState, "hpf", hpfSlider));
+    //    hpfSliderAttachment.reset(new SliderAttachment(valueTreeState, "hpf", hpfSlider));
     
     //==============================================================================
     
-//    inputMeter.setCallback(&processor, 0);
-//    inputMeter.startTimerHz(INPUT_METER_UPDATE_FREQ);
+    //    inputMeter.setCallback(&processor, 0);
+    //    inputMeter.startTimerHz(INPUT_METER_UPDATE_FREQ);
     addAndMakeVisible(inputMeter);
     
     //==============================================================================
@@ -180,12 +180,13 @@ MainComponent::MainComponent()
     
     gainSlider.setSliderStyle(Slider::LinearHorizontal);
     gainSlider.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
+    gainSlider.setRange(0,40,0.1);
     gainSlider.addListener(this);
     addAndMakeVisible(gainSlider);
     
     //=====================================================
     // Add CPU Load and start its timer
-//    cpuLoad.setSource(&processor);
+    //    cpuLoad.setSource(&processor);
     cpuLoad.startTimerHz(CPULOAD_UPDATE_FREQ);
     addAndMakeVisible(cpuLoad);
     
@@ -204,7 +205,7 @@ MainComponent::MainComponent()
     configCombo.addItemList(micConfigLabels, 10);
     configCombo.addListener(this);
     addAndMakeVisible(configCombo);
-
+    
     
     /* Initialize OSC */
     oscIpLabel.setText("IP", NotificationType::dontSendNotification);
@@ -457,8 +458,44 @@ void MainComponent::oscMessageReceived (const OSCMessage& message){
         auto val = message[0].getFloat32();
         if (message.getAddressPattern() == "/ebeamer/steerBeamX1"){
             steerBeamX1Slider.setValue(val,dontSendNotification);
+            //TODO: notify SceneComp about the change
         }else if (message.getAddressPattern() == "/ebeamer/steerBeamX2"){
             steerBeamX2Slider.setValue(val,dontSendNotification);
+            //TODO: notify SceneComp about the change
+        }else if (message.getAddressPattern() == "/ebeamer/steerBeamY1"){
+            steerBeamY1Slider.setValue(val,dontSendNotification);
+            //TODO: notify SceneComp about the change
+        }else if (message.getAddressPattern() == "/ebeamer/steerBeamY2"){
+            steerBeamY2Slider.setValue(val,dontSendNotification);
+            //TODO: notify SceneComp about the change
+        }else if (message.getAddressPattern() == "/ebeamer/widthBeam1"){
+            widthBeam1Knob.setValue(val,dontSendNotification);
+        }else if (message.getAddressPattern() == "/ebeamer/widthBeam2"){
+            widthBeam2Knob.setValue(val,dontSendNotification);
+        }else if (message.getAddressPattern() == "/ebeamer/panBeam1"){
+            panBeam1Knob.setValue(val,dontSendNotification);
+        }else if (message.getAddressPattern() == "/ebeamer/panBeam2"){
+            panBeam2Knob.setValue(val,dontSendNotification);
+        }else if (message.getAddressPattern() == "/ebeamer/levelBeam1"){
+            levelBeam1Knob.setValue(val,dontSendNotification);
+        }else if (message.getAddressPattern() == "/ebeamer/levelBeam2"){
+            levelBeam2Knob.setValue(val,dontSendNotification);
+        }else if (message.getAddressPattern() == "/ebeamer/gainMic"){
+            gainSlider.setValue(val,dontSendNotification);
+        }else if (message.getAddressPattern() == "/ebeamer/hpf"){
+            hpfSlider.setValue(val,dontSendNotification);
+        }
+    }else if ((message.size() == 1) && (message[0].isInt32())){
+        auto val = message[0].getInt32();
+        if (message.getAddressPattern() == "/ebeamer/muteBeam1"){
+            muteBeam1Button.setToggleState(val,dontSendNotification);
+        }else if (message.getAddressPattern() == "/ebeamer/muteBeam2"){
+            muteBeam2Button.setToggleState(val,dontSendNotification);
+        }else if (message.getAddressPattern() == "/ebeamer/frontFacing"){
+            frontToggle.setToggleState(val,dontSendNotification);
+            //TODO: trigger config change
+        }else if (message.getAddressPattern() == "/ebeamer/config"){
+            //TODO: trigger config change
         }
     }
 }
