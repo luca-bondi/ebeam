@@ -109,7 +109,10 @@ private:
     OSCSender sender;
     bool connected = false;
     String serverIp = "127.0.0.1";
+    /** Ebeamer VST port */
     int serverPort = 9001;
+    /** Port where to receive OSC replies */
+    int ownPort = 9002;
     
     TextEditor oscIp;
     Label oscIpLabel;
@@ -117,10 +120,15 @@ private:
     TextEditor oscPort;
     Label oscPortLabel;
     
-    TextButton oscConnect;
+    TextButton oscConnectButton;
     ActivityLed oscStatus;
     
     void sendOscMessage(const String& path, float value);
+    void sendOscMessage(const String& path, bool value);
+    void sendOscMessage(const String& path, MicConfig value);
+    
+    void oscConnect();
+    void oscDisconnect();
     
     //==============================================================================
     /* Listeners and callbacks */

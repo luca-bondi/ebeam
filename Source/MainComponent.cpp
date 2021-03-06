@@ -219,12 +219,15 @@ MainComponent::MainComponent()
     oscPort.setJustification(Justification::centred);
     addAndMakeVisible(oscPort);
     
-    oscConnect.setButtonText("Connect");
-    oscConnect.addListener(this);
-    addAndMakeVisible(oscConnect);
+    oscConnectButton.setButtonText("Connect");
+    oscConnectButton.addListener(this);
+    addAndMakeVisible(oscConnectButton);
     
-    oscStatus.setColours(Colours::grey,Colours::red);
+    oscStatus.setColours(Colours::red,Colours::grey);
     addAndMakeVisible(oscStatus);
+    
+    //=====================================================
+    startTimerHz(10);
     
 }
 
@@ -266,7 +269,7 @@ void MainComponent::resized()
     oscArea.removeFromLeft(OSC_PORT_LABEL_WIDTH);
     oscPort.setBounds(oscArea.removeFromLeft(OSC_PORT_WIDTH));
     oscArea.removeFromLeft(OSC_CONNECT_MARGIN_LEFT);
-    oscConnect.setBounds(oscArea.removeFromLeft(OSC_CONNECT_WIDTH));
+    oscConnectButton.setBounds(oscArea.removeFromLeft(OSC_CONNECT_WIDTH));
     oscArea.removeFromLeft(OSC_LED_MARGIN_LEFT);
     oscStatus.setBounds(oscArea.removeFromLeft(OSC_LED_WIDTH));
     
@@ -389,32 +392,40 @@ void MainComponent::sliderValueChanged(Slider * slider){
 }
 
 void MainComponent::buttonClicked (Button* button){
-    if (button == &oscConnect){
+    if (button == &oscConnectButton){
         if (connected){
-            if (sender.disconnect()){
-                oscConnect.setButtonText("Connect");
-                oscIp.setEnabled(true);
-                oscPort.setEnabled(true);
-                connected = false;
-                oscStatus.setColours(Colours::grey,Colours::red);
-            }else{
-                showConnectionErrorMessage ("Error: could not disconnect");
-            }
+            oscDisconnect();
         }else{
             serverIp = oscIp.getTextValue().toString();
             serverPort = oscPort.getTextValue().toString().getIntValue();
-            if (sender.connect(serverIp,serverPort)){
-                oscConnect.setButtonText("Disconnect");
-                oscIp.setEnabled(false);
-                oscPort.setEnabled(false);
-                connected = true;
-                oscStatus.setColours(Colours::grey,Colours::green);
-            }else{
-                std::ostringstream errMsg;
-                errMsg << "Error: could not connect to " << serverIp << " on " << serverPort;
-                showConnectionErrorMessage (errMsg.str());
-            }
+            oscConnect();
         }
+    }
+}
+
+void MainComponent::oscConnect(){
+    if (sender.connect(serverIp,serverPort)){
+        oscConnectButton.setButtonText("Disconnect");
+        oscIp.setEnabled(false);
+        oscPort.setEnabled(false);
+        connected = true;
+        oscStatus.setColours(Colours::green,Colours::grey);
+    }else{
+        std::ostringstream errMsg;
+        errMsg << "Error: could not connect to " << serverIp << " on " << serverPort;
+        showConnectionErrorMessage (errMsg.str());
+    }
+}
+
+void MainComponent::oscDisconnect(){
+    if (sender.disconnect()){
+        oscConnectButton.setButtonText("Connect");
+        oscIp.setEnabled(true);
+        oscPort.setEnabled(true);
+        connected = false;
+        oscStatus.setColours(Colours::red,Colours::grey);
+    }else{
+        showConnectionErrorMessage ("Error: could not disconnect");
     }
 }
 
@@ -431,7 +442,14 @@ void MainComponent::oscMessageReceived (const OSCMessage& message){
 }
 
 void MainComponent::timerCallback(){
-    //TODO: implement
+    if (connected){
+        OSCMessage msg("/ebeamer/get");
+        //TODO: get IP address of the interface connected to the Ebeamer
+        msg.addString("127.0.0.1");
+        msg.addInt32(ownPort);
+        sender.send(msg);
+        oscStatus.toggle();
+    }
 }
 
 void MainComponent::showConnectionErrorMessage (const String& messageText){
@@ -448,7 +466,7 @@ void MainComponent::setBeamSteerX(int idx, float newVal){
     }else{
         steerBeamX2Slider.setValue(newVal,dontSendNotification);
     }
-    sendOscMessage(String("/ebeamer/steerX") + String(idx+1),newVal);
+    sendOscMessage(String("steerBeamX") + String(idx+1),newVal);
     
 }
 
@@ -459,14 +477,38 @@ void MainComponent::setBeamSteerY(int idx, float newVal){
     }else{
         steerBeamY2Slider.setValue(newVal,dontSendNotification);
     }
-    sendOscMessage(String("/ebeamer/steerY") + String(idx+1),newVal);
+    sendOscMessage(String("steerBeamY") + String(idx+1),newVal);
 }
 
-void MainComponent::sendOscMessage(const String& path, float value){
-    
+void MainComponent::sendOscMessage(const String& tag, float value){
+    auto address = "/ebeamer/" + tag;
     if (connected){
-        OSCMessage msg(path);
+        OSCMessage msg(address);
         msg.addFloat32(value);
+        sender.send(msg);
+    }
+    // Toggle status even if not connect, to show that something should have happened
+    oscStatus.toggle();
+    
+}
+
+void MainComponent::sendOscMessage(const String& tag, bool value){
+    auto address = "/ebeamer/" + tag;
+    if (connected){
+        OSCMessage msg(address);
+        msg.addInt32(value);
+        sender.send(msg);
+    }
+    // Toggle status even if not connect, to show that something should have happened
+    oscStatus.toggle();
+    
+}
+
+void MainComponent::sendOscMessage(const String& tag, MicConfig value){
+    auto address = "/ebeamer/" + tag;
+    if (connected){
+        OSCMessage msg(address);
+        msg.addInt32(value);
         sender.send(msg);
     }
     // Toggle status even if not connect, to show that something should have happened
