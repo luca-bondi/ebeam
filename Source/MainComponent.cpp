@@ -561,6 +561,14 @@ void MainComponent::oscMessageReceived (const OSCMessage& message){
             beam1Meter.setValue(((float*)val.getData())[0]);
             beam2Meter.setValue(((float*)val.getData())[1]);
         }
+    }else if ((message.size() == 3) && (message[0].isInt32()) && (message[1].isInt32()) && (message[2].isBlob())){
+        auto nRows = message[0].getInt32();
+        auto nCols = message[1].getInt32();
+        auto val = message[2].getBlob();
+        if (message.getAddressPattern() == "/ebeamer/doaEnergy"){
+            Eigen::Map<Eigen::MatrixXf> newEnergy((float*)val.getData(),nRows,nCols);
+            energy = newEnergy;
+        }
     }
 }
 

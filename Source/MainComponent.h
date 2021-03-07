@@ -104,6 +104,8 @@ private:
     std::atomic<float> steerX[NUM_BEAMS];
     std::atomic<float> steerY[NUM_BEAMS];
     
+    Mtx energy;
+    
     //==============================================================================
     /** OSC */
     OSCSender sender;
@@ -167,9 +169,8 @@ private:
     void setBeamSteerX(int idx, float newVal) override;
     void setBeamSteerY(int idx, float newVal) override;
     
-    void getDoaEnergy(Mtx &energy) const override{
-        //TODO: implement
-        energy.setZero();
+    void getDoaEnergy(Mtx &en) const override{
+        en = energy;
     }
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
