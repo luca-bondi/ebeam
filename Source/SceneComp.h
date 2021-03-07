@@ -10,12 +10,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ebeamerDefs.h"
-//#include "MeterComp.h"
-//#include "Beamformer.h"
 
 #include "../Eigen/Eigen"
-
-using namespace juce;
 
 typedef Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Mtx;
 const float pi = MathConstants<float>::pi;

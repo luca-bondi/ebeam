@@ -15,7 +15,7 @@
 //==============================================================================
 /*
 */
-class FrequencySlider  : public juce::Slider
+class FrequencySlider  : public Slider
 {
 public:
     FrequencySlider() {};

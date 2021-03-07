@@ -14,12 +14,10 @@
 
 #define DB_MINUS_INF -100.0
 
-using namespace juce;
-
 //==============================================================================
 /*
 */
-class DecibelSlider  : public juce::Slider
+class DecibelSlider  : public Slider
 {
 public:
     DecibelSlider() {};

@@ -4,6 +4,8 @@
 MainComponent::MainComponent()
 {
     
+    appVersion = JUCEApplication::getInstance()->getApplicationVersion();
+    
     //==============================================================================
     /* Initialize parameters */
     config = 0;
@@ -143,13 +145,8 @@ MainComponent::MainComponent()
     getLookAndFeel().setColour(MuteButton::buttonOnColourId, Colours::darkred);
     
     //==============================================================================
-    
-    //    beam1Meter.setCallback(&processor, 1, 0);
-    //    beam1Meter.startTimerHz(BEAM_METER_UPDATE_FREQ);
+
     addAndMakeVisible(beam1Meter);
-    
-    //    beam2Meter.setCallback(&processor, 1, 1);
-    //    beam2Meter.startTimerHz(BEAM_METER_UPDATE_FREQ);
     addAndMakeVisible(beam2Meter);
     
     //==============================================================================
@@ -164,12 +161,8 @@ MainComponent::MainComponent()
     hpfSlider.addListener(this);
     addAndMakeVisible(hpfSlider);
     
-    //    hpfSliderAttachment.reset(new SliderAttachment(valueTreeState, "hpf", hpfSlider));
-    
     //==============================================================================
-    
-    //    inputMeter.setCallback(&processor, 0);
-    //    inputMeter.startTimerHz(INPUT_METER_UPDATE_FREQ);
+
     addAndMakeVisible(inputMeter);
     
     //==============================================================================
@@ -207,9 +200,10 @@ MainComponent::MainComponent()
     
     
     /* Initialize OSC */
+    serverIp = IPAddress("127.0.0.1");
     oscIpLabel.setText("IP", NotificationType::dontSendNotification);
     oscIpLabel.attachToComponent(&oscIp, true);
-    oscIp.setText(serverIp);
+    oscIp.setText(serverIp.toString());
     oscIp.setJustification(Justification::centred);
     addAndMakeVisible(oscIp);
     
@@ -231,7 +225,7 @@ MainComponent::MainComponent()
     startTimerHz(10);
     
     /* Set this as a listener for OSC messages */
-    OSCReceiver::addListener(this);
+    receiver.addListener(this);
     
 }
 
@@ -252,8 +246,7 @@ void MainComponent::paint (juce::Graphics& g)
     versionArea.removeFromBottom(2);
     g.setColour(Colours::lightgrey);
     g.setFont(12);
-    //    TODO: app version
-    g.drawText("Eventide - Ebeamer Controller v", versionArea, Justification::centredBottom, false);
+    g.drawText(String("Eventide - Ebeamer Controller v") + appVersion, versionArea, Justification::centredBottom, false);
 }
 
 void MainComponent::resized()
@@ -418,7 +411,7 @@ void MainComponent::buttonClicked (Button* button){
         if (connected){
             oscDisconnect();
         }else{
-            serverIp = oscIp.getTextValue().toString();
+            serverIp = IPAddress(oscIp.getTextValue().toString());
             serverPort = oscPort.getTextValue().toString().getIntValue();
             oscConnect();
         }
@@ -458,28 +451,56 @@ void MainComponent::comboBoxChanged(ComboBox * comboBox){
 //OSC Methods
 
 void MainComponent::oscConnect(){
-    if (sender.connect(serverIp,serverPort)){
-        if (connect(ownPort)){
-            oscConnectButton.setButtonText("Disconnect");
-            oscIp.setEnabled(false);
-            oscPort.setEnabled(false);
-            connected = true;
-            oscStatus.setColours(Colours::green,Colours::grey);
-        }else{
+    if (sender.connectToSocket(socket,serverIp.toString(),serverPort)){
+        int localPort = 9001;
+        while (socket.getBoundPort()==-1 && !socket.bindToPort(localPort) && (localPort<65535))
+            localPort++;
+        if (localPort==65535){
             std::ostringstream errMsg;
-            errMsg << "Error: could not listen on port " << ownPort;
+            errMsg << "Error: cannot find a free port to listen on";
             showConnectionErrorMessage (errMsg.str());
+            return;
         }
+        if (!receiver.connectToSocket(socket)){
+            std::ostringstream errMsg;
+            errMsg << "Error: cannot listen on port " << socket.getBoundPort();
+            showConnectionErrorMessage (errMsg.str());
+            return;
+        }
+        
+        /* Connection successful */
+        oscConnectButton.setButtonText("Disconnect");
+        oscIp.setEnabled(false);
+        oscPort.setEnabled(false);
+        connected = true;
+        oscStatus.setColours(Colours::green,Colours::grey);
+        
+        /* Determine local IP */
+        auto ipArray = IPAddress::getAllAddresses();
+        int mostLikelyIdx = 0;
+        int mostLikelyScore = 0;
+        for (auto idx = 0; idx < ipArray.size(); idx++){
+            auto ip = ipArray[idx];
+            int score = 0;
+            while (ip.address[score] == serverIp.address[score])
+                score ++;
+            if (score > mostLikelyScore){
+                mostLikelyScore = score;
+                mostLikelyIdx = idx;
+            }
+        }
+        localIp = ipArray[mostLikelyIdx];
+        
     }else{
         std::ostringstream errMsg;
-        errMsg << "Error: could not connect to " << serverIp << " on " << serverPort;
+        errMsg << "Error: cannot connect to " << serverIp.toString() << " on " << serverPort;
         showConnectionErrorMessage (errMsg.str());
     }
 }
 
 void MainComponent::oscDisconnect(){
     if (sender.disconnect()){
-        if (disconnect()){
+        if (receiver.disconnect()){
             oscConnectButton.setButtonText("Connect");
             oscIp.setEnabled(true);
             oscPort.setEnabled(true);
@@ -575,9 +596,8 @@ void MainComponent::oscMessageReceived (const OSCMessage& message){
 void MainComponent::timerCallback(){
     if (connected){
         OSCMessage msg("/ebeamer/get");
-        //TODO: get IP address of the interface connected to the Ebeamer
-        msg.addString("127.0.0.1");
-        msg.addInt32(ownPort);
+        msg.addString(localIp.toString());
+        msg.addInt32(socket.getBoundPort());
         sender.send(msg);
         oscStatus.toggle();
     }

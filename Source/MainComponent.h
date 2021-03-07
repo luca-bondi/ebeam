@@ -12,8 +12,6 @@
 #include "SceneComp.h"
 #include "RoundLed.h"
 
-using namespace juce;
-
 //==============================================================================
 /*
  This component lives inside our window, and this is where you should put all
@@ -21,7 +19,6 @@ using namespace juce;
  */
 class MainComponent  :
 public Component,
-private OSCReceiver,
 private OSCReceiver::Listener<OSCReceiver::MessageLoopCallback>,
 private Timer,
 private Slider::Listener,
@@ -39,6 +36,8 @@ public:
     void resized() override;
     
 private:
+    
+    String appVersion;
     
     //==============================================================================
     SceneComp scene;
@@ -109,18 +108,24 @@ private:
     //==============================================================================
     /** OSC */
     OSCSender sender;
+    OSCReceiver receiver;
+    DatagramSocket socket;
+    
     bool connected = false;
-    String serverIp = "127.0.0.1";
+    IPAddress serverIp;
+    
     /** Ebeamer VST port */
     int serverPort = 9001;
-    /** Port where to receive OSC replies */
-    int ownPort = 9002;
+    
+    /** Local IP */
+    IPAddress localIp;
     
     TextEditor oscIp;
     Label oscIpLabel;
     
     TextEditor oscPort;
     Label oscPortLabel;
+    
     
     TextButton oscConnectButton;
     ActivityLed oscStatus;

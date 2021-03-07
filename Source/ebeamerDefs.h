@@ -19,7 +19,7 @@
 
 #define OSC_HEIGHT 20
 #define OSC_IP_LABEL_WIDTH 30
-#define OSC_IP_WIDTH 90
+#define OSC_IP_WIDTH 100
 #define OSC_PORT_LABEL_WIDTH 50
 #define OSC_PORT_WIDTH 50
 #define OSC_CONNECT_WIDTH 120
@@ -91,7 +91,7 @@ typedef enum {
 } MicConfig;
 
 /** Available eSticks configurations labels */
-const juce::StringArray micConfigLabels({
+const StringArray micConfigLabels({
                                           "Single",
                                           "Horiz 2",
                                           "Horiz 3",

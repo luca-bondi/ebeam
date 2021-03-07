@@ -15,7 +15,7 @@
 //==============================================================================
 /*
 */
-class MuteButton  : public juce::TextButton
+class MuteButton  : public TextButton
 {
 public:
     MuteButton(){

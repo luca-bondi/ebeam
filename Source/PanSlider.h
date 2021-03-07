@@ -12,12 +12,11 @@
 
 #include <JuceHeader.h>
 
-using namespace juce;
 
 //==============================================================================
 /*
 */
-class PanSlider  : public juce::Slider
+class PanSlider  : public Slider
 {
 public:
     PanSlider() {};

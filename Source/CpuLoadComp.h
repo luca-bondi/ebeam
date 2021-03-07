@@ -12,11 +12,10 @@
 
 #include <JuceHeader.h>
 
-using namespace juce;
 //==============================================================================
 /*
 */
-class CpuLoadComp : public juce::Component {
+class CpuLoadComp : public Component {
 public:
     CpuLoadComp();
 
