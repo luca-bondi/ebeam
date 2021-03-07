@@ -21,12 +21,6 @@ MultiChannelLedBar::MultiChannelLedBar(){
 void MultiChannelLedBar::makeLayout() {
     removeAllChildren();
     leds.clear();
-//    if (callback == nullptr) {
-//        return;
-//    }
-//    callback->getMeterValues(values, meterId);
-    //TODO: real implementation
-    values.resize(16);
     auto num = values.size();
     for (auto ledIdx = 0; ledIdx < num; ++ledIdx) {
         leds.push_back(std::make_unique<RoundLed>());
@@ -36,18 +30,23 @@ void MultiChannelLedBar::makeLayout() {
     resized();
 }
 
+void MultiChannelLedBar::setValues(const std::vector<float>& newValues){
+    if (values.size() != newValues.size()){
+        values = newValues;
+        makeLayout();
+    }else{
+        values = newValues;
+    }
+    for (auto ledIdx = 0; ledIdx < leds.size(); ++ledIdx)
+        leds[ledIdx]->setColour(dbToColor(Decibels::gainToDecibels(values.at(ledIdx))));
+}
+
 void MultiChannelLedBar::paint(Graphics &) {
     
 }
 
 void MultiChannelLedBar::resized() {
     
-//    if (callback == nullptr) {
-//        return;
-//    }
-//    callback->getMeterValues(values, meterId);
-    //TODO: real implementation
-    values.resize(16);
     auto num = values.size();
     Rectangle<int> area = getLocalBounds();
     
@@ -89,28 +88,3 @@ Colour MultiChannelLedBar::dbToColor(float valDb){
     }
     return col;
 }
-
-void MultiChannelLedBar::timerCallback() {
-    
-//    if (callback == nullptr)
-//        return;
-//
-//    callback->getMeterValues(values, meterId);
-    //TODO: real implementation
-    values.resize(16);
-    if (values.size() != leds.size())
-        makeLayout();
-    
-    for (auto ledIdx = 0; ledIdx < leds.size(); ++ledIdx)
-        leds[ledIdx]->setColour(dbToColor(Decibels::gainToDecibels(values.at(ledIdx))));
-    
-}
-
-//void MultiChannelLedBar::setCallback(MeterDecay::Callback *cb, int metId) {
-//    callback = cb;
-//    meterId = metId;
-//    callback->getMeterValues(values, meterId);
-//    if (values.size() > 0) {
-//        makeLayout();
-//    }
-//}

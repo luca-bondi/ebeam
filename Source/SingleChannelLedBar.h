@@ -16,14 +16,12 @@
 //==============================================================================
 /*
 */
-class SingleChannelLedBar : public juce::Component, public juce::Timer {
+class SingleChannelLedBar : public juce::Component{
 public:
     
     SingleChannelLedBar(size_t numLeds = 7, bool isHorizontal = false);
     
     ~SingleChannelLedBar() {};
-    
-//    void setCallback(MeterDecay::Callback *cb, int meterId, int channel);
     
     void paint(Graphics &) override;
     
@@ -31,9 +29,10 @@ public:
     
     static Colour dbToColour(float valDb, float thDb);
     
+    void setValue(float);
+    
 private:
     
-//    MeterDecay::Callback *provider = nullptr;
     int meterId;
     int channel;
     
@@ -42,7 +41,6 @@ private:
     std::vector<float> th;
     std::vector<std::unique_ptr<RoundLed>> leds;
     
-    void timerCallback() override;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SingleChannelLedBar)
 };

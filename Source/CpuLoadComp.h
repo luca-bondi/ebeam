@@ -16,25 +16,17 @@ using namespace juce;
 //==============================================================================
 /*
 */
-class CpuLoadComp : public juce::Component,
-public juce::Timer {
+class CpuLoadComp : public juce::Component {
 public:
     CpuLoadComp();
 
     ~CpuLoadComp();
 
-    class Callback {
-    public:
-        virtual ~Callback() = default;
-
-        virtual float getCpuLoad() const = 0;
-    };
-
-    void setSource(Callback *cb);
-
     void paint(Graphics &) override;
 
     void resized() override;
+    
+    void setLoad(float);
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CpuLoadComp)
@@ -43,12 +35,6 @@ private:
     Label text;
     /** Label for load indicator text */
     Label label;
-
-    /** Timer callback */
-    void timerCallback() override;
-
-    /** Callback instance */
-    Callback *callback = nullptr;
 
     // Constants
     const float labelWidth = 45;

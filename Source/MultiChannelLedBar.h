@@ -16,7 +16,7 @@
 //==============================================================================
 /*
 */
-class MultiChannelLedBar : public juce::Component, public juce::Timer {
+class MultiChannelLedBar : public juce::Component{
 public:
     
     MultiChannelLedBar();
@@ -27,26 +27,23 @@ public:
     
     void resized() override;
     
-//    void setCallback(MeterDecay::Callback *cb, int metId);
-    
     void setHorizontal() { isHorizontal = true; };
     
     void setVertical() { isHorizontal = false; };
     
     static Colour dbToColor(float valDb);
     
+    void setValues(const std::vector<float>&);
+    
     
 private:
     
-//    MeterDecay::Callback *callback = nullptr;
     int meterId;
     
     bool isHorizontal = true;
     
     std::vector<std::unique_ptr<RoundLed>> leds;
-    std::vector<float> values;
-    
-    void timerCallback() override;
+    std::vector<float> values = {0,0};
     
     void makeLayout();
     

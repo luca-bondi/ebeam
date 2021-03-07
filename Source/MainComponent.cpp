@@ -185,9 +185,7 @@ MainComponent::MainComponent()
     addAndMakeVisible(gainSlider);
     
     //=====================================================
-    // Add CPU Load and start its timer
-    //    cpuLoad.setSource(&processor);
-    cpuLoad.startTimerHz(CPULOAD_UPDATE_FREQ);
+    // Add CPU Load
     addAndMakeVisible(cpuLoad);
     
     //=====================================================
@@ -204,6 +202,7 @@ MainComponent::MainComponent()
     configComboLabel.attachToComponent(&configCombo, true);
     configCombo.addItemList(micConfigLabels, 10);
     configCombo.addListener(this);
+    configCombo.setSelectedItemIndex(0);
     addAndMakeVisible(configCombo);
     
     
@@ -382,17 +381,35 @@ void MainComponent::resized()
 
 void MainComponent::sliderValueChanged(Slider * slider){
     if (slider == &steerBeamX1Slider){
+        steerX[0] = slider->getValue();
         setBeamSteerX(0,slider->getValue());
-        //TODO: notify SceneComp about the change
     }else if(slider == &steerBeamX2Slider){
+        steerX[1] = slider->getValue();
         setBeamSteerX(1,slider->getValue());
-        //TODO: notify SceneComp about the change
     }else if (slider == &steerBeamY1Slider){
+        steerY[0] = slider->getValue();
         setBeamSteerY(0,slider->getValue());
-        //TODO: notify SceneComp about the change
     }else if(slider == &steerBeamY2Slider){
+        steerY[1] = slider->getValue();
         setBeamSteerY(1,slider->getValue());
-        //TODO: notify SceneComp about the change
+    }else if(slider == &widthBeam1Knob){
+        width[0] = slider->getValue();
+        if (connected) sendOscMessage("widthBeam1", width[0]);
+    }else if(slider == &widthBeam2Knob){
+        width[1] = slider->getValue();
+        if (connected) sendOscMessage("widthBeam2", width[1]);
+    }else if(slider == &panBeam1Knob){
+        if (connected) sendOscMessage("panBeam1", (float)panBeam1Knob.getValue());
+    }else if(slider == &panBeam2Knob){
+        if (connected) sendOscMessage("panBeam2", (float)panBeam2Knob.getValue());
+    }else if(slider == &levelBeam1Knob){
+        if (connected) sendOscMessage("levelBeam1", (float)levelBeam1Knob.getValue());
+    }else if(slider == &levelBeam2Knob){
+        if (connected) sendOscMessage("levelBeam2", (float)levelBeam2Knob.getValue());
+    }else if(slider == &hpfSlider){
+        if (connected) sendOscMessage("hpf", (float)hpfSlider.getValue());
+    }else if(slider == &gainSlider){
+        if (connected) sendOscMessage("gainMic", (float)gainSlider.getValue());
     }
 }
 
@@ -407,6 +424,38 @@ void MainComponent::buttonClicked (Button* button){
         }
     }
 }
+
+void MainComponent::buttonStateChanged(Button * button){
+    if (button == &frontToggle){
+        frontFacing = frontToggle.getToggleState();
+        scene.resized();
+        if (connected)
+            sendOscMessage("frontFacing", (bool)frontFacing);
+    } else if (button == &muteBeam1Button){
+        mute[0] = muteBeam1Button.getToggleState();
+        scene.resized();
+        if (connected)
+            sendOscMessage("muteBeam1", (bool)mute[0]);
+    } else if (button == &muteBeam2Button){
+        mute[1] = muteBeam2Button.getToggleState();
+        scene.resized();
+        if (connected)
+            sendOscMessage("muteBeam2", (bool)mute[1]);
+    }
+    
+}
+
+void MainComponent::comboBoxChanged(ComboBox * comboBox){
+    if (comboBox == &configCombo){
+        config = configCombo.getSelectedItemIndex();
+        resized();
+        if (connected)
+            sendOscMessage("config", static_cast<MicConfig>((int)config));
+    }
+}
+
+//=====================================================================================
+//OSC Methods
 
 void MainComponent::oscConnect(){
     if (sender.connect(serverIp,serverPort)){
@@ -444,13 +493,6 @@ void MainComponent::oscDisconnect(){
     }
 }
 
-void MainComponent::buttonStateChanged(Button * button){
-    //TODO: implement
-}
-
-void MainComponent::comboBoxChanged(ComboBox * comboBox){
-    //TODO: implement
-}
 
 void MainComponent::oscMessageReceived (const OSCMessage& message){
     
@@ -458,20 +500,22 @@ void MainComponent::oscMessageReceived (const OSCMessage& message){
         auto val = message[0].getFloat32();
         if (message.getAddressPattern() == "/ebeamer/steerBeamX1"){
             steerBeamX1Slider.setValue(val,dontSendNotification);
-            //TODO: notify SceneComp about the change
+            steerX[0] = val;
         }else if (message.getAddressPattern() == "/ebeamer/steerBeamX2"){
             steerBeamX2Slider.setValue(val,dontSendNotification);
-            //TODO: notify SceneComp about the change
+            steerX[1] = val;
         }else if (message.getAddressPattern() == "/ebeamer/steerBeamY1"){
             steerBeamY1Slider.setValue(val,dontSendNotification);
-            //TODO: notify SceneComp about the change
+            steerY[0] = val;
         }else if (message.getAddressPattern() == "/ebeamer/steerBeamY2"){
             steerBeamY2Slider.setValue(val,dontSendNotification);
-            //TODO: notify SceneComp about the change
+            steerY[1] = val;
         }else if (message.getAddressPattern() == "/ebeamer/widthBeam1"){
             widthBeam1Knob.setValue(val,dontSendNotification);
+            width[0] = val;
         }else if (message.getAddressPattern() == "/ebeamer/widthBeam2"){
             widthBeam2Knob.setValue(val,dontSendNotification);
+            width[1] = val;
         }else if (message.getAddressPattern() == "/ebeamer/panBeam1"){
             panBeam1Knob.setValue(val,dontSendNotification);
         }else if (message.getAddressPattern() == "/ebeamer/panBeam2"){
@@ -484,18 +528,38 @@ void MainComponent::oscMessageReceived (const OSCMessage& message){
             gainSlider.setValue(val,dontSendNotification);
         }else if (message.getAddressPattern() == "/ebeamer/hpf"){
             hpfSlider.setValue(val,dontSendNotification);
+        }else if (message.getAddressPattern() == "/ebeamer/cpuLoad"){
+            cpuLoad.setLoad(val);
         }
     }else if ((message.size() == 1) && (message[0].isInt32())){
         auto val = message[0].getInt32();
         if (message.getAddressPattern() == "/ebeamer/muteBeam1"){
             muteBeam1Button.setToggleState(val,dontSendNotification);
+            mute[0] = val;
         }else if (message.getAddressPattern() == "/ebeamer/muteBeam2"){
             muteBeam2Button.setToggleState(val,dontSendNotification);
+            mute[1] = val;
         }else if (message.getAddressPattern() == "/ebeamer/frontFacing"){
-            frontToggle.setToggleState(val,dontSendNotification);
-            //TODO: trigger config change
+            if (val != frontToggle.getToggleState()){
+                frontToggle.setToggleState(val,dontSendNotification);
+                frontFacing = val;
+                scene.resized();
+            }
         }else if (message.getAddressPattern() == "/ebeamer/config"){
-            //TODO: trigger config change
+            if (val != configCombo.getSelectedItemIndex()){
+                configCombo.setSelectedItemIndex(val);
+                config = val;
+                resized();
+            }
+        }
+    }else if ((message.size() == 1) && (message[0].isBlob())){
+        auto val = message[0].getBlob();
+        if (message.getAddressPattern() == "/ebeamer/inMeters"){
+            std::vector<float> values((float*)val.begin(),(float*)val.end());
+            inputMeter.setValues(values);
+        } else if (message.getAddressPattern() == "/ebeamer/outMeters"){
+            beam1Meter.setValue(((float*)val.getData())[0]);
+            beam2Meter.setValue(((float*)val.getData())[1]);
         }
     }
 }

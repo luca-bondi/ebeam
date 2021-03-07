@@ -33,12 +33,6 @@ SingleChannelLedBar::SingleChannelLedBar(size_t numLeds, bool isHorizontal) {
     }
 }
 
-//void SingleChannelLedBar::setCallback(MeterDecay::Callback *pr, int metId, int ch) {
-//    provider = pr;
-//    meterId = metId;
-//    channel = ch;
-//}
-
 void SingleChannelLedBar::paint(Graphics &) {
     
 }
@@ -55,12 +49,10 @@ void SingleChannelLedBar::resized() {
     
 }
 
-void SingleChannelLedBar::timerCallback() {
-//    if (provider == nullptr)
-//        return;
-//
-//    auto valueDb = Decibels::gainToDecibels(provider->getMeterValue(meterId, channel));
-    float valueDb = 0;
+
+
+void SingleChannelLedBar::setValue(float newValue) {
+    auto valueDb = Decibels::gainToDecibels(newValue);
     for (auto ledIdx = 0; ledIdx < leds.size(); ++ledIdx)
         leds[ledIdx]->setColour(dbToColour(valueDb, th[ledIdx]));
     
