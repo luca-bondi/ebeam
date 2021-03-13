@@ -252,121 +252,152 @@ void MainComponent::paint (juce::Graphics& g)
 void MainComponent::resized()
 {
     auto area = getLocalBounds();
-    area.removeFromTop(TOP_BOTTOM_MARGIN);
-    area.removeFromBottom(TOP_BOTTOM_MARGIN);
+    const bool portrait = area.getHeight() > area.getWidth();
     
-    auto oscArea = area.removeFromTop(OSC_HEIGHT);
+    /* Overall minimum margin */
+    const int screenMargin = jmin(5,(int)(0.03*area.getWidth()));
+    area.removeFromLeft(screenMargin);
+    area.removeFromTop(screenMargin);
+    area.removeFromBottom(screenMargin);
+    area.removeFromRight(screenMargin);
     
-    // Center area
-    const int oscTotalWidth = OSC_IP_LABEL_WIDTH+OSC_IP_WIDTH+OSC_PORT_LABEL_WIDTH+OSC_PORT_WIDTH+OSC_CONNECT_MARGIN_LEFT+OSC_CONNECT_WIDTH+OSC_LED_MARGIN_LEFT+OSC_LED_WIDTH;
-    oscArea = oscArea.withSizeKeepingCentre(oscTotalWidth, OSC_HEIGHT);
-    
-    oscArea.removeFromLeft(OSC_IP_LABEL_WIDTH);
-    oscIp.setBounds(oscArea.removeFromLeft(OSC_IP_WIDTH));
-    oscArea.removeFromLeft(OSC_PORT_LABEL_WIDTH);
-    oscPort.setBounds(oscArea.removeFromLeft(OSC_PORT_WIDTH));
-    oscArea.removeFromLeft(OSC_CONNECT_MARGIN_LEFT);
-    oscConnectButton.setBounds(oscArea.removeFromLeft(OSC_CONNECT_WIDTH));
-    oscArea.removeFromLeft(OSC_LED_MARGIN_LEFT);
-    oscStatus.setBounds(oscArea.removeFromLeft(OSC_LED_WIDTH));
-    
-    area.removeFromTop(OSC_BOTTOM_MARGIN);
-    auto sceneArea = area.removeFromTop(SCENE_HEIGHT);
-    
-    if (isLinearArray(static_cast<MicConfig>((int)config))){
-        steerBeamY1Slider.setVisible(false);
-        steerBeamY2Slider.setVisible(false);
-        sceneArea.removeFromRight((area.getWidth() - SCENE_WIDTH) / 2);
-        sceneArea.removeFromLeft((area.getWidth() - SCENE_WIDTH) / 2);
-        scene.setBounds(sceneArea);
+    if (portrait){
+        
+        /* Scene, aspect ratio 2:1 */
+        auto sceneArea = area.removeFromTop(area.getWidth()/2);
+        
+        if (isLinearArray(static_cast<MicConfig>((int)config))){
+            steerBeamY1Slider.setVisible(false);
+            steerBeamY2Slider.setVisible(false);
+            scene.setBounds(sceneArea);
+        }else{
+            steerBeamY1Slider.setVisible(true);
+            steerBeamY2Slider.setVisible(true);
+            steerBeamY1Slider.setBounds(sceneArea.removeFromLeft(50).withTrimmedTop(20));
+            steerBeamY2Slider.setBounds(sceneArea.removeFromRight(50).withTrimmedTop(20));
+            scene.setBounds(sceneArea);
+        }
+        
+        /* Controls area */
+        area.removeFromLeft(SMALL_MARGIN);
+        area.removeFromRight(SMALL_MARGIN);
+        
+        area.removeFromBottom(BOTTOM_MARGIN);
+        Rectangle<int> oscArea,setupArea;
+        const int oscWidth = OSC_IP_LABEL_WIDTH+OSC_IP_WIDTH+OSC_PORT_LABEL_WIDTH+OSC_PORT_WIDTH+OSC_CONNECT_MARGIN_LEFT+OSC_CONNECT_WIDTH+OSC_LED_MARGIN_LEFT+LED_SIZE;
+        const int configWidth = CPULOAD_WIDTH+CONFIG_COMBO_LABEL_WIDTH+CONFIG_COMBO_WIDTH+FRONT_TOGGLE_LABEL_WIDTH+FRONT_TOGGLE_WIDTH;
+        if (area.getWidth() >= oscWidth+configWidth+SMALL_MARGIN){
+            auto oscControlArea = area.removeFromBottom(CONTROLS_HEIGHT);
+            setupArea = oscControlArea.removeFromLeft(area.getWidth()/2).withSizeKeepingCentre(configWidth, CONTROLS_HEIGHT);
+            oscArea = oscControlArea.withSizeKeepingCentre(oscWidth, CONTROLS_HEIGHT);
+        }else{
+            oscArea = area.removeFromBottom(CONTROLS_HEIGHT).withSizeKeepingCentre(oscWidth, CONTROLS_HEIGHT);
+            area.removeFromBottom(MEDIUM_MARGIN);
+            setupArea = area.removeFromBottom(CONTROLS_HEIGHT).withSizeKeepingCentre(configWidth, CONTROLS_HEIGHT);
+        }
+        area.removeFromBottom(MEDIUM_MARGIN);
+        
+        /* OSC controls */
+        oscArea.removeFromLeft(OSC_IP_LABEL_WIDTH);
+        oscIp.setBounds(oscArea.removeFromLeft(OSC_IP_WIDTH));
+        oscArea.removeFromLeft(OSC_PORT_LABEL_WIDTH);
+        oscPort.setBounds(oscArea.removeFromLeft(OSC_PORT_WIDTH));
+        oscArea.removeFromLeft(OSC_CONNECT_MARGIN_LEFT);
+        oscConnectButton.setBounds(oscArea.removeFromLeft(OSC_CONNECT_WIDTH));
+        oscArea.removeFromLeft(OSC_LED_MARGIN_LEFT);
+        oscStatus.setBounds(oscArea.removeFromLeft(LED_SIZE));
+        
+        /* Set area for CPU Load */
+        cpuLoad.setBounds(setupArea.removeFromLeft(CPULOAD_WIDTH));
+        
+        /* Set area for config combo */
+        setupArea.removeFromLeft(CONFIG_COMBO_LABEL_WIDTH);
+        configCombo.setBounds(setupArea.removeFromLeft(CONFIG_COMBO_WIDTH));
+
+        /* Set area for front toggle */
+        setupArea.removeFromLeft(FRONT_TOGGLE_LABEL_WIDTH);
+        frontToggle.setBounds(setupArea.removeFromLeft(FRONT_TOGGLE_WIDTH));
+        
+        
+        /* Derive margins and sizes based on remaninig space */
+        const int availableHeight = area.getHeight();
+        const int usedHeight = MEDIUM_MARGIN+HOR_SLIDER_HEIGHT+SMALL_MARGIN+LABEL_HEIGHT+SMALL_MARGIN+HOR_SLIDER_HEIGHT+3*(MEDIUM_MARGIN+KNOB_SIZE)+LARGE_MARGIN+MUTE_SIZE+LARGE_MARGIN+HOR_SLIDER_HEIGHT+LED_SIZE+HOR_SLIDER_HEIGHT;
+        const int residualHeight = jmax(availableHeight - usedHeight,0);
+        
+        
+        const int smallMargin = SMALL_MARGIN;
+        const int mediumMargin = MEDIUM_MARGIN;
+        const int largeMargin = LARGE_MARGIN;
+        
+        const int knobMuteTotalIncrease = residualHeight/2;
+        const int horSliderTotalIncrease = residualHeight - knobMuteTotalIncrease;
+        
+        const int knobSize = KNOB_SIZE + knobMuteTotalIncrease/4;
+        const int muteSize = MUTE_SIZE + knobMuteTotalIncrease/4;
+        const int horSliderHeight = HOR_SLIDER_HEIGHT + horSliderTotalIncrease/4;
+        
+        /* Allocate elements from top to bottom */
+        
+        /* Horizontal steering */
+        area.removeFromTop(mediumMargin);
+        steerBeamX1Slider.setBounds(area.removeFromTop(horSliderHeight).withTrimmedLeft(SMALL_LABEL_WIDTH));
+        area.removeFromTop(smallMargin);
+        steerLabel.setBounds(area.removeFromTop(LABEL_HEIGHT));
+        area.removeFromTop(smallMargin);
+        steerBeamX2Slider.setBounds(area.removeFromTop(horSliderHeight).withTrimmedLeft(SMALL_LABEL_WIDTH));
+        
+        /* Width knobs */
+        area.removeFromTop(mediumMargin);
+        auto widthKnobsArea = area.removeFromTop(knobSize);
+        widthBeam1Knob.setBounds(widthKnobsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2));
+        widthBeam2Knob.setBounds(widthKnobsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2));
+        widthLabel.setBounds(widthKnobsArea);
+
+        /* Pan knobs */
+        area.removeFromTop(mediumMargin);
+        auto panKnobsArea = area.removeFromTop(knobSize);
+        panBeam1Knob.setBounds(panKnobsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2));
+        panBeam2Knob.setBounds(panKnobsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2));
+        panLabel.setBounds(panKnobsArea);
+        
+        /* Levels and meters */
+        area.removeFromTop(mediumMargin);
+        auto levelsArea = area.removeFromTop(knobSize);
+        auto level1Area = levelsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
+        auto level2Area = levelsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
+        levelBeam1Knob.setBounds(level1Area);
+        levelBeam2Knob.setBounds(level2Area);
+        level1Area.removeFromRight(LABEL_WIDTH+largeMargin);
+        level2Area.removeFromLeft(LABEL_WIDTH+largeMargin);
+        beam1Meter.setBounds(level1Area.removeFromRight(LED_SIZE));
+        beam2Meter.setBounds(level2Area.removeFromLeft(LED_SIZE));
+        levelLabel.setBounds(levelsArea);
+        
+        /* Mutes */
+        area.removeFromTop(largeMargin);
+        auto mutesArea = area.removeFromTop(muteSize);
+        muteBeam1Button.setBounds(mutesArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2).withTrimmedRight(LABEL_WIDTH).withSizeKeepingCentre(muteSize, muteSize));
+        muteBeam2Button.setBounds(mutesArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2).withTrimmedLeft(LABEL_WIDTH).withSizeKeepingCentre(muteSize, muteSize));
+        muteLabel.setBounds(mutesArea);
+        
+        /* HPF slider */
+        area.removeFromTop(largeMargin);
+        hpfSlider.setBounds(area.removeFromTop(horSliderHeight).withTrimmedLeft(LABEL_WIDTH));
+
+        /* Input LED */
+        inputMeter.setBounds(area.removeFromTop(LED_SIZE).withTrimmedLeft(LABEL_WIDTH).withTrimmedRight(LABEL_WIDTH));
+        
+        /* Gain slider */
+        gainSlider.setBounds(area.removeFromTop(horSliderHeight).withTrimmedLeft(LABEL_WIDTH));
+
+        
     }else{
-        steerBeamY1Slider.setVisible(true);
-        steerBeamY2Slider.setVisible(true);
-        sceneArea.removeFromLeft(15);
-        sceneArea.removeFromRight(15);
-        steerBeamY1Slider.setBounds(sceneArea.removeFromLeft(50));
-        steerBeamY2Slider.setBounds(sceneArea.removeFromRight(50));
-        sceneArea.removeFromLeft(5);
-        sceneArea.removeFromRight(5);
-        sceneArea.removeFromTop(10);
-        sceneArea.removeFromBottom(10);
-        scene.setBounds(sceneArea);
+        
     }
-    
-    area.removeFromLeft(LEFT_RIGHT_MARGIN);
-    area.removeFromRight(LEFT_RIGHT_MARGIN);
+
     
     
-    area.removeFromTop(STEER_SLIDER_TOP_MARGIN);
-    steerBeamX1Slider.setBounds(area.removeFromTop(STEER_SLIDER_HEIGHT).withTrimmedLeft(LABEL_BEAM_WIDTH));
-    steerBeamX2Slider.setBounds(area.removeFromTop(STEER_SLIDER_HEIGHT).withTrimmedLeft(LABEL_BEAM_WIDTH));
     
-    steerLabel.setBounds(area.removeFromTop(LABEL_HEIGHT));
-    
-    area.removeFromLeft(KNOBS_LEFT_RIGHT_MARGIN);
-    area.removeFromRight(KNOBS_LEFT_RIGHT_MARGIN);
-    
-    auto knobsArea = area.removeFromTop(KNOB_HEIGHT + KNOB_TOP_MARGIN);
-    knobsArea.removeFromTop(KNOB_TOP_MARGIN);
-    widthBeam1Knob.setBounds(knobsArea.removeFromLeft(KNOB_WIDTH));
-    widthBeam2Knob.setBounds(knobsArea.removeFromRight(KNOB_WIDTH));
-    widthLabel.setBounds(knobsArea);
-    
-    knobsArea = area.removeFromTop(KNOB_HEIGHT + KNOB_TOP_MARGIN);
-    knobsArea.removeFromTop(KNOB_TOP_MARGIN);
-    panBeam1Knob.setBounds(knobsArea.removeFromLeft(KNOB_WIDTH));
-    panBeam2Knob.setBounds(knobsArea.removeFromRight(KNOB_WIDTH));
-    panLabel.setBounds(knobsArea);
-    
-    knobsArea = area.removeFromTop(KNOB_HEIGHT + KNOB_TOP_MARGIN);
-    knobsArea.removeFromTop(KNOB_TOP_MARGIN);
-    levelBeam1Knob.setBounds(knobsArea.removeFromLeft(KNOB_WIDTH));
-    levelBeam2Knob.setBounds(knobsArea.removeFromRight(KNOB_WIDTH));
-    auto meterArea = knobsArea.removeFromLeft(BEAM_LED_WIDTH + BEAM_LEFT_RIGHT_MARGIN);
-    meterArea.removeFromTop(BEAM_TOP_BOTTOM_MARGIN);
-    meterArea.removeFromBottom(BEAM_TOP_BOTTOM_MARGIN);
-    meterArea.removeFromLeft(BEAM_LEFT_RIGHT_MARGIN);
-    beam1Meter.setBounds(meterArea.removeFromLeft(BEAM_LED_WIDTH));
-    meterArea = knobsArea.removeFromRight(BEAM_LED_WIDTH + BEAM_LEFT_RIGHT_MARGIN);
-    meterArea.removeFromTop(BEAM_TOP_BOTTOM_MARGIN);
-    meterArea.removeFromBottom(BEAM_TOP_BOTTOM_MARGIN);
-    meterArea.removeFromRight(BEAM_LEFT_RIGHT_MARGIN);
-    beam2Meter.setBounds(meterArea.removeFromRight(BEAM_LED_WIDTH));
-    levelLabel.setBounds(knobsArea);
-    
-    auto mutesArea = area.removeFromTop(MUTE_HEIGHT + MUTE_TOP_MARGIN);
-    mutesArea.removeFromTop(MUTE_TOP_MARGIN);
-    mutesArea.removeFromLeft(MUTE_LEFT_RIGHT_MARGIN);
-    mutesArea.removeFromRight(MUTE_LEFT_RIGHT_MARGIN);
-    muteBeam1Button.setBounds(mutesArea.removeFromLeft(MUTE_WIDTH));
-    muteBeam2Button.setBounds(mutesArea.removeFromRight(MUTE_WIDTH));
-    muteLabel.setBounds(mutesArea);
-    
-    area.removeFromTop(INPUT_SECTION_TOP_MARGIN);
-    hpfSlider.setBounds(area.removeFromTop(INPUT_HPF_SLIDER_HEIGHT).withTrimmedLeft(INPUT_HPF_LABEL_WIDTH));
-    
-    auto inputLedArea = area.removeFromTop(INPUT_LED_HEIGHT);
-    inputLedArea.removeFromLeft(INPUT_LEFT_RIGHT_MARGIN+4);
-    inputLedArea.removeFromRight(INPUT_LEFT_RIGHT_MARGIN+23);
-    inputMeter.setBounds(inputLedArea);
-    
-    gainSlider.setBounds(area.removeFromTop(INPUT_GAIN_SLIDER_HEIGHT).withTrimmedLeft(INPUT_GAIN_LABEL_WIDTH));
-    
-    //===============================================================
-    /** Prepare area for the footer */
-    area.removeFromTop(FOOTER_MARGIN);
-    auto footerArea = area.removeFromTop(FOOTER_HEIGHT);
-    
-    /** Set area for CPU Load */
-    cpuLoad.setBounds(footerArea.removeFromLeft(CPULOAD_WIDTH));
-    
-    /** Set area for front toggle */
-    frontToggle.setBounds(footerArea.removeFromRight(FRONT_TOGGLE_WIDTH));
-    footerArea.removeFromRight(FRONT_TOGGLE_LABEL_WIDTH);
-    
-    /** Set area for config combo */
-    footerArea.removeFromLeft(CONFIG_COMBO_LABEL_WIDTH);
-    configCombo.setBounds(footerArea.removeFromLeft(CONFIG_COMBO_WIDTH));
 }
 
 //====================================================================
