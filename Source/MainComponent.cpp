@@ -67,12 +67,15 @@ MainComponent::MainComponent()
     addAndMakeVisible(steerBeamY2Slider);
     
     //==============================================================================
+    widthLabel.setText("WIDTH", NotificationType::dontSendNotification);
     widthLabel1.setText("WIDTH", NotificationType::dontSendNotification);
     widthLabel2.setText("WIDTH", NotificationType::dontSendNotification);
-    widthLabel1.setJustificationType(Justification::centred);
-    widthLabel2.setJustificationType(Justification::centred);
+    widthLabel.setJustificationType(Justification::centred);
+    widthLabel1.setJustificationType(Justification::left);
+    widthLabel2.setJustificationType(Justification::left);
     widthLabel1.attachToComponent(&widthBeam1Knob, true);
     widthLabel2.attachToComponent(&widthBeam2Knob, true);
+    addAndMakeVisible(widthLabel);
     addAndMakeVisible(widthLabel1);
     addAndMakeVisible(widthLabel2);
     
@@ -84,7 +87,6 @@ MainComponent::MainComponent()
     addAndMakeVisible(widthBeam1Knob);
     
     widthBeam2Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    widthBeam2Knob.setTextBoxStyle(Slider::TextBoxLeft, false, LABEL_WIDTH, LABEL_HEIGHT);
     widthBeam2Knob.setColour(Slider::thumbColourId, beamColours[1]);
     widthBeam2Knob.setRange(0,1,0.01);
     widthBeam2Knob.addListener(this);
@@ -92,12 +94,15 @@ MainComponent::MainComponent()
     
     
     //==============================================================================
+    panLabel.setText("PAN", NotificationType::dontSendNotification);
     panLabel1.setText("PAN", NotificationType::dontSendNotification);
     panLabel2.setText("PAN", NotificationType::dontSendNotification);
-    panLabel1.setJustificationType(Justification::centred);
-    panLabel2.setJustificationType(Justification::centred);
+    panLabel.setJustificationType(Justification::centred);
+    panLabel1.setJustificationType(Justification::left);
+    panLabel2.setJustificationType(Justification::left);
     panLabel1.attachToComponent(&panBeam1Knob, true);
     panLabel2.attachToComponent(&panBeam2Knob, true);
+    addAndMakeVisible(panLabel);
     addAndMakeVisible(panLabel1);
     addAndMakeVisible(panLabel2);
     
@@ -109,20 +114,21 @@ MainComponent::MainComponent()
     addAndMakeVisible(panBeam1Knob);
     
     panBeam2Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    panBeam2Knob.setTextBoxStyle(Slider::TextBoxLeft, false, LABEL_WIDTH, LABEL_HEIGHT);
     panBeam2Knob.setColour(Slider::thumbColourId, beamColours[1]);
     panBeam2Knob.setRange(-1,1,0.01);
     panBeam2Knob.addListener(this);
     addAndMakeVisible(panBeam2Knob);
     
     //==============================================================================
-    
+    levelLabel.setText("LEVEL", NotificationType::dontSendNotification);
     levelLabel1.setText("LEVEL", NotificationType::dontSendNotification);
     levelLabel2.setText("LEVEL", NotificationType::dontSendNotification);
-    levelLabel1.setJustificationType(Justification::centred);
-    levelLabel2.setJustificationType(Justification::centred);
+    levelLabel.setJustificationType(Justification::centred);
+    levelLabel1.setJustificationType(Justification::left);
+    levelLabel2.setJustificationType(Justification::left);
     levelLabel1.attachToComponent(&levelBeam1Knob, true);
     levelLabel2.attachToComponent(&levelBeam2Knob, true);
+    addAndMakeVisible(levelLabel);
     addAndMakeVisible(levelLabel1);
     addAndMakeVisible(levelLabel2);
     
@@ -134,7 +140,6 @@ MainComponent::MainComponent()
     addAndMakeVisible(levelBeam1Knob);
     
     levelBeam2Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    levelBeam2Knob.setTextBoxStyle(Slider::TextBoxLeft, false, LABEL_WIDTH, LABEL_HEIGHT);
     levelBeam2Knob.setColour(Slider::thumbColourId, beamColours[1]);
     levelBeam2Knob.setRange(-10,10,0.1);
     levelBeam2Knob.addListener(this);
@@ -142,11 +147,13 @@ MainComponent::MainComponent()
     
     
     //==============================================================================
-    
+    muteLabel.setText("MUTE", NotificationType::dontSendNotification);
     muteLabel1.setText("MUTE", NotificationType::dontSendNotification);
     muteLabel2.setText("MUTE", NotificationType::dontSendNotification);
+    muteLabel.setJustificationType(Justification::centred);
     muteLabel1.setJustificationType(Justification::centred);
     muteLabel2.setJustificationType(Justification::centred);
+    addAndMakeVisible(muteLabel);
     addAndMakeVisible(muteLabel1);
     addAndMakeVisible(muteLabel2);
     
@@ -279,6 +286,22 @@ void MainComponent::resized()
     
     if (portrait){
         
+        /* Landscape-only labels */
+        widthLabel1.setVisible(false);
+        panLabel1.setVisible(false);
+        levelLabel1.setVisible(false);
+        muteLabel1.setVisible(false);
+        widthLabel2.setVisible(false);
+        panLabel2.setVisible(false);
+        levelLabel2.setVisible(false);
+        muteLabel2.setVisible(false);
+        
+        /* Portrait-only labels */
+        steerLabel.setVisible(true);
+        widthLabel.setVisible(true);
+        panLabel.setVisible(true);
+        muteLabel.setVisible(true);
+        
         /* Scene, aspect ratio 2:1 */
         auto sceneArea = area.removeFromTop(area.getWidth()/2);
         
@@ -336,15 +359,17 @@ void MainComponent::resized()
         area.removeFromTop(mediumMargin);
         auto widthKnobsArea = area.removeFromTop(knobSize);
         widthBeam1Knob.setBounds(widthKnobsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2));
+        widthBeam2Knob.setTextBoxStyle(Slider::TextBoxLeft, false, LABEL_WIDTH, LABEL_HEIGHT);
         widthBeam2Knob.setBounds(widthKnobsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2));
-        widthLabel1.setBounds(widthKnobsArea);
+        widthLabel.setBounds(widthKnobsArea);
 
         /* Pan knobs */
         area.removeFromTop(mediumMargin);
         auto panKnobsArea = area.removeFromTop(knobSize);
         panBeam1Knob.setBounds(panKnobsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2));
+        panBeam2Knob.setTextBoxStyle(Slider::TextBoxLeft, false, LABEL_WIDTH, LABEL_HEIGHT);
         panBeam2Knob.setBounds(panKnobsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2));
-        panLabel1.setBounds(panKnobsArea);
+        panLabel.setBounds(panKnobsArea);
         
         /* Levels and meters */
         area.removeFromTop(mediumMargin);
@@ -352,19 +377,20 @@ void MainComponent::resized()
         auto level1Area = levelsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
         auto level2Area = levelsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
         levelBeam1Knob.setBounds(level1Area);
+        levelBeam2Knob.setTextBoxStyle(Slider::TextBoxLeft, false, LABEL_WIDTH, LABEL_HEIGHT);
         levelBeam2Knob.setBounds(level2Area);
         level1Area.removeFromRight(LABEL_WIDTH+largeMargin);
         level2Area.removeFromLeft(LABEL_WIDTH+largeMargin);
         beam1Meter.setBounds(level1Area.removeFromRight(LED_SIZE));
         beam2Meter.setBounds(level2Area.removeFromLeft(LED_SIZE));
-        levelLabel1.setBounds(levelsArea);
+        levelLabel.setBounds(levelsArea);
         
         /* Mutes */
         area.removeFromTop(largeMargin);
         auto mutesArea = area.removeFromTop(muteSize);
         muteBeam1Button.setBounds(mutesArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2).withTrimmedRight(LABEL_WIDTH).withSizeKeepingCentre(muteSize, muteSize));
         muteBeam2Button.setBounds(mutesArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2).withTrimmedLeft(LABEL_WIDTH).withSizeKeepingCentre(muteSize, muteSize));
-        muteLabel1.setBounds(mutesArea);
+        muteLabel.setBounds(mutesArea);
         
         /* HPF slider */
         area.removeFromTop(largeMargin);
@@ -376,13 +402,24 @@ void MainComponent::resized()
         /* Gain slider */
         gainSlider.setBounds(area.removeFromTop(horSliderHeight).withTrimmedLeft(LABEL_WIDTH));
         
-        /* Landscape layout labels */
-        widthLabel2.setVisible(false);
-        panLabel2.setVisible(false);
-        levelLabel2.setVisible(false);
-        muteLabel2.setVisible(false);
 
     }else{
+        
+        /* Landscape-only labels */
+        widthLabel1.setVisible(true);
+        panLabel1.setVisible(true);
+        levelLabel1.setVisible(true);
+        muteLabel1.setVisible(true);
+        widthLabel2.setVisible(true);
+        panLabel2.setVisible(true);
+        levelLabel2.setVisible(true);
+        muteLabel2.setVisible(true);
+        
+        /* Portrait-only labels */
+        steerLabel.setVisible(false);
+        widthLabel.setVisible(false);
+        panLabel.setVisible(false);
+        muteLabel.setVisible(false);
         
         auto sceneArea = area.removeFromTop(area.getHeight()/2);
         
@@ -437,8 +474,8 @@ void MainComponent::resized()
         
         /* Beams section */
         
-        auto beam1Area = area.removeFromLeft(area.getWidth()/2).withTrimmedRight(SMALL_MARGIN);
-        auto beam2Area = area.withTrimmedLeft(SMALL_MARGIN);
+        auto beam1Area = area.removeFromLeft(area.getWidth()/2).withTrimmedRight(MEDIUM_MARGIN);
+        auto beam2Area = area.withTrimmedLeft(MEDIUM_MARGIN);
         
         /* Beam 1 */
         
@@ -465,18 +502,15 @@ void MainComponent::resized()
         
         /* Beam 2 */
         
-        widthLabel2.setVisible(true);
-        panLabel2.setVisible(true);
-        levelLabel2.setVisible(true);
-        muteLabel2.setVisible(true);
-        
         beam2Area.removeFromTop(smallMargin);
         steerBeam2Label.setText("STEER 2", NotificationType::dontSendNotification);
         steerBeamX2Slider.setBounds(beam2Area.removeFromTop(horSliderHeight).withTrimmedLeft(LABEL_WIDTH));
         
         beam2Area.removeFromTop(smallMargin);
         auto widthPanArea2 = beam2Area.removeFromTop(knobSize);
+        widthBeam2Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
         widthBeam2Knob.setBounds(widthPanArea2.removeFromLeft(beam2Area.getWidth()/2).withTrimmedLeft(LABEL_WIDTH));
+        panBeam2Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
         panBeam2Knob.setBounds(widthPanArea2.withTrimmedLeft(LABEL_WIDTH));
         
         beam2Area.removeFromTop(smallMargin);
@@ -489,10 +523,10 @@ void MainComponent::resized()
         beam2Meter.setBounds(levelMuteArea2.removeFromLeft(LED_SIZE));
         levelMuteArea2.removeFromLeft(LARGE_MARGIN);
         
+        levelBeam2Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
         levelBeam2Knob.setBounds(levelMuteArea2.withTrimmedLeft(LABEL_WIDTH));
         
-        /* Portrait-only labels */
-        steerLabel.setVisible(false);
+        
     }
 
 

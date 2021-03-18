@@ -49,19 +49,19 @@ private:
     Slider steerBeamY1Slider, steerBeamY2Slider;
     
     //==============================================================================
-    Label widthLabel1,widthLabel2;
+    Label widthLabel1,widthLabel2,widthLabel;
     Slider widthBeam1Knob, widthBeam2Knob;
     
     //==============================================================================
-    Label panLabel1,panLabel2;
+    Label panLabel1,panLabel2,panLabel;
     PanSlider panBeam1Knob, panBeam2Knob;
     
     //==============================================================================
-    Label levelLabel1,levelLabel2;
+    Label levelLabel1,levelLabel2,levelLabel;
     DecibelSlider levelBeam1Knob, levelBeam2Knob;
     
     //==============================================================================
-    Label muteLabel1,muteLabel2;
+    Label muteLabel1,muteLabel2,muteLabel;
     MuteButton muteBeam1Button, muteBeam2Button;
     
     //==============================================================================
