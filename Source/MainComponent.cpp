@@ -578,20 +578,26 @@ void MainComponent::sliderValueChanged(Slider * slider){
     if (slider == &steerBeamX1Slider){
         steerX[0] = slider->getValue();
         setBeamSteerX(0,slider->getValue());
+        scene.repaint();
     }else if(slider == &steerBeamX2Slider){
         steerX[1] = slider->getValue();
         setBeamSteerX(1,slider->getValue());
+        scene.repaint();
     }else if (slider == &steerBeamY1Slider){
         steerY[0] = slider->getValue();
         setBeamSteerY(0,slider->getValue());
+        scene.repaint();
     }else if(slider == &steerBeamY2Slider){
         steerY[1] = slider->getValue();
         setBeamSteerY(1,slider->getValue());
+        scene.repaint();
     }else if(slider == &widthBeam1Knob){
         width[0] = slider->getValue();
+        scene.repaint();
         if (connected) sendOscMessage("widthBeam1", width[0]);
     }else if(slider == &widthBeam2Knob){
         width[1] = slider->getValue();
+        scene.repaint();
         if (connected) sendOscMessage("widthBeam2", width[1]);
     }else if(slider == &panBeam1Knob){
         if (connected) sendOscMessage("panBeam1", (float)panBeam1Knob.getValue());
