@@ -240,9 +240,10 @@ void BeamComp::paint(Graphics &g) {
         const float positionX = *steerXParam;
         
         const float width = (0.1 + 2.9 * (*widthParam)) * area.getWidth() / 10;
+        const float length = jmin(area.getWidth(),2*area.getHeight());
         path.startNewSubPath(0, 0);
-        path.cubicTo(width, -area.getWidth() / 3, width, -area.getWidth() / 2, 0, -area.getWidth() / 2);
-        path.cubicTo(-width, -area.getWidth() / 2, -width, -area.getWidth() / 3, 0, 0);
+        path.cubicTo(width, -length / 3, width, -length / 2, 0, -length / 2);
+        path.cubicTo(-width, -length / 2, -width, -length / 3, 0, 0);
         path.closeSubPath();
         
         path.applyTransform(AffineTransform::rotation((MathConstants<float>::pi / 2) * positionX));
@@ -345,10 +346,12 @@ void SceneComp::mouseDrag (const MouseEvent& e){
         const float newY = jlimit(-1.f,1.f,dragStartY + deltaY);
         callback->setBeamSteerX(beamBeingDragged, newX);
         callback->setBeamSteerY(beamBeingDragged, newY);
+        beams[beamBeingDragged].repaint();
     }
 }
 
 void SceneComp::mouseUp (const MouseEvent& e){
+    beams[beamBeingDragged].repaint();
     beamBeingDragged = -1;
 }
 

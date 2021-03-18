@@ -27,6 +27,7 @@
 #define BOTTOM_MARGIN 16
 
 #define HOR_SLIDER_HEIGHT 25
+#define VER_SLIDER_WIDTH 70
 
 #define LABEL_WIDTH 70
 #define LABEL_HEIGHT 20

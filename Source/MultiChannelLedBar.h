@@ -40,6 +40,8 @@ private:
     
     int meterId;
     
+    const float maxLedDistance = 100.;
+    
     bool isHorizontal = true;
     
     std::vector<std::unique_ptr<RoundLed>> leds;

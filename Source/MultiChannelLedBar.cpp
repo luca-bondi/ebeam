@@ -14,7 +14,6 @@
 
 //==============================================================================
 MultiChannelLedBar::MultiChannelLedBar(){
-    //TOOD: real implementation
     makeLayout();
 }
 
@@ -50,7 +49,7 @@ void MultiChannelLedBar::resized() {
     auto num = values.size();
     Rectangle<int> area = getLocalBounds();
     
-    float step = isHorizontal ? floor(area.getWidth() / num) : floor(area.getHeight() / num);
+    float step = jmin<float>(isHorizontal ? floor(area.getWidth() / num) : floor(area.getHeight() / num),maxLedDistance);
     float otherDim = isHorizontal ? area.getHeight() : area.getWidth();
     otherDim = jmin(otherDim, step - 1);
     
