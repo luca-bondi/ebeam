@@ -301,6 +301,7 @@ void MainComponent::resized()
         widthLabel.setVisible(true);
         panLabel.setVisible(true);
         muteLabel.setVisible(true);
+        levelLabel.setVisible(true);
         
         /* Scene, aspect ratio 2:1 */
         auto sceneArea = area.removeFromTop(area.getWidth()/2);
@@ -379,8 +380,8 @@ void MainComponent::resized()
         levelBeam1Knob.setBounds(level1Area);
         levelBeam2Knob.setTextBoxStyle(Slider::TextBoxLeft, false, LABEL_WIDTH, LABEL_HEIGHT);
         levelBeam2Knob.setBounds(level2Area);
-        level1Area.removeFromRight(LABEL_WIDTH+largeMargin);
-        level2Area.removeFromLeft(LABEL_WIDTH+largeMargin);
+        level1Area.removeFromRight(LABEL_WIDTH+2*LARGE_MARGIN);
+        level2Area.removeFromLeft(LABEL_WIDTH+2*LARGE_MARGIN);
         beam1Meter.setBounds(level1Area.removeFromRight(LED_SIZE));
         beam2Meter.setBounds(level2Area.removeFromLeft(LED_SIZE));
         levelLabel.setBounds(levelsArea);
@@ -420,6 +421,7 @@ void MainComponent::resized()
         widthLabel.setVisible(false);
         panLabel.setVisible(false);
         muteLabel.setVisible(false);
+        levelLabel.setVisible(false);
         
         auto sceneArea = area.removeFromTop(area.getHeight()/2);
         
