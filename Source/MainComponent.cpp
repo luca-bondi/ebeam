@@ -284,6 +284,9 @@ void MainComponent::resized()
     area.removeFromTop(screenMargin);
     area.removeFromBottom(screenMargin);
     
+    /* Controls area */
+    layoutConfigOsc(area);
+    
     if (portrait){
         
         /* Landscape-only labels */
@@ -321,9 +324,6 @@ void MainComponent::resized()
             sceneArea.removeFromRight(SMALL_MARGIN);
             scene.setBounds(sceneArea);
         }
-        
-        /* Controls area */
-        layoutConfigOsc(area);
         
         
         /* Derive margins and sizes based on remaninig space */
@@ -442,9 +442,6 @@ void MainComponent::resized()
         /* Scene, aspect ratio 2:1 */
         scene.setBounds(sceneArea);
         
-        /* Controls area */
-        layoutConfigOsc(area);
-        
         /* Input section */
         
         /* HPF slider */
@@ -536,20 +533,20 @@ void MainComponent::resized()
 
 void MainComponent::layoutConfigOsc(Rectangle<int>& area){
     
-    area.removeFromBottom(BOTTOM_MARGIN);
     Rectangle<int> oscArea,setupArea;
     const int oscWidth = OSC_IP_LABEL_WIDTH+OSC_IP_WIDTH+OSC_PORT_LABEL_WIDTH+OSC_PORT_WIDTH+OSC_CONNECT_MARGIN_LEFT+OSC_CONNECT_WIDTH+OSC_LED_MARGIN_LEFT+LED_SIZE;
     const int configWidth = CPULOAD_WIDTH+CONFIG_COMBO_LABEL_WIDTH+CONFIG_COMBO_WIDTH+FRONT_TOGGLE_LABEL_WIDTH+FRONT_TOGGLE_WIDTH;
     if (area.getWidth() >= oscWidth+configWidth+SMALL_MARGIN){
-        auto oscControlArea = area.removeFromBottom(CONTROLS_HEIGHT);
+        auto oscControlArea = area.removeFromTop(CONTROLS_HEIGHT);
         setupArea = oscControlArea.removeFromLeft(area.getWidth()/2).withSizeKeepingCentre(configWidth, CONTROLS_HEIGHT);
         oscArea = oscControlArea.withSizeKeepingCentre(oscWidth, CONTROLS_HEIGHT);
     }else{
-        oscArea = area.removeFromBottom(CONTROLS_HEIGHT).withSizeKeepingCentre(oscWidth, CONTROLS_HEIGHT);
-        area.removeFromBottom(MEDIUM_MARGIN);
-        setupArea = area.removeFromBottom(CONTROLS_HEIGHT).withSizeKeepingCentre(configWidth, CONTROLS_HEIGHT);
+        oscArea = area.removeFromTop(CONTROLS_HEIGHT).withSizeKeepingCentre(oscWidth, CONTROLS_HEIGHT);
+        area.removeFromTop(MEDIUM_MARGIN);
+        setupArea = area.removeFromTop(CONTROLS_HEIGHT).withSizeKeepingCentre(configWidth, CONTROLS_HEIGHT);
     }
-    area.removeFromBottom(MEDIUM_MARGIN);
+    area.removeFromTop(BOTTOM_MARGIN);
+    
     
     /* OSC controls */
     oscArea.removeFromLeft(OSC_IP_LABEL_WIDTH);
