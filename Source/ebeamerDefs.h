@@ -60,7 +60,7 @@
 #define CONFIG_COMBO_LABEL_WIDTH 25
 #define CONFIG_COMBO_WIDTH 105
 
-#define CONTROLS_HEIGHT 20
+#define CONTROLS_HEIGHT 25
 
 /* Colors */
 

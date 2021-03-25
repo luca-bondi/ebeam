@@ -444,6 +444,10 @@ void MainComponent::resized()
         
         /* Input section */
         
+        /* Input LED */
+        area.removeFromBottom(BOTTOM_MARGIN);
+        inputMeter.setBounds(area.removeFromBottom(LED_SIZE).withTrimmedLeft(LABEL_WIDTH).withTrimmedRight(LABEL_WIDTH));
+        
         /* HPF slider */
         area.removeFromBottom(MEDIUM_MARGIN);
         auto inputSlidersArea = area.removeFromBottom(HOR_SLIDER_HEIGHT);
@@ -451,10 +455,6 @@ void MainComponent::resized()
         
         /* Gain slider */
         gainSlider.setBounds(inputSlidersArea.withTrimmedLeft(LABEL_WIDTH).withTrimmedRight(MEDIUM_MARGIN));
-
-        /* Input LED */
-        area.removeFromBottom(MEDIUM_MARGIN);
-        inputMeter.setBounds(area.removeFromBottom(LED_SIZE).withTrimmedLeft(LABEL_WIDTH).withTrimmedRight(LABEL_WIDTH));
         
         /* Dynamic geometry section */
         const int availableHeight = area.getHeight();
@@ -545,7 +545,7 @@ void MainComponent::layoutConfigOsc(Rectangle<int>& area){
         area.removeFromTop(MEDIUM_MARGIN);
         setupArea = area.removeFromTop(CONTROLS_HEIGHT).withSizeKeepingCentre(configWidth, CONTROLS_HEIGHT);
     }
-    area.removeFromTop(BOTTOM_MARGIN);
+    area.removeFromTop(SMALL_MARGIN);
     
     
     /* OSC controls */
