@@ -130,7 +130,6 @@ private:
     TextEditor oscPort;
     Label oscPortLabel;
     
-    
     TextButton oscConnectButton;
     ActivityLed oscStatus;
     
