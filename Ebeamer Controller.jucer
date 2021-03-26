@@ -4,6 +4,9 @@
               displaySplashScreen="1" jucerFormatVersion="1" companyName="Eventide"
               companyWebsite="www.eventideaudio.com" companyEmail="info@eventide.com">
   <MAINGROUP id="iU4yLj" name="Ebeamer Controller">
+    <GROUP id="{0CD9154C-1BC5-9F57-9B69-78AB6E80DC03}" name="Resources">
+      <FILE id="rvwEOW" name="icon.png" compile="0" resource="1" file="images/icon.png"/>
+    </GROUP>
     <GROUP id="{3BE2215D-D2BF-6071-A0D0-329D08D166D5}" name="Eigen">
       <GROUP id="{D2676BA1-5772-5DA9-DCC8-FA8FDD7E8722}" name="src">
         <GROUP id="{E5D2E13C-4FAB-A76B-E8AF-3593208E7A6F}" name="Cholesky">
@@ -546,7 +549,7 @@
     <XCODE_IPHONE targetFolder="Builds/iOS" iosScreenOrientation="UIInterfaceOrientationLandscapeLeft,UIInterfaceOrientationLandscapeRight,UIInterfaceOrientationPortrait,UIInterfaceOrientationPortraitUpsideDown"
                   iPadScreenOrientation="UIInterfaceOrientationLandscapeLeft,UIInterfaceOrientationLandscapeRight,UIInterfaceOrientationPortrait,UIInterfaceOrientationPortraitUpsideDown"
                   iosContentSharing="0" iosDevelopmentTeamID="9UVTQTKNV4" UIRequiresFullScreen="0"
-                  UIStatusBarHidden="1">
+                  UIStatusBarHidden="1" smallIcon="rvwEOW" bigIcon="rvwEOW">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="Ebeamer GUI"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="Ebeamer GUI"/>
