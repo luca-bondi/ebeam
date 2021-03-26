@@ -314,10 +314,12 @@ void SceneComp::resized() {
             area.removeFromTop(20);
     
     originX = area.getCentreX();
-    if (frontFacing){
-        originY = area.getBottom();
-    }else{
-        originY = area.getY();
+    if (frontFacing != nullptr){
+        if ((bool)*frontFacing){
+            originY = area.getY();
+        }else{
+            originY = area.getBottom();
+        }
     }
     
     if (grid.getBounds() == area){
@@ -353,7 +355,12 @@ void SceneComp::mouseDrag (const MouseEvent& e){
         if (isLinearArray(static_cast<MicConfig>((int)*configParam))){
             const float posX = e.getScreenX();
             const float posY = e.getScreenY();
-            auto dragCurrentAngle = atan2((posX-originX),-(posY-originY));
+            float dragCurrentAngle;
+            if ((bool)*frontFacing){
+                dragCurrentAngle = atan2((posX-originX),(posY-originY));
+            }else{
+                dragCurrentAngle = atan2((posX-originX),-(posY-originY));
+            }
             const float newX = jlimit(-1.f,1.f,dragCurrentAngle/(pi/2.f));
             callback->setBeamSteerX(beamBeingDragged, newX);
         }else{
