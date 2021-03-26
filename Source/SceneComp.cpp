@@ -239,7 +239,7 @@ void BeamComp::paint(Graphics &g) {
     if (isLinearArray(static_cast<MicConfig>((int)*configParam))){
         const float positionX = *steerXParam;
         
-        const float width = (0.1 + 2.9 * (*widthParam)) * area.getWidth() / 10;
+        const float width = (0.3 + 2.9 * (*widthParam)) * area.getWidth() / 10;
         const float length = jmin(area.getWidth(),2*area.getHeight());
         path.startNewSubPath(0, 0);
         path.cubicTo(width, -length / 3, width, -length / 2, 0, -length / 2);
@@ -292,6 +292,9 @@ void SceneComp::setCallback(Callback *c) {
     grid.setCallback(c);
     grid.setParams(c->getConfigParam(),c->getFrontFacingParam());
     
+    configParam = c->getConfigParam();
+    frontFacing = c->getFrontFacingParam();
+    
     for (auto idx = 0; idx < NUM_BEAMS; idx++) {
         beams[idx].setParams(c->getConfigParam(), c->getFrontFacingParam(), c->getBeamMute(idx), c->getBeamWidth(idx), c->getBeamSteerX(idx), c->getBeamSteerY(idx));
     }
@@ -307,8 +310,15 @@ void SceneComp::resized() {
     area = getLocalBounds();
     
     if (callback != nullptr)
-        if (!isLinearArray(static_cast<MicConfig>((int)*callback->getConfigParam())))
+        if (isLinearArray(static_cast<MicConfig>((int)*configParam)))
             area.removeFromTop(20);
+    
+    originX = area.getCentreX();
+    if (frontFacing){
+        originY = area.getBottom();
+    }else{
+        originY = area.getY();
+    }
     
     if (grid.getBounds() == area){
         grid.resized();
@@ -340,12 +350,20 @@ void SceneComp::mouseDown (const MouseEvent& e){
 
 void SceneComp::mouseDrag (const MouseEvent& e){
     if (beamBeingDragged >= 0){
-        const float deltaX = float(e.getDistanceFromDragStartX())/area.getWidth()*2;
-        const float deltaY = float(-e.getDistanceFromDragStartY())/area.getHeight()*2;
-        const float newX = jlimit(-1.f,1.f,dragStartX + deltaX);
-        const float newY = jlimit(-1.f,1.f,dragStartY + deltaY);
-        callback->setBeamSteerX(beamBeingDragged, newX);
-        callback->setBeamSteerY(beamBeingDragged, newY);
+        if (isLinearArray(static_cast<MicConfig>((int)*configParam))){
+            const float posX = e.getScreenX();
+            const float posY = e.getScreenY();
+            auto dragCurrentAngle = atan2((posX-originX),-(posY-originY));
+            const float newX = jlimit(-1.f,1.f,dragCurrentAngle/(pi/2.f));
+            callback->setBeamSteerX(beamBeingDragged, newX);
+        }else{
+            const float deltaX = float(e.getDistanceFromDragStartX())/area.getWidth()*2;
+            const float deltaY = float(-e.getDistanceFromDragStartY())/area.getHeight()*2;
+            const float newX = jlimit(-1.f,1.f,dragStartX + deltaX);
+            const float newY = jlimit(-1.f,1.f,dragStartY + deltaY);
+            callback->setBeamSteerX(beamBeingDragged, newX);
+            callback->setBeamSteerY(beamBeingDragged, newY);
+        }
         beams[beamBeingDragged].repaint();
     }
 }

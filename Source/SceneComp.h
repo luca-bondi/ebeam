@@ -191,7 +191,9 @@ private:
     void mouseUp (const MouseEvent& e) override;
     
     int beamBeingDragged = -1;
-    float dragStartX, dragStartY;
-
+    float dragStartX, dragStartY, originX, originY;
+    
+    const std::atomic<float> *configParam = nullptr;
+    const std::atomic<float> *frontFacing = nullptr;
     
 };
