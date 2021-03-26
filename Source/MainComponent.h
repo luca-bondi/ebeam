@@ -11,6 +11,7 @@
 #include "MultiChannelLedBar.h"
 #include "SceneComp.h"
 #include "RoundLed.h"
+#include "ValueTreeFile.h"
 
 //==============================================================================
 /*
@@ -180,6 +181,16 @@ private:
     void getDoaEnergy(Mtx &en) const override{
         en = energy;
     }
+    
+    //==============================================================================
+    /* ValueTree */
+    File statusFile;
+    ValueTree valueTree;
+    ValueTreeFile valueTreeFile;
+    
+    Identifier serverIpIdentifier = Identifier("serverIp");
+    Identifier serverPortIdentifier = Identifier("serverPort");
+    
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

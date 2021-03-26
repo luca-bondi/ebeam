@@ -7,6 +7,22 @@ MainComponent::MainComponent()
     appVersion = JUCEApplication::getInstance()->getApplicationVersion();
     
     //==============================================================================
+    /* ValueTree */
+    statusFile = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("ebeamer-controller.xml");
+    valueTree = ValueTree("ebeamer-controller");
+    valueTreeFile.init(valueTree, statusFile, true);
+    
+    if (statusFile.exists()){
+        valueTreeFile.load();
+        serverIp = IPAddress(valueTree.getProperty(serverIpIdentifier, serverIp.toString()).toString());
+        serverPort = valueTree.getProperty(serverPortIdentifier, serverPort);
+    }else{
+        valueTree.setProperty(serverIpIdentifier, serverIp.toString(), nullptr);
+        valueTree.setProperty(serverPortIdentifier, serverPort, nullptr);
+        valueTreeFile.save();
+    }
+    
+    //==============================================================================
     /* Initialize parameters */
     config = 0;
     frontFacing = 0;
@@ -620,6 +636,8 @@ void MainComponent::buttonClicked (Button* button){
         }else{
             serverIp = IPAddress(oscIp.getTextValue().toString());
             serverPort = oscPort.getTextValue().toString().getIntValue();
+            valueTree.setProperty(serverIpIdentifier, serverIp.toString(), nullptr);
+            valueTree.setProperty(serverPortIdentifier, serverPort, nullptr);
             oscConnect();
         }
     }
