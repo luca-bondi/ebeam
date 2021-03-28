@@ -242,12 +242,16 @@ MainComponent::MainComponent()
     oscIpLabel.attachToComponent(&oscIp, true);
     oscIp.setText(serverIp.toString());
     oscIp.setJustification(Justification::centred);
+    oscIp.setKeyboardType(TextInputTarget::numericKeyboard);
+    oscIp.onReturnKey = [this]{oscConnect();};
     addAndMakeVisible(oscIp);
     
     oscPortLabel.setText("PORT", NotificationType::dontSendNotification);
     oscPortLabel.attachToComponent(&oscPort, true);
     oscPort.setText(String(serverPort));
     oscPort.setJustification(Justification::centred);
+    oscPort.setKeyboardType(TextInputTarget::numericKeyboard);
+    oscPort.onReturnKey = [this]{oscConnect();};
     addAndMakeVisible(oscPort);
     
     oscConnectButton.setButtonText("Connect");
@@ -632,10 +636,6 @@ void MainComponent::buttonClicked (Button* button){
         if (connected){
             oscDisconnect();
         }else{
-            serverIp = IPAddress(oscIp.getTextValue().toString());
-            serverPort = oscPort.getTextValue().toString().getIntValue();
-            valueTree.setProperty(serverIpIdentifier, serverIp.toString(), nullptr);
-            valueTree.setProperty(serverPortIdentifier, serverPort, nullptr);
             oscConnect();
         }
     }
@@ -674,6 +674,13 @@ void MainComponent::comboBoxChanged(ComboBox * comboBox){
 //OSC Methods
 
 void MainComponent::oscConnect(){
+    
+    /* Save IP and Port */
+    serverIp = IPAddress(oscIp.getTextValue().toString());
+    serverPort = oscPort.getTextValue().toString().getIntValue();
+    valueTree.setProperty(serverIpIdentifier, serverIp.toString(), nullptr);
+    valueTree.setProperty(serverPortIdentifier, serverPort, nullptr);
+    
     if (sender.connectToSocket(socket,serverIp.toString(),serverPort)){
         int localPort = 9002;
         while (socket.getBoundPort()==-1 && !socket.bindToPort(localPort) && (localPort<65535))
