@@ -239,11 +239,11 @@ void BeamComp::paint(Graphics &g) {
     if (isLinearArray(static_cast<MicConfig>((int)*configParam))){
         const float positionX = *steerXParam;
         
-        const float width = (0.3 + 2.9 * (*widthParam)) * area.getWidth() / 10;
-        const float length = jmin(area.getWidth(),2*area.getHeight());
+        const float width = (0.3 + 2.0 * (*widthParam)) * area.getWidth() / 10;
+        const float length = jmin(area.getWidth(),2*area.getHeight())*0.99;
         path.startNewSubPath(0, 0);
-        path.cubicTo(width, -length / 3, width, -length / 2, 0, -length / 2);
-        path.cubicTo(-width, -length / 2, -width, -length / 3, 0, 0);
+        path.cubicTo(width, -length / 4, width, -length / 2, 0, -length / 2);
+        path.cubicTo(-width, -length / 2, -width, -length / 4, 0, 0);
         path.closeSubPath();
         
         path.applyTransform(AffineTransform::rotation((MathConstants<float>::pi / 2) * positionX));
