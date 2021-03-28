@@ -35,6 +35,8 @@ public:
     
     void setValues(const std::vector<float>&);
     
+    void reset();
+    
     
 private:
     

@@ -62,6 +62,12 @@
 
 #define CONTROLS_HEIGHT 30
 
+/** OSC timeout [s] */
+#define OSC_TIMEOUT 5
+
+/** OSC polling interval [Hz] */
+#define OSC_POLLING_FREQ 10
+
 /* Colors */
 
 #define RED_LT -0.5f //dB

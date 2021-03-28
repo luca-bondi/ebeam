@@ -134,6 +134,9 @@ private:
     TextButton oscConnectButton;
     ActivityLed oscStatus;
     
+    Time lastOscMsgReceived = Time::getCurrentTime();
+    Time lastOscRequestSent = Time::getCurrentTime();
+    
     void sendOscMessage(const String& path, float value);
     void sendOscMessage(const String& path, bool value);
     void sendOscMessage(const String& path, MicConfig value);

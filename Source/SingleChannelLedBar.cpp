@@ -72,3 +72,7 @@ Colour SingleChannelLedBar::dbToColour(float valDb, float thDb) {
     }
     return col;
 }
+
+void SingleChannelLedBar::reset(){
+    setValue(0);
+}

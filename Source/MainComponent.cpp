@@ -261,10 +261,6 @@ MainComponent::MainComponent()
     oscStatus.setColours(Colours::red,Colours::grey);
     addAndMakeVisible(oscStatus);
     
-    //=====================================================
-    /* Set polling timer to fetch updates from VST */
-    startTimerHz(10);
-    
     /* Set this as a listener for OSC messages */
     receiver.addListener(this);
     
@@ -721,6 +717,13 @@ void MainComponent::oscConnect(){
         }
         localIp = ipArray[mostLikelyIdx];
         
+        /* Reset auto disconnect timer */
+        lastOscRequestSent = Time::getCurrentTime();
+        lastOscMsgReceived = Time::getCurrentTime();
+        
+        /* Set polling timer to fetch updates from VST */
+        startTimerHz(OSC_POLLING_FREQ);
+        
     }else{
         std::ostringstream errMsg;
         errMsg << "Error: cannot connect to " << serverIp.toString() << " on " << serverPort;
@@ -736,6 +739,13 @@ void MainComponent::oscDisconnect(){
             oscPort.setEnabled(true);
             connected = false;
             oscStatus.setColours(Colours::red,Colours::grey);
+            stopTimer();
+            /* Reset graphic components */
+            inputMeter.reset();
+            beam1Meter.reset();
+            beam2Meter.reset();
+            energy.setConstant(-100);
+            cpuLoad.setLoad(0);
         }else{
             showConnectionErrorMessage ("Error: could not disconnect receiver");
         }
@@ -746,6 +756,8 @@ void MainComponent::oscDisconnect(){
 
 
 void MainComponent::oscMessageReceived (const OSCMessage& message){
+    
+    lastOscMsgReceived = Time::getCurrentTime();
     
     if ((message.size() == 1) && (message[0].isFloat32())){
         auto val = message[0].getFloat32();
@@ -825,11 +837,16 @@ void MainComponent::oscMessageReceived (const OSCMessage& message){
 
 void MainComponent::timerCallback(){
     if (connected){
+        if ((lastOscRequestSent - lastOscMsgReceived).inSeconds() > OSC_TIMEOUT){
+            oscDisconnect();
+            return;
+        }
         OSCMessage msg("/ebeamer/get");
         msg.addString(localIp.toString());
         msg.addInt32(socket.getBoundPort());
         sender.send(msg);
         oscStatus.toggle();
+        lastOscRequestSent = Time::getCurrentTime();
     }
 }
 

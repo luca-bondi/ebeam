@@ -31,6 +31,8 @@ public:
     
     void setValue(float);
     
+    void reset();
+    
 private:
     
     int meterId;

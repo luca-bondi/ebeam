@@ -87,3 +87,8 @@ Colour MultiChannelLedBar::dbToColor(float valDb){
     }
     return col;
 }
+
+void MultiChannelLedBar::reset(){
+    std::vector<float> zeros(values.size(),0);
+    setValues(zeros);
+}
