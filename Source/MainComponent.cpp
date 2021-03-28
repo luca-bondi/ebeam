@@ -14,7 +14,7 @@ MainComponent::MainComponent()
     
     if (!valueTreeFile.load()){
         /** Initialize value tree if not loaded */
-        valueTree.setProperty(serverIpIdentifier, "127.0.0.1", nullptr);
+        valueTree.setProperty(serverIpIdentifier, "", nullptr);
         valueTree.setProperty(serverPortIdentifier, 9001, nullptr);
         valueTreeFile.save();
     }
@@ -769,82 +769,85 @@ void MainComponent::oscDisconnect(){
 
 void MainComponent::oscMessageReceived (const OSCMessage& message){
     
-    lastOscMsgReceived = Time::getCurrentTime();
-    
-    if ((message.size() == 1) && (message[0].isFloat32())){
-        auto val = message[0].getFloat32();
-        if (message.getAddressPattern() == "/ebeamer/steerBeamX1"){
-            steerBeamX1Slider.setValue(val,dontSendNotification);
-            steerX[0] = val;
-        }else if (message.getAddressPattern() == "/ebeamer/steerBeamX2"){
-            steerBeamX2Slider.setValue(val,dontSendNotification);
-            steerX[1] = val;
-        }else if (message.getAddressPattern() == "/ebeamer/steerBeamY1"){
-            steerBeamY1Slider.setValue(val,dontSendNotification);
-            steerY[0] = val;
-        }else if (message.getAddressPattern() == "/ebeamer/steerBeamY2"){
-            steerBeamY2Slider.setValue(val,dontSendNotification);
-            steerY[1] = val;
-        }else if (message.getAddressPattern() == "/ebeamer/widthBeam1"){
-            widthBeam1Knob.setValue(val,dontSendNotification);
-            width[0] = val;
-        }else if (message.getAddressPattern() == "/ebeamer/widthBeam2"){
-            widthBeam2Knob.setValue(val,dontSendNotification);
-            width[1] = val;
-        }else if (message.getAddressPattern() == "/ebeamer/panBeam1"){
-            panBeam1Knob.setValue(val,dontSendNotification);
-        }else if (message.getAddressPattern() == "/ebeamer/panBeam2"){
-            panBeam2Knob.setValue(val,dontSendNotification);
-        }else if (message.getAddressPattern() == "/ebeamer/levelBeam1"){
-            levelBeam1Knob.setValue(val,dontSendNotification);
-        }else if (message.getAddressPattern() == "/ebeamer/levelBeam2"){
-            levelBeam2Knob.setValue(val,dontSendNotification);
-        }else if (message.getAddressPattern() == "/ebeamer/gainMic"){
-            gainSlider.setValue(val,dontSendNotification);
-        }else if (message.getAddressPattern() == "/ebeamer/hpf"){
-            hpfSlider.setValue(val,dontSendNotification);
-        }else if (message.getAddressPattern() == "/ebeamer/cpuLoad"){
-            cpuLoad.setLoad(val);
-        }
-    }else if ((message.size() == 1) && (message[0].isInt32())){
-        auto val = message[0].getInt32();
-        if (message.getAddressPattern() == "/ebeamer/muteBeam1"){
-            muteBeam1Button.setToggleState(val,dontSendNotification);
-            mute[0] = val;
-        }else if (message.getAddressPattern() == "/ebeamer/muteBeam2"){
-            muteBeam2Button.setToggleState(val,dontSendNotification);
-            mute[1] = val;
-        }else if (message.getAddressPattern() == "/ebeamer/frontFacing"){
-            if (val != frontToggle.getToggleState()){
-                frontToggle.setToggleState(val,dontSendNotification);
-                frontFacing = val;
-                scene.resized();
+    if (connected){
+        lastOscMsgReceived = Time::getCurrentTime();
+        if ((message.size() == 1) && (message[0].isFloat32())){
+            auto val = message[0].getFloat32();
+            if (message.getAddressPattern() == "/ebeamer/steerBeamX1"){
+                steerBeamX1Slider.setValue(val,dontSendNotification);
+                steerX[0] = val;
+            }else if (message.getAddressPattern() == "/ebeamer/steerBeamX2"){
+                steerBeamX2Slider.setValue(val,dontSendNotification);
+                steerX[1] = val;
+            }else if (message.getAddressPattern() == "/ebeamer/steerBeamY1"){
+                steerBeamY1Slider.setValue(val,dontSendNotification);
+                steerY[0] = val;
+            }else if (message.getAddressPattern() == "/ebeamer/steerBeamY2"){
+                steerBeamY2Slider.setValue(val,dontSendNotification);
+                steerY[1] = val;
+            }else if (message.getAddressPattern() == "/ebeamer/widthBeam1"){
+                widthBeam1Knob.setValue(val,dontSendNotification);
+                width[0] = val;
+            }else if (message.getAddressPattern() == "/ebeamer/widthBeam2"){
+                widthBeam2Knob.setValue(val,dontSendNotification);
+                width[1] = val;
+            }else if (message.getAddressPattern() == "/ebeamer/panBeam1"){
+                panBeam1Knob.setValue(val,dontSendNotification);
+            }else if (message.getAddressPattern() == "/ebeamer/panBeam2"){
+                panBeam2Knob.setValue(val,dontSendNotification);
+            }else if (message.getAddressPattern() == "/ebeamer/levelBeam1"){
+                levelBeam1Knob.setValue(val,dontSendNotification);
+            }else if (message.getAddressPattern() == "/ebeamer/levelBeam2"){
+                levelBeam2Knob.setValue(val,dontSendNotification);
+            }else if (message.getAddressPattern() == "/ebeamer/gainMic"){
+                gainSlider.setValue(val,dontSendNotification);
+            }else if (message.getAddressPattern() == "/ebeamer/hpf"){
+                hpfSlider.setValue(val,dontSendNotification);
+            }else if (message.getAddressPattern() == "/ebeamer/cpuLoad"){
+                cpuLoad.setLoad(val);
             }
-        }else if (message.getAddressPattern() == "/ebeamer/config"){
-            if (val != configCombo.getSelectedItemIndex()){
-                configCombo.setSelectedItemIndex(val,dontSendNotification);
-                config = val;
-                resized();
+        }else if ((message.size() == 1) && (message[0].isInt32())){
+            auto val = message[0].getInt32();
+            if (message.getAddressPattern() == "/ebeamer/muteBeam1"){
+                muteBeam1Button.setToggleState(val,dontSendNotification);
+                mute[0] = val;
+            }else if (message.getAddressPattern() == "/ebeamer/muteBeam2"){
+                muteBeam2Button.setToggleState(val,dontSendNotification);
+                mute[1] = val;
+            }else if (message.getAddressPattern() == "/ebeamer/frontFacing"){
+                if (val != frontToggle.getToggleState()){
+                    frontToggle.setToggleState(val,dontSendNotification);
+                    frontFacing = val;
+                    scene.resized();
+                }
+            }else if (message.getAddressPattern() == "/ebeamer/config"){
+                if (val != configCombo.getSelectedItemIndex()){
+                    configCombo.setSelectedItemIndex(val,dontSendNotification);
+                    config = val;
+                    resized();
+                }
+            }
+        }else if ((message.size() == 1) && (message[0].isBlob())){
+            auto val = message[0].getBlob();
+            if (message.getAddressPattern() == "/ebeamer/inMeters"){
+                std::vector<float> values((float*)val.begin(),(float*)val.end());
+                inputMeter.setValues(values);
+            } else if (message.getAddressPattern() == "/ebeamer/outMeters"){
+                beam1Meter.setValue(((float*)val.getData())[0]);
+                beam2Meter.setValue(((float*)val.getData())[1]);
+            }
+        }else if ((message.size() == 3) && (message[0].isInt32()) && (message[1].isInt32()) && (message[2].isBlob())){
+            auto nRows = message[0].getInt32();
+            auto nCols = message[1].getInt32();
+            auto val = message[2].getBlob();
+            if (message.getAddressPattern() == "/ebeamer/doaEnergy"){
+                Eigen::Map<Eigen::MatrixXf> newEnergy((float*)val.getData(),nRows,nCols);
+                energy = newEnergy;
             }
         }
-    }else if ((message.size() == 1) && (message[0].isBlob())){
-        auto val = message[0].getBlob();
-        if (message.getAddressPattern() == "/ebeamer/inMeters"){
-            std::vector<float> values((float*)val.begin(),(float*)val.end());
-            inputMeter.setValues(values);
-        } else if (message.getAddressPattern() == "/ebeamer/outMeters"){
-            beam1Meter.setValue(((float*)val.getData())[0]);
-            beam2Meter.setValue(((float*)val.getData())[1]);
-        }
-    }else if ((message.size() == 3) && (message[0].isInt32()) && (message[1].isInt32()) && (message[2].isBlob())){
-        auto nRows = message[0].getInt32();
-        auto nCols = message[1].getInt32();
-        auto val = message[2].getBlob();
-        if (message.getAddressPattern() == "/ebeamer/doaEnergy"){
-            Eigen::Map<Eigen::MatrixXf> newEnergy((float*)val.getData(),nRows,nCols);
-            energy = newEnergy;
-        }
-    }else if ((message.size()==2) && (message[0].isString()) && (message[1].isInt32()) && message.getAddressPattern() == "/ebeamer/announce"){
+    }
+        
+    if ((message.size()==2) && (message[0].isString()) && (message[1].isInt32()) && message.getAddressPattern() == "/ebeamer/announce"){
         ServerSpec server = {message[0].getString(),message[1].getInt32()};
         auto timestamp = Time::getCurrentTime();
         {

@@ -551,9 +551,8 @@
   <EXPORTFORMATS>
     <XCODE_IPHONE targetFolder="Builds/iOS" iosScreenOrientation="UIInterfaceOrientationLandscapeLeft,UIInterfaceOrientationLandscapeRight,UIInterfaceOrientationPortrait,UIInterfaceOrientationPortraitUpsideDown"
                   iPadScreenOrientation="UIInterfaceOrientationLandscapeLeft,UIInterfaceOrientationLandscapeRight,UIInterfaceOrientationPortrait,UIInterfaceOrientationPortraitUpsideDown"
-                  iosContentSharing="0" iosDevelopmentTeamID="9UVTQTKNV4" UIRequiresFullScreen="0"
-                  UIStatusBarHidden="1" smallIcon="rvwEOW" bigIcon="rvwEOW" UISupportsDocumentBrowser="1"
-                  UIFileSharingEnabled="1">
+                  iosContentSharing="0" iosDevelopmentTeamID="9UVTQTKNV4" UIRequiresFullScreen="1"
+                  UIStatusBarHidden="1" smallIcon="rvwEOW" bigIcon="rvwEOW">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="Ebeamer GUI"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="Ebeamer GUI"/>
