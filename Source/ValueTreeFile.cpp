@@ -46,24 +46,29 @@ void ValueTreeFile::enableAutoSave (bool isEnabled)
         requestAutoSave ();
 }
 
-void ValueTreeFile::save ()
+bool ValueTreeFile::save ()
 {
     auto xmlToWrite = vtData.createXml ();
-    save (xmlToWrite.get ());
+    return save (xmlToWrite.get ());
 }
 
-void ValueTreeFile::save (XmlElement* xmlToWrite)
+bool ValueTreeFile::save (XmlElement* xmlToWrite)
 {
-    xmlToWrite->writeTo (file, {});
+    return xmlToWrite->writeTo (file, {});
 }
 
-void ValueTreeFile::load ()
+bool ValueTreeFile::load ()
 {
     if (file.exists ())
     {
         XmlDocument xmlDoc (file);
         auto xmlToRead = xmlDoc.getDocumentElement ();
         vtData.copyPropertiesAndChildrenFrom (ValueTree::fromXml (*xmlToRead), nullptr);
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }
 

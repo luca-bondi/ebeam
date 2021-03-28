@@ -33,8 +33,8 @@ public:
     ~ValueTreeFile ();
 
     void init (ValueTree vt, File f, bool enableAutoSave);
-    void save ();
-    void load ();
+    bool save ();
+    bool load ();
     void requestAutoSave ();
     void setAutoSaveTimes (uint32 sdt, uint32 msdt);
     void enableAutoSave (bool isEnabled);
@@ -50,7 +50,7 @@ private:
     CriticalSection xmlDataCS;
     std::unique_ptr<XmlElement> xml;
 
-    void save (XmlElement* xmlToWrite);
+    bool save (XmlElement* xmlToWrite);
     void run () override;
     void valueTreePropertyChanged (ValueTree& treeWhosePropertyHasChanged, const Identifier& property) override;
     void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded) override;

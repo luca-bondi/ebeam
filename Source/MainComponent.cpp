@@ -8,12 +8,11 @@ MainComponent::MainComponent()
     
     //==============================================================================
     /* ValueTree */
-    statusFile = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("ebeamer-controller.xml");
+    statusFile = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("ebeamer-controller.xml");
     valueTree = ValueTree("ebeamer-controller");
     valueTreeFile.init(valueTree, statusFile, true);
     
-    if (statusFile.exists()){
-        valueTreeFile.load();
+    if (valueTreeFile.load()){
         serverIp = IPAddress(valueTree.getProperty(serverIpIdentifier, serverIp.toString()).toString());
         serverPort = valueTree.getProperty(serverPortIdentifier, serverPort);
     }else{
@@ -239,7 +238,6 @@ MainComponent::MainComponent()
     
     
     /* Initialize OSC */
-    serverIp = IPAddress("127.0.0.1");
     oscIpLabel.setText("IP", NotificationType::dontSendNotification);
     oscIpLabel.attachToComponent(&oscIp, true);
     oscIp.setText(serverIp.toString());
