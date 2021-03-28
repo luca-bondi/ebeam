@@ -24,6 +24,7 @@ MainComponent::MainComponent()
     
     //==============================================================================
     /* Initialize parameters */
+    // TODO: use ValueTree
     config = 0;
     frontFacing = 0;
     for (auto beamIdx = 0; beamIdx < NUM_BEAMS; beamIdx++){
@@ -241,15 +242,15 @@ MainComponent::MainComponent()
     /* Initialize OSC */
     oscIpLabel.setText("IP", NotificationType::dontSendNotification);
     oscIpLabel.attachToComponent(&oscIp, true);
-    oscIp.setText(serverIp.toString());
-    oscIp.setJustification(Justification::centred);
-    oscIp.setKeyboardType(TextInputTarget::numericKeyboard);
-    oscIp.onReturnKey = [this]{oscConnect();};
+    oscIp.setJustificationType(Justification::centred);
+    oscIp.setEditableText(true);
+    oscIp.setText(serverIp.toString(),dontSendNotification);
+    oscIp.addListener(this);
     addAndMakeVisible(oscIp);
     
     oscPortLabel.setText("PORT", NotificationType::dontSendNotification);
     oscPortLabel.attachToComponent(&oscPort, true);
-    oscPort.setText(serverPort.toString());
+    oscPort.setText(serverPort.toString(),dontSendNotification);
     oscPort.setJustification(Justification::centred);
     oscPort.setKeyboardType(TextInputTarget::numericKeyboard);
     oscPort.onReturnKey = [this]{oscConnect();};
@@ -265,6 +266,12 @@ MainComponent::MainComponent()
     /* Set this as a listener for OSC messages */
     receiver.addListener(this);
     
+    /* Broadcast receiver */
+    broadcastReceiver.addListener(this);
+    broadcastReceiver.connect(OSC_BORADCAST_PORT);
+    
+    /* Set polling timer to fetch updates from VST */
+    startTimerHz(OSC_POLLING_FREQ);
 }
 
 MainComponent::~MainComponent()
@@ -551,10 +558,13 @@ void MainComponent::layoutConfigOsc(Rectangle<int>& area){
     Rectangle<int> oscArea,setupArea;
     const int oscWidth = OSC_IP_LABEL_WIDTH+OSC_IP_WIDTH+OSC_PORT_LABEL_WIDTH+OSC_PORT_WIDTH+OSC_CONNECT_MARGIN_LEFT+OSC_CONNECT_WIDTH+OSC_LED_MARGIN_LEFT+LED_SIZE;
     const int configWidth = CPULOAD_WIDTH+CONFIG_COMBO_LABEL_WIDTH+CONFIG_COMBO_WIDTH+FRONT_TOGGLE_LABEL_WIDTH+FRONT_TOGGLE_WIDTH;
-    if (area.getWidth() >= oscWidth+configWidth+SMALL_MARGIN){
+    auto remainingWidth = area.getWidth() - (oscWidth+configWidth+SMALL_MARGIN);
+    if (remainingWidth >= 0){
         auto oscControlArea = area.removeFromTop(CONTROLS_HEIGHT);
-        setupArea = oscControlArea.removeFromLeft(area.getWidth()/2).withSizeKeepingCentre(configWidth, CONTROLS_HEIGHT);
-        oscArea = oscControlArea.withSizeKeepingCentre(oscWidth, CONTROLS_HEIGHT);
+        oscControlArea.removeFromLeft(remainingWidth/3);
+        setupArea = oscControlArea.removeFromLeft(configWidth);
+        oscControlArea.removeFromLeft(remainingWidth/3);
+        oscArea = oscControlArea.removeFromLeft(oscWidth);
     }else{
         oscArea = area.removeFromTop(CONTROLS_HEIGHT).withSizeKeepingCentre(oscWidth, CONTROLS_HEIGHT);
         area.removeFromTop(MEDIUM_MARGIN);
@@ -664,6 +674,13 @@ void MainComponent::comboBoxChanged(ComboBox * comboBox){
         resized();
         if (connected)
             sendOscMessage("config", static_cast<MicConfig>((int)config));
+    }else if (comboBox == &oscIp){
+        auto selectedId = oscIp.getSelectedId();
+        if (selectedId > 0){
+            auto selectedServer = serversComboMap[selectedId];
+            oscIp.setText(selectedServer.ip,dontSendNotification);
+            oscPort.setText(String(selectedServer.port),dontSendNotification);
+        }
     }
 }
 
@@ -672,7 +689,7 @@ void MainComponent::comboBoxChanged(ComboBox * comboBox){
 
 void MainComponent::oscConnect(){
     
-    serverIp.setValue(oscIp.getTextValue());
+    serverIp.setValue(oscIp.getText());
     serverPort.setValue(jmin(oscPort.getTextValue().toString().getIntValue(),65535));
     
     if (sender.connectToSocket(socket,serverIp.toString(),serverPort.getValue())){
@@ -720,9 +737,6 @@ void MainComponent::oscConnect(){
         lastOscRequestSent = Time::getCurrentTime();
         lastOscMsgReceived = Time::getCurrentTime();
         
-        /* Set polling timer to fetch updates from VST */
-        startTimerHz(OSC_POLLING_FREQ);
-        
     }else{
         std::ostringstream errMsg;
         errMsg << "Error: cannot connect to " << serverIp.toString() << " on " << serverPort.toString();
@@ -738,7 +752,6 @@ void MainComponent::oscDisconnect(){
             oscPort.setEnabled(true);
             connected = false;
             oscStatus.setColours(Colours::red,Colours::grey);
-            stopTimer();
             /* Reset graphic components */
             inputMeter.reset();
             beam1Meter.reset();
@@ -831,6 +844,19 @@ void MainComponent::oscMessageReceived (const OSCMessage& message){
             Eigen::Map<Eigen::MatrixXf> newEnergy((float*)val.getData(),nRows,nCols);
             energy = newEnergy;
         }
+    }else if ((message.size()==2) && (message[0].isString()) && (message[1].isInt32()) && message.getAddressPattern() == "/ebeamer/announce"){
+        ServerSpec server = {message[0].getString(),message[1].getInt32()};
+        auto timestamp = Time::getCurrentTime();
+        {
+            GenericScopedLock<SpinLock> lock(serversMapLock);
+            if (serversMap.count(server)==0){
+                lastServerId += 1;
+                oscIp.addItem(server.toString(), lastServerId);
+                serversComboMap[lastServerId] = server;
+            }
+            /** Update timestamp */
+            serversMap[server] = timestamp;
+        }
     }
 }
 
@@ -847,6 +873,28 @@ void MainComponent::timerCallback(){
         oscStatus.toggle();
         lastOscRequestSent = Time::getCurrentTime();
     }
+    
+    {
+        GenericScopedLock<SpinLock> lock(serversMapLock);
+        /* Check expired announces */
+        auto now = Time::getCurrentTime();
+        std::list<ServerSpec> toBeRemoved;
+        for (auto server : serversMap)
+            if ((now - server.second).inSeconds() > OSC_TIMEOUT)
+                toBeRemoved.push_back(server.first);
+        if (toBeRemoved.size()){
+            oscIp.clear();
+            for (auto server : toBeRemoved){
+                serversMap.erase(server);
+            }
+            for (auto server : serversMap){
+                lastServerId += 1;
+                oscIp.addItem(server.first.toString(), lastServerId);
+                serversComboMap[lastServerId] = server.first;
+            }
+        }
+    }
+    
 }
 
 void MainComponent::showConnectionErrorMessage (const String& messageText){

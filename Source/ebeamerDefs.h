@@ -44,7 +44,7 @@
 #define CPULOAD_UPDATE_FREQ 10 //Hz
 
 #define OSC_IP_LABEL_WIDTH 30
-#define OSC_IP_WIDTH 130
+#define OSC_IP_WIDTH 150
 
 #define OSC_PORT_LABEL_WIDTH 60
 #define OSC_PORT_WIDTH 60
@@ -67,6 +67,8 @@
 
 /** OSC polling interval [Hz] */
 #define OSC_POLLING_FREQ 10
+
+#define OSC_BORADCAST_PORT 9011
 
 /* Colors */
 
@@ -102,4 +104,23 @@ const StringArray micConfigLabels({
                                   });
 
 bool isLinearArray(MicConfig m);
+
+
+struct ServerSpec{
+    String ip;
+    int32 port;
+    
+    bool operator< (const ServerSpec& other) const{
+        return (ip < other.ip) | ((ip  ==  other.ip) && (port < other.port));
+    };
+    
+    friend std::ostream& operator<<(std::ostream& os, const ServerSpec& obj){
+        os << obj.ip << ":" << obj.port;
+        return os;
+    };
+    
+    const String toString() const{
+        return ip + ":" + String(port);
+    }
+};
 

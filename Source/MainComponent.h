@@ -113,7 +113,7 @@ private:
     //==============================================================================
     /** OSC */
     OSCSender sender;
-    OSCReceiver receiver;
+    OSCReceiver receiver, broadcastReceiver;
     DatagramSocket socket;
     
     Value serverIp;
@@ -124,7 +124,7 @@ private:
     /** Local IP */
     IPAddress localIp;
     
-    TextEditor oscIp;
+    ComboBox oscIp;
     Label oscIpLabel;
     
     TextEditor oscPort;
@@ -132,6 +132,12 @@ private:
     
     TextButton oscConnectButton;
     ActivityLed oscStatus;
+    
+    /** Available servers */
+    std::map<ServerSpec,Time> serversMap;
+    std::map<int,ServerSpec> serversComboMap;
+    int lastServerId = 0;
+    SpinLock serversMapLock;
     
     Time lastOscMsgReceived = Time::getCurrentTime();
     Time lastOscRequestSent = Time::getCurrentTime();
