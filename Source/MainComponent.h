@@ -116,11 +116,10 @@ private:
     OSCReceiver receiver;
     DatagramSocket socket;
     
-    bool connected = false;
-    IPAddress serverIp;
+    Value serverIp;
+    Value serverPort;
     
-    /** Ebeamer VST port */
-    int serverPort = 9001;
+    bool connected = false;
     
     /** Local IP */
     IPAddress localIp;

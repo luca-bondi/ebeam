@@ -12,14 +12,15 @@ MainComponent::MainComponent()
     valueTree = ValueTree("ebeamer-controller");
     valueTreeFile.init(valueTree, statusFile, true);
     
-    if (valueTreeFile.load()){
-        serverIp = IPAddress(valueTree.getProperty(serverIpIdentifier, serverIp.toString()).toString());
-        serverPort = valueTree.getProperty(serverPortIdentifier, serverPort);
-    }else{
-        valueTree.setProperty(serverIpIdentifier, serverIp.toString(), nullptr);
-        valueTree.setProperty(serverPortIdentifier, serverPort, nullptr);
+    if (!valueTreeFile.load()){
+        /** Initialize value tree if not loaded */
+        valueTree.setProperty(serverIpIdentifier, "127.0.0.1", nullptr);
+        valueTree.setProperty(serverPortIdentifier, 9001, nullptr);
         valueTreeFile.save();
     }
+    
+    serverIp = valueTree.getPropertyAsValue(serverIpIdentifier,nullptr);
+    serverPort = valueTree.getPropertyAsValue(serverPortIdentifier,nullptr);
     
     //==============================================================================
     /* Initialize parameters */
@@ -248,7 +249,7 @@ MainComponent::MainComponent()
     
     oscPortLabel.setText("PORT", NotificationType::dontSendNotification);
     oscPortLabel.attachToComponent(&oscPort, true);
-    oscPort.setText(String(serverPort));
+    oscPort.setText(serverPort.toString());
     oscPort.setJustification(Justification::centred);
     oscPort.setKeyboardType(TextInputTarget::numericKeyboard);
     oscPort.onReturnKey = [this]{oscConnect();};
@@ -671,13 +672,10 @@ void MainComponent::comboBoxChanged(ComboBox * comboBox){
 
 void MainComponent::oscConnect(){
     
-    /* Save IP and Port */
-    serverIp = IPAddress(oscIp.getTextValue().toString());
-    serverPort = oscPort.getTextValue().toString().getIntValue();
-    valueTree.setProperty(serverIpIdentifier, serverIp.toString(), nullptr);
-    valueTree.setProperty(serverPortIdentifier, serverPort, nullptr);
+    serverIp.setValue(oscIp.getTextValue());
+    serverPort.setValue(jmin(oscPort.getTextValue().toString().getIntValue(),65535));
     
-    if (sender.connectToSocket(socket,serverIp.toString(),serverPort)){
+    if (sender.connectToSocket(socket,serverIp.toString(),serverPort.getValue())){
         int localPort = 9002;
         while (socket.getBoundPort()==-1 && !socket.bindToPort(localPort) && (localPort<65535))
             localPort++;
@@ -702,13 +700,14 @@ void MainComponent::oscConnect(){
         oscStatus.setColours(Colours::green,Colours::grey);
         
         /* Determine local IP */
+        IPAddress serverIpAddr = IPAddress(serverIp.toString());
         auto ipArray = IPAddress::getAllAddresses();
         int mostLikelyIdx = 0;
         int mostLikelyScore = 0;
         for (auto idx = 0; idx < ipArray.size(); idx++){
             auto ip = ipArray[idx];
             int score = 0;
-            while (ip.address[score] == serverIp.address[score])
+            while (ip.address[score] == serverIpAddr.address[score])
                 score ++;
             if (score > mostLikelyScore){
                 mostLikelyScore = score;
@@ -726,7 +725,7 @@ void MainComponent::oscConnect(){
         
     }else{
         std::ostringstream errMsg;
-        errMsg << "Error: cannot connect to " << serverIp.toString() << " on " << serverPort;
+        errMsg << "Error: cannot connect to " << serverIp.toString() << " on " << serverPort.toString();
         showConnectionErrorMessage (errMsg.str());
     }
 }
