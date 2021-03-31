@@ -291,7 +291,7 @@ void MainComponent::paint (juce::Graphics& g)
     versionArea.removeFromBottom(2);
     g.setColour(Colours::lightgrey);
     g.setFont(12);
-    g.drawText(String("Eventide - Ebeamer Controller v") + appVersion, versionArea, Justification::centredBottom, false);
+    g.drawText(String("Eventide - EbeaMote") + appVersion, versionArea, Justification::centredBottom, false);
 }
 
 void MainComponent::resized()
