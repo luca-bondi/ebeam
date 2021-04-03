@@ -59,6 +59,8 @@ MainComponent::MainComponent()
     steerBeamX1Slider.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
     steerBeamX1Slider.setColour(Slider::thumbColourId, beamColours[0]);
     steerBeamX1Slider.setRange(-1,1,0.01);
+    steerBeamX1Slider.setTextBoxIsEditable(false);
+    steerBeamX1Slider.setValue(-0.5);
     steerBeamX1Slider.addListener(this);
     addAndMakeVisible(steerBeamX1Slider);
     
@@ -66,6 +68,8 @@ MainComponent::MainComponent()
     steerBeamX2Slider.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
     steerBeamX2Slider.setColour(Slider::thumbColourId, beamColours[1]);
     steerBeamX2Slider.setRange(-1,1,0.01);
+    steerBeamX2Slider.setTextBoxIsEditable(false);
+    steerBeamX2Slider.setValue(0.5);
     steerBeamX2Slider.addListener(this);
     addAndMakeVisible(steerBeamX2Slider);
     
@@ -73,6 +77,7 @@ MainComponent::MainComponent()
     steerBeamY1Slider.setTextBoxStyle(Slider::TextBoxAbove, false, LABEL_WIDTH, LABEL_HEIGHT);
     steerBeamY1Slider.setColour(Slider::thumbColourId, beamColours[0]);
     steerBeamY1Slider.setRange(-1,1,0.01);
+    steerBeamY1Slider.setTextBoxIsEditable(false);
     steerBeamY1Slider.addListener(this);
     addAndMakeVisible(steerBeamY1Slider);
     
@@ -80,6 +85,7 @@ MainComponent::MainComponent()
     steerBeamY2Slider.setTextBoxStyle(Slider::TextBoxAbove, false, LABEL_WIDTH, LABEL_HEIGHT);
     steerBeamY2Slider.setColour(Slider::thumbColourId, beamColours[1]);
     steerBeamY2Slider.setRange(-1,1,0.01);
+    steerBeamY2Slider.setTextBoxIsEditable(false);
     steerBeamY2Slider.addListener(this);
     addAndMakeVisible(steerBeamY2Slider);
     
@@ -100,12 +106,14 @@ MainComponent::MainComponent()
     widthBeam1Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
     widthBeam1Knob.setColour(Slider::thumbColourId, beamColours[0]);
     widthBeam1Knob.setRange(0,1,0.01);
+    widthBeam1Knob.setTextBoxIsEditable(false);
     widthBeam1Knob.addListener(this);
     addAndMakeVisible(widthBeam1Knob);
     
     widthBeam2Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
     widthBeam2Knob.setColour(Slider::thumbColourId, beamColours[1]);
     widthBeam2Knob.setRange(0,1,0.01);
+    widthBeam2Knob.setTextBoxIsEditable(false);
     widthBeam2Knob.addListener(this);
     addAndMakeVisible(widthBeam2Knob);
     
@@ -127,12 +135,14 @@ MainComponent::MainComponent()
     panBeam1Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
     panBeam1Knob.setColour(Slider::thumbColourId, beamColours[0]);
     panBeam1Knob.setRange(-1,1,0.01);
+    panBeam1Knob.setTextBoxIsEditable(false);
     panBeam1Knob.addListener(this);
     addAndMakeVisible(panBeam1Knob);
     
     panBeam2Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
     panBeam2Knob.setColour(Slider::thumbColourId, beamColours[1]);
     panBeam2Knob.setRange(-1,1,0.01);
+    panBeam2Knob.setTextBoxIsEditable(false);
     panBeam2Knob.addListener(this);
     addAndMakeVisible(panBeam2Knob);
     
@@ -153,12 +163,14 @@ MainComponent::MainComponent()
     levelBeam1Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
     levelBeam1Knob.setColour(Slider::thumbColourId, beamColours[0]);
     levelBeam1Knob.setRange(-10,10,0.1);
+    levelBeam1Knob.setTextBoxIsEditable(false);
     levelBeam1Knob.addListener(this);
     addAndMakeVisible(levelBeam1Knob);
     
     levelBeam2Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
     levelBeam2Knob.setColour(Slider::thumbColourId, beamColours[1]);
     levelBeam2Knob.setRange(-10,10,0.1);
+    levelBeam2Knob.setTextBoxIsEditable(false);
     levelBeam2Knob.addListener(this);
     addAndMakeVisible(levelBeam2Knob);
     
@@ -199,6 +211,7 @@ MainComponent::MainComponent()
     hpfSlider.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
     hpfSlider.setRange(20,500,1);
     hpfSlider.addListener(this);
+    hpfSlider.setTextBoxIsEditable(false);
     addAndMakeVisible(hpfSlider);
     
     //==============================================================================
@@ -215,6 +228,7 @@ MainComponent::MainComponent()
     gainSlider.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
     gainSlider.setRange(0,40,0.1);
     gainSlider.addListener(this);
+    gainSlider.setTextBoxIsEditable(false);
     addAndMakeVisible(gainSlider);
     
     //=====================================================
@@ -383,6 +397,7 @@ void MainComponent::resized()
         auto widthKnobsArea = area.removeFromTop(knobSize);
         widthBeam1Knob.setBounds(widthKnobsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2));
         widthBeam2Knob.setTextBoxStyle(Slider::TextBoxLeft, false, LABEL_WIDTH, LABEL_HEIGHT);
+        widthBeam2Knob.setTextBoxIsEditable(false);
         widthBeam2Knob.setBounds(widthKnobsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2));
         widthLabel.setBounds(widthKnobsArea);
 
@@ -391,6 +406,7 @@ void MainComponent::resized()
         auto panKnobsArea = area.removeFromTop(knobSize);
         panBeam1Knob.setBounds(panKnobsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2));
         panBeam2Knob.setTextBoxStyle(Slider::TextBoxLeft, false, LABEL_WIDTH, LABEL_HEIGHT);
+        panBeam2Knob.setTextBoxIsEditable(false);
         panBeam2Knob.setBounds(panKnobsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2));
         panLabel.setBounds(panKnobsArea);
         
@@ -401,6 +417,7 @@ void MainComponent::resized()
         auto level2Area = levelsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
         levelBeam1Knob.setBounds(level1Area);
         levelBeam2Knob.setTextBoxStyle(Slider::TextBoxLeft, false, LABEL_WIDTH, LABEL_HEIGHT);
+        levelBeam2Knob.setTextBoxIsEditable(false);
         levelBeam2Knob.setBounds(level2Area);
         level1Area.removeFromRight(LABEL_WIDTH+2*LARGE_MARGIN);
         level2Area.removeFromLeft(LABEL_WIDTH+2*LARGE_MARGIN);
@@ -531,7 +548,9 @@ void MainComponent::resized()
         auto widthPanArea2 = beam2Area.removeFromTop(knobSize);
         widthBeam2Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
         widthBeam2Knob.setBounds(widthPanArea2.removeFromLeft(beam2Area.getWidth()/2).withTrimmedLeft(LABEL_WIDTH));
+        widthBeam2Knob.setTextBoxIsEditable(false);
         panBeam2Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
+        panBeam2Knob.setTextBoxIsEditable(false);
         panBeam2Knob.setBounds(widthPanArea2.withTrimmedLeft(LABEL_WIDTH));
         
         beam2Area.removeFromTop(smallMargin);
@@ -545,6 +564,7 @@ void MainComponent::resized()
         levelMuteArea2.removeFromLeft(LARGE_MARGIN);
         
         levelBeam2Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
+        levelBeam2Knob.setTextBoxIsEditable(false);
         levelBeam2Knob.setBounds(levelMuteArea2.withTrimmedLeft(LABEL_WIDTH));
         
         
