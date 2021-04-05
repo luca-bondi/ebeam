@@ -20,12 +20,13 @@
  */
 class MainComponent  :
 public Component,
-private OSCReceiver::Listener<OSCReceiver::MessageLoopCallback>,
-private Timer,
+//private OSCReceiver::Listener<OSCReceiver::MessageLoopCallback>,
+private ValueTree::Listener,
+//private Timer,
 private Slider::Listener,
 private Button::Listener,
-private ComboBox::Listener,
-private SceneComp::Callback
+private ComboBox::Listener
+//private SceneComp::Callback
 {
 public:
     //==============================================================================
@@ -41,7 +42,7 @@ private:
     String appVersion;
     
     //==============================================================================
-    SceneComp scene;
+//    SceneComp scene;
     
     //==============================================================================
     Label steerLabel;
@@ -88,9 +89,8 @@ private:
     
     //==============================================================================
     /** Configuration selection combo */
-    
-    Label configComboLabel;
-    ComboBox configCombo;
+    Identifier configIdentifier = Identifier("config");
+    ConfigComboBox configComboBox;
     
     //==============================================================================
     /* Layout functions */
@@ -101,7 +101,6 @@ private:
     
     //==============================================================================
     /** State variables */
-    std::atomic<float> config;
     std::atomic<float> frontFacing;
     std::atomic<float> mute[NUM_BEAMS];
     std::atomic<float> width[NUM_BEAMS];
@@ -112,8 +111,15 @@ private:
     
     //==============================================================================
     /** OSC */
+    
+    OSCController oscController;
+    
+    const Identifier serversIdentifier = Identifier("servers");
+    std::map<int,Server> servers;
+    
+    //TODO: move to OSCController
     OSCSender sender;
-    OSCReceiver receiver, broadcastReceiver;
+    OSCReceiver receiver;
     DatagramSocket socket;
     
     Value serverIp;
@@ -133,15 +139,6 @@ private:
     TextButton oscConnectButton;
     ActivityLed oscStatus;
     
-    /** Available servers */
-    std::map<ServerSpec,Time> serversMap;
-    std::map<int,ServerSpec> serversComboMap;
-    int lastServerId = 0;
-    SpinLock serversMapLock;
-    
-    Time lastOscMsgReceived = Time::getCurrentTime();
-    Time lastOscRequestSent = Time::getCurrentTime();
-    
     void sendOscMessage(const String& path, float value);
     void sendOscMessage(const String& path, bool value);
     void sendOscMessage(const String& path, MicConfig value);
@@ -158,46 +155,50 @@ private:
     void buttonStateChanged(Button *) override;
     
     void comboBoxChanged(ComboBox *) override;
-    
-    void oscMessageReceived (const OSCMessage&) override;
-    
-    void timerCallback() override;
+//    
+//    void oscMessageReceived (const OSCMessage&) override;
+//    
+//    void timerCallback() override;
     
     void showConnectionErrorMessage (const String&);
     
-    const std::atomic<float> *getConfigParam() const override{
-        return &config;
-    }
-    const std::atomic<float> *getFrontFacingParam() const override{
-        return &frontFacing;
-    }
-    const std::atomic<float> *getBeamMute(int idx) const override{
-        return &(mute[idx]);
-    }
-    const std::atomic<float> *getBeamWidth(int idx) const override{
-        return &(width[idx]);
-    }
-    const std::atomic<float> *getBeamSteerX(int idx) const override{
-        return &(steerX[idx]);
-    }
-    const std::atomic<float> *getBeamSteerY(int idx) const override{
-        return &(steerY[idx]);
-    }
-    void setBeamSteerX(int idx, float newVal) override;
-    void setBeamSteerY(int idx, float newVal) override;
-    
-    void getDoaEnergy(Mtx &en) const override{
-        en = energy;
-    }
+//    const std::atomic<float> *getConfigParam() const override{
+//        return &config;
+//    }
+//    const std::atomic<float> *getFrontFacingParam() const override{
+//        return &frontFacing;
+//    }
+//    const std::atomic<float> *getBeamMute(int idx) const override{
+//        return &(mute[idx]);
+//    }
+//    const std::atomic<float> *getBeamWidth(int idx) const override{
+//        return &(width[idx]);
+//    }
+//    const std::atomic<float> *getBeamSteerX(int idx) const override{
+//        return &(steerX[idx]);
+//    }
+//    const std::atomic<float> *getBeamSteerY(int idx) const override{
+//        return &(steerY[idx]);
+//    }
+//    void setBeamSteerX(int idx, float newVal) override;
+//    void setBeamSteerY(int idx, float newVal) override;
+//
+//    void getDoaEnergy(Mtx &en) const override{
+//        en = energy;
+//    }
     
     //==============================================================================
     /* ValueTree */
     File statusFile;
-    ValueTree valueTree;
+    ValueTree valueTreePersistent;
+    ValueTree valueTreeSession;
     ValueTreeFile valueTreeFile;
     
     Identifier serverIpIdentifier = Identifier("serverIp");
     Identifier serverPortIdentifier = Identifier("serverPort");
+    
+    void valueTreePropertyChanged (ValueTree& treeWhosePropertyHasChanged,
+                                           const Identifier& property) override;
     
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)

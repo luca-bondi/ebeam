@@ -540,7 +540,6 @@
             file="Source/FrequencySlider.h"/>
       <FILE id="dalVnQ" name="DecibelSlider.h" compile="0" resource="0" file="Source/DecibelSlider.h"/>
       <FILE id="vUlf1x" name="PanSlider.h" compile="0" resource="0" file="Source/PanSlider.h"/>
-      <FILE id="BiNcVU" name="ebeamerDefs.cpp" compile="1" resource="0" file="Source/ebeamerDefs.cpp"/>
       <FILE id="ZY5Pze" name="ebeamerDefs.h" compile="0" resource="0" file="Source/ebeamerDefs.h"/>
       <FILE id="E9475a" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="OK2Wfs" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
@@ -566,6 +565,9 @@
         <MODULEPATH id="juce_gui_basics" path="../../../JUCE/modules"/>
         <MODULEPATH id="juce_osc" path="../../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_basics" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_ebeamer_gui" path="../../juce_modules"/>
+        <MODULEPATH id="juce_ebeamer_osc" path="../../juce_modules"/>
+        <MODULEPATH id="juce_ebeamer_common" path="../../juce_modules"/>
       </MODULEPATHS>
     </XCODE_IPHONE>
     <XCODE_MAC targetFolder="Builds/MacOSX" iosDevelopmentTeamID="955EYEC7K8">
@@ -581,6 +583,9 @@
         <MODULEPATH id="juce_gui_basics" path="../../../JUCE/modules"/>
         <MODULEPATH id="juce_osc" path="../../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_basics" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_ebeamer_gui" path="../../juce_modules"/>
+        <MODULEPATH id="juce_ebeamer_osc" path="../../juce_modules"/>
+        <MODULEPATH id="juce_ebeamer_common" path="../../juce_modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
   </EXPORTFORMATS>
@@ -588,6 +593,9 @@
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_ebeamer_common" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_ebeamer_gui" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_ebeamer_osc" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
