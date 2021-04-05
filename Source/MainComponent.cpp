@@ -713,7 +713,7 @@ void MainComponent::oscConnect(){
     const Server srv = {serverIp.toString(), int(serverPort.getValue())};
     if (oscController.addSender(srv)){
         
-        if(!oscController.listen())
+        if(!oscController.startReceiver())
             return;
         
         /* Connection successful */
@@ -734,24 +734,28 @@ void MainComponent::oscConnect(){
 }
 
 void MainComponent::oscDisconnect(){
-    if (sender.disconnect()){
-        if (receiver.disconnect()){
-            oscConnectButton.setButtonText("Connect");
-            oscIp.setEnabled(true);
-            oscPort.setEnabled(true);
-            connected = false;
-            oscStatus.setColours(Colours::red,Colours::grey);
-            /* Reset graphic components */
-            inputMeter.reset();
-            beam1Meter.reset();
-            beam2Meter.reset();
-            energy.setConstant(-100);
-            cpuLoad.setLoad(0);
+    if (oscController.stopPolling()){
+        if (oscController.stopReceiver()){
+            if (oscController.removeSender({serverIp.toString(),serverPort.getValue()})){
+                oscConnectButton.setButtonText("Connect");
+                oscIp.setEnabled(true);
+                oscPort.setEnabled(true);
+                connected = false;
+                oscStatus.setColours(Colours::red,Colours::grey);
+                /* Reset graphic components */
+                inputMeter.reset();
+                beam1Meter.reset();
+                beam2Meter.reset();
+                energy.setConstant(-100);
+                cpuLoad.setLoad(0);
+            }else{
+                showConnectionErrorMessage ("Error: could not remove sender");
+            }
         }else{
             showConnectionErrorMessage ("Error: could not disconnect receiver");
         }
     }else{
-        showConnectionErrorMessage ("Error: could not disconnect sender");
+        showConnectionErrorMessage ("Error: could not stop polling");
     }
 }
 
