@@ -7,9 +7,8 @@ MainComponent::MainComponent()
     appVersion = JUCEApplication::getInstance()->getApplicationVersion();
     
     //==============================================================================
-    /* Value tree for persistent parameters */
+    /* Value Tree for persistent parameters */
     statusFile = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("EbeaMote.xml");
-    
     valueTreePersistent = ValueTree("EbeaMote");
     valueTreeFile.init(valueTreePersistent, statusFile, true);
     
@@ -27,25 +26,19 @@ MainComponent::MainComponent()
     valueTreeSession = ValueTree("EbeaMoteTmp");
     valueTreeSession.addListener(this);
     
+    //==============================================================================
     /* OSC controller */
     oscController.init(valueTreeSession);
     oscController.initBroadcastReceiver(serversIdentifier);
     
     //==============================================================================
-    /* Initialize parameters */
+    /* Value Tree for session parameters */
     
     valueTreeSession.setProperty(configIdentifier,ULA_1ESTICK,nullptr);
     oscController.registerIdentifier(configIdentifier);
     
-    // TODO: use valueTreeSession
-
-    frontFacing = 0;
-    for (auto beamIdx = 0; beamIdx < NUM_BEAMS; beamIdx++){
-        mute[beamIdx] = 0;
-        width[beamIdx] = 0;
-        steerX[beamIdx] = 0;
-        steerY[beamIdx] = 0;
-    }
+    valueTreeSession.setProperty(frontIdentifier,false,nullptr);
+    oscController.registerIdentifier(frontIdentifier);
     
     //==============================================================================
     setSize(GUI_WIDTH, GUI_HEIGHT);
@@ -74,7 +67,7 @@ MainComponent::MainComponent()
     steerBeamX1Slider.setRange(-1,1,0.01);
     steerBeamX1Slider.setTextBoxIsEditable(false);
     steerBeamX1Slider.setValue(-0.5);
-    steerBeamX1Slider.addListener(this);
+//    steerBeamX1Slider.addListener(this);
     addAndMakeVisible(steerBeamX1Slider);
     
     steerBeamX2Slider.setSliderStyle(Slider::LinearHorizontal);
@@ -83,7 +76,7 @@ MainComponent::MainComponent()
     steerBeamX2Slider.setRange(-1,1,0.01);
     steerBeamX2Slider.setTextBoxIsEditable(false);
     steerBeamX2Slider.setValue(0.5);
-    steerBeamX2Slider.addListener(this);
+//    steerBeamX2Slider.addListener(this);
     addAndMakeVisible(steerBeamX2Slider);
     
     steerBeamY1Slider.setSliderStyle(Slider::LinearVertical);
@@ -91,7 +84,7 @@ MainComponent::MainComponent()
     steerBeamY1Slider.setColour(Slider::thumbColourId, beamColours[0]);
     steerBeamY1Slider.setRange(-1,1,0.01);
     steerBeamY1Slider.setTextBoxIsEditable(false);
-    steerBeamY1Slider.addListener(this);
+//    steerBeamY1Slider.addListener(this);
     addAndMakeVisible(steerBeamY1Slider);
     
     steerBeamY2Slider.setSliderStyle(Slider::LinearVertical);
@@ -99,7 +92,7 @@ MainComponent::MainComponent()
     steerBeamY2Slider.setColour(Slider::thumbColourId, beamColours[1]);
     steerBeamY2Slider.setRange(-1,1,0.01);
     steerBeamY2Slider.setTextBoxIsEditable(false);
-    steerBeamY2Slider.addListener(this);
+//    steerBeamY2Slider.addListener(this);
     addAndMakeVisible(steerBeamY2Slider);
     
     //==============================================================================
@@ -120,14 +113,14 @@ MainComponent::MainComponent()
     widthBeam1Knob.setColour(Slider::thumbColourId, beamColours[0]);
     widthBeam1Knob.setRange(0,1,0.01);
     widthBeam1Knob.setTextBoxIsEditable(false);
-    widthBeam1Knob.addListener(this);
+//    widthBeam1Knob.addListener(this);
     addAndMakeVisible(widthBeam1Knob);
     
     widthBeam2Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
     widthBeam2Knob.setColour(Slider::thumbColourId, beamColours[1]);
     widthBeam2Knob.setRange(0,1,0.01);
     widthBeam2Knob.setTextBoxIsEditable(false);
-    widthBeam2Knob.addListener(this);
+//    widthBeam2Knob.addListener(this);
     addAndMakeVisible(widthBeam2Knob);
     
     
@@ -149,14 +142,14 @@ MainComponent::MainComponent()
     panBeam1Knob.setColour(Slider::thumbColourId, beamColours[0]);
     panBeam1Knob.setRange(-1,1,0.01);
     panBeam1Knob.setTextBoxIsEditable(false);
-    panBeam1Knob.addListener(this);
+//    panBeam1Knob.addListener(this);
     addAndMakeVisible(panBeam1Knob);
     
     panBeam2Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
     panBeam2Knob.setColour(Slider::thumbColourId, beamColours[1]);
     panBeam2Knob.setRange(-1,1,0.01);
     panBeam2Knob.setTextBoxIsEditable(false);
-    panBeam2Knob.addListener(this);
+//    panBeam2Knob.addListener(this);
     addAndMakeVisible(panBeam2Knob);
     
     //==============================================================================
@@ -177,14 +170,14 @@ MainComponent::MainComponent()
     levelBeam1Knob.setColour(Slider::thumbColourId, beamColours[0]);
     levelBeam1Knob.setRange(-10,10,0.1);
     levelBeam1Knob.setTextBoxIsEditable(false);
-    levelBeam1Knob.addListener(this);
+//    levelBeam1Knob.addListener(this);
     addAndMakeVisible(levelBeam1Knob);
     
     levelBeam2Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
     levelBeam2Knob.setColour(Slider::thumbColourId, beamColours[1]);
     levelBeam2Knob.setRange(-10,10,0.1);
     levelBeam2Knob.setTextBoxIsEditable(false);
-    levelBeam2Knob.addListener(this);
+//    levelBeam2Knob.addListener(this);
     addAndMakeVisible(levelBeam2Knob);
     
     
@@ -223,7 +216,7 @@ MainComponent::MainComponent()
     hpfSlider.setSliderStyle(Slider::LinearHorizontal);
     hpfSlider.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
     hpfSlider.setRange(20,500,1);
-    hpfSlider.addListener(this);
+//    hpfSlider.addListener(this);
     hpfSlider.setTextBoxIsEditable(false);
     addAndMakeVisible(hpfSlider);
     
@@ -240,7 +233,7 @@ MainComponent::MainComponent()
     gainSlider.setSliderStyle(Slider::LinearHorizontal);
     gainSlider.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
     gainSlider.setRange(0,40,0.1);
-    gainSlider.addListener(this);
+//    gainSlider.addListener(this);
     gainSlider.setTextBoxIsEditable(false);
     addAndMakeVisible(gainSlider);
     
@@ -250,11 +243,8 @@ MainComponent::MainComponent()
     
     //=====================================================
     // Add front facing toggle
-    frontToggleLabel.setText("FRONT", NotificationType::dontSendNotification);
-    frontToggleLabel.attachToComponent(&frontToggle, true);
-    frontToggle.addListener(this);
+    frontToggle.init(valueTreeSession.getPropertyAsValue(frontIdentifier, nullptr));
     addAndMakeVisible(frontToggle);
-    
     
     //=====================================================
     // Configuration selection combo
@@ -285,11 +275,6 @@ MainComponent::MainComponent()
     oscStatus.setColours(Colours::red,Colours::grey);
     addAndMakeVisible(oscStatus);
     
-    /* Set this as a listener for OSC messages */
-//    receiver.addListener(this);
-    
-    /* Set polling timer to fetch updates from VST */
-//    startTimerHz(OSC_POLLING_FREQ);
 }
 
 MainComponent::~MainComponent()
@@ -581,7 +566,7 @@ void MainComponent::layoutConfigOsc(Rectangle<int>& area){
     
     Rectangle<int> oscArea,setupArea;
     const int oscWidth = OSC_IP_LABEL_WIDTH+OSC_IP_WIDTH+OSC_PORT_LABEL_WIDTH+OSC_PORT_WIDTH+OSC_CONNECT_MARGIN_LEFT+OSC_CONNECT_WIDTH+OSC_LED_MARGIN_LEFT+LED_SIZE;
-    const int configWidth = CPULOAD_WIDTH+CONFIG_COMBO_LABEL_WIDTH+CONFIG_COMBO_WIDTH+FRONT_TOGGLE_LABEL_WIDTH+FRONT_TOGGLE_WIDTH;
+    const int configWidth = CPULOAD_WIDTH+MEDIUM_MARGIN+configComboBox.getMinWidth()+MEDIUM_MARGIN+frontToggle.getMinWidth();
     auto remainingWidth = area.getWidth() - (oscWidth+configWidth+SMALL_MARGIN);
     if (remainingWidth >= 0){
         auto oscControlArea = area.removeFromTop(CONTROLS_HEIGHT);
@@ -611,55 +596,56 @@ void MainComponent::layoutConfigOsc(Rectangle<int>& area){
     cpuLoad.setBounds(setupArea.removeFromLeft(CPULOAD_WIDTH));
     
     /* Set area for config combo */
+    setupArea.removeFromLeft(MEDIUM_MARGIN);
     configComboBox.setBounds(setupArea.removeFromLeft(configComboBox.getMinWidth()));
 
     /* Set area for front toggle */
-    setupArea.removeFromLeft(FRONT_TOGGLE_LABEL_WIDTH);
-    frontToggle.setBounds(setupArea.removeFromLeft(FRONT_TOGGLE_WIDTH));
+    setupArea.removeFromLeft(MEDIUM_MARGIN);
+    frontToggle.setBounds(setupArea.removeFromLeft(frontToggle.getMinWidth()));
 }
 
 //====================================================================
 /* Callbacks and listeners */
 
-void MainComponent::sliderValueChanged(Slider * slider){
-    if (slider == &steerBeamX1Slider){
-        steerX[0] = slider->getValue();
-//        setBeamSteerX(0,slider->getValue());
-//        scene.repaint();
-    }else if(slider == &steerBeamX2Slider){
-        steerX[1] = slider->getValue();
-//        setBeamSteerX(1,slider->getValue());
-//        scene.repaint();
-    }else if (slider == &steerBeamY1Slider){
-        steerY[0] = slider->getValue();
-//        setBeamSteerY(0,slider->getValue());
-//        scene.repaint();
-    }else if(slider == &steerBeamY2Slider){
-        steerY[1] = slider->getValue();
-//        setBeamSteerY(1,slider->getValue());
-//        scene.repaint();
-    }else if(slider == &widthBeam1Knob){
-        width[0] = slider->getValue();
-//        scene.repaint();
-        if (connected) sendOscMessage("widthBeam1", width[0]);
-    }else if(slider == &widthBeam2Knob){
-        width[1] = slider->getValue();
-//        scene.repaint();
-        if (connected) sendOscMessage("widthBeam2", width[1]);
-    }else if(slider == &panBeam1Knob){
-        if (connected) sendOscMessage("panBeam1", (float)panBeam1Knob.getValue());
-    }else if(slider == &panBeam2Knob){
-        if (connected) sendOscMessage("panBeam2", (float)panBeam2Knob.getValue());
-    }else if(slider == &levelBeam1Knob){
-        if (connected) sendOscMessage("levelBeam1", (float)levelBeam1Knob.getValue());
-    }else if(slider == &levelBeam2Knob){
-        if (connected) sendOscMessage("levelBeam2", (float)levelBeam2Knob.getValue());
-    }else if(slider == &hpfSlider){
-        if (connected) sendOscMessage("hpf", (float)hpfSlider.getValue());
-    }else if(slider == &gainSlider){
-        if (connected) sendOscMessage("gainMic", (float)gainSlider.getValue());
-    }
-}
+//void MainComponent::sliderValueChanged(Slider * slider){
+//    if (slider == &steerBeamX1Slider){
+//        steerX[0] = slider->getValue();
+////        setBeamSteerX(0,slider->getValue());
+////        scene.repaint();
+//    }else if(slider == &steerBeamX2Slider){
+//        steerX[1] = slider->getValue();
+////        setBeamSteerX(1,slider->getValue());
+////        scene.repaint();
+//    }else if (slider == &steerBeamY1Slider){
+//        steerY[0] = slider->getValue();
+////        setBeamSteerY(0,slider->getValue());
+////        scene.repaint();
+//    }else if(slider == &steerBeamY2Slider){
+//        steerY[1] = slider->getValue();
+////        setBeamSteerY(1,slider->getValue());
+////        scene.repaint();
+//    }else if(slider == &widthBeam1Knob){
+//        width[0] = slider->getValue();
+////        scene.repaint();
+//        if (connected) sendOscMessage("widthBeam1", width[0]);
+//    }else if(slider == &widthBeam2Knob){
+//        width[1] = slider->getValue();
+////        scene.repaint();
+//        if (connected) sendOscMessage("widthBeam2", width[1]);
+//    }else if(slider == &panBeam1Knob){
+//        if (connected) sendOscMessage("panBeam1", (float)panBeam1Knob.getValue());
+//    }else if(slider == &panBeam2Knob){
+//        if (connected) sendOscMessage("panBeam2", (float)panBeam2Knob.getValue());
+//    }else if(slider == &levelBeam1Knob){
+//        if (connected) sendOscMessage("levelBeam1", (float)levelBeam1Knob.getValue());
+//    }else if(slider == &levelBeam2Knob){
+//        if (connected) sendOscMessage("levelBeam2", (float)levelBeam2Knob.getValue());
+//    }else if(slider == &hpfSlider){
+//        if (connected) sendOscMessage("hpf", (float)hpfSlider.getValue());
+//    }else if(slider == &gainSlider){
+//        if (connected) sendOscMessage("gainMic", (float)gainSlider.getValue());
+//    }
+//}
 
 void MainComponent::buttonClicked (Button* button){
     if (button == &oscConnectButton){
@@ -669,26 +655,6 @@ void MainComponent::buttonClicked (Button* button){
             oscConnect();
         }
     }
-}
-
-void MainComponent::buttonStateChanged(Button * button){
-    if (button == &frontToggle){
-        frontFacing = frontToggle.getToggleState();
-//        scene.resized();
-        if (connected)
-            sendOscMessage("frontFacing", (bool)frontFacing);
-    } else if (button == &muteBeam1Button){
-        mute[0] = muteBeam1Button.getToggleState();
-//        scene.resized();
-        if (connected)
-            sendOscMessage("muteBeam1", (bool)mute[0]);
-    } else if (button == &muteBeam2Button){
-        mute[1] = muteBeam2Button.getToggleState();
-//        scene.resized();
-        if (connected)
-            sendOscMessage("muteBeam2", (bool)mute[1]);
-    }
-    
 }
 
 void MainComponent::comboBoxChanged(ComboBox * comboBox){
@@ -746,7 +712,7 @@ void MainComponent::oscDisconnect(){
                 inputMeter.reset();
                 beam1Meter.reset();
                 beam2Meter.reset();
-                energy.setConstant(-100);
+//                energy.setConstant(-100);
                 cpuLoad.setLoad(0);
             }else{
                 showConnectionErrorMessage ("Error: could not remove sender");

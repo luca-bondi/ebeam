@@ -20,10 +20,8 @@
  */
 class MainComponent  :
 public Component,
-//private OSCReceiver::Listener<OSCReceiver::MessageLoopCallback>,
 private ValueTree::Listener,
-//private Timer,
-private Slider::Listener,
+//private Slider::Listener,
 private Button::Listener,
 private ComboBox::Listener
 //private SceneComp::Callback
@@ -84,13 +82,14 @@ private:
     
     //==============================================================================
     /** Swap side toggle component */
-    Label frontToggleLabel;
-    ToggleButton frontToggle;
+    Identifier frontIdentifier = Identifier("frontFacing");
+    FrontToggle frontToggle;
     
     //==============================================================================
     /** Configuration selection combo */
     Identifier configIdentifier = Identifier("config");
     ConfigComboBox configComboBox;
+    
     
     //==============================================================================
     /* Layout functions */
@@ -99,15 +98,6 @@ private:
     //==============================================================================
     const std::vector<Colour> beamColours = {Colours::orangered, Colours::royalblue};
     
-    //==============================================================================
-    /** State variables */
-    std::atomic<float> frontFacing;
-    std::atomic<float> mute[NUM_BEAMS];
-    std::atomic<float> width[NUM_BEAMS];
-    std::atomic<float> steerX[NUM_BEAMS];
-    std::atomic<float> steerY[NUM_BEAMS];
-    
-    Mtx energy;
     
     //==============================================================================
     /** OSC */
@@ -149,10 +139,8 @@ private:
     //==============================================================================
     /* Listeners and callbacks */
     
-    void sliderValueChanged(Slider *) override;
-    
+//    void sliderValueChanged(Slider *) override;
     void buttonClicked (Button*) override;
-    void buttonStateChanged(Button *) override;
     
     void comboBoxChanged(ComboBox *) override;
 //    
