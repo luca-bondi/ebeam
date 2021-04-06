@@ -534,9 +534,6 @@
       <FILE id="XPlFG5" name="MultiChannelLedBar.h" compile="0" resource="0"
             file="Source/MultiChannelLedBar.h"/>
       <FILE id="sDjmb4" name="MuteButton.h" compile="0" resource="0" file="Source/MuteButton.h"/>
-      <FILE id="WFMTRL" name="FrequencySlider.h" compile="0" resource="0"
-            file="Source/FrequencySlider.h"/>
-      <FILE id="dalVnQ" name="DecibelSlider.h" compile="0" resource="0" file="Source/DecibelSlider.h"/>
       <FILE id="vUlf1x" name="PanSlider.h" compile="0" resource="0" file="Source/PanSlider.h"/>
       <FILE id="ZY5Pze" name="ebeamerDefs.h" compile="0" resource="0" file="Source/ebeamerDefs.h"/>
       <FILE id="E9475a" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>

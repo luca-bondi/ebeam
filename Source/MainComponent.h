@@ -3,8 +3,6 @@
 #include <JuceHeader.h>
 #include "ebeamerDefs.h"
 #include "PanSlider.h"
-#include "FrequencySlider.h"
-#include "DecibelSlider.h"
 #include "MuteButton.h"
 #include "SingleChannelLedBar.h"
 #include "MultiChannelLedBar.h"
@@ -70,8 +68,8 @@ private:
     HpfSlider hpfSlider;
     
     //==============================================================================
-    Label gainLabel;
-    DecibelSlider gainSlider;
+    const Identifier gainIdentifier = Identifier("gainMic");
+    GainSlider gainSlider;
     
     //==============================================================================
     /** CPU load component */

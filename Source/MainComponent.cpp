@@ -46,6 +46,9 @@ MainComponent::MainComponent()
     valueTreeSession.setProperty(hpfIdentifier,20,nullptr);
     oscController.registerIdentifier(hpfIdentifier);
     
+    valueTreeSession.setProperty(gainIdentifier,20,nullptr);
+    oscController.registerIdentifier(gainIdentifier);
+    
     //==============================================================================
     setSize(GUI_WIDTH, GUI_HEIGHT);
     
@@ -223,16 +226,8 @@ MainComponent::MainComponent()
     addAndMakeVisible(inputMeter);
     
     //==============================================================================
-    
-    gainLabel.setText("GAIN", NotificationType::dontSendNotification);
-    gainLabel.setJustificationType(Justification::left);
-    gainLabel.attachToComponent(&gainSlider, true);
-    
-    gainSlider.setSliderStyle(Slider::LinearHorizontal);
-    gainSlider.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
-    gainSlider.setRange(0,40,0.1);
-//    gainSlider.addListener(this);
-    gainSlider.setTextBoxIsEditable(false);
+    // Gain
+    gainSlider.init(valueTreeSession.getPropertyAsValue(gainIdentifier, nullptr));
     addAndMakeVisible(gainSlider);
     
     //=====================================================
@@ -428,7 +423,7 @@ void MainComponent::resized()
         inputMeter.setBounds(area.removeFromTop(LED_SIZE).withTrimmedLeft(LABEL_WIDTH).withTrimmedRight(LABEL_WIDTH));
         
         /* Gain slider */
-        gainSlider.setBounds(area.removeFromTop(horSliderHeight).withTrimmedLeft(LABEL_WIDTH));
+        gainSlider.setBounds(area.removeFromTop(horSliderHeight));
         
 
     }else{
@@ -478,10 +473,10 @@ void MainComponent::resized()
         /* HPF slider */
         area.removeFromBottom(MEDIUM_MARGIN);
         auto inputSlidersArea = area.removeFromBottom(HOR_SLIDER_HEIGHT);
-        hpfSlider.setBounds(inputSlidersArea.removeFromLeft(inputSlidersArea.getWidth()/2).withTrimmedLeft(LABEL_WIDTH).withTrimmedRight(MEDIUM_MARGIN));
+        hpfSlider.setBounds(inputSlidersArea.removeFromLeft(inputSlidersArea.getWidth()/2).withTrimmedRight(MEDIUM_MARGIN));
         
         /* Gain slider */
-        gainSlider.setBounds(inputSlidersArea.withTrimmedLeft(LABEL_WIDTH).withTrimmedRight(MEDIUM_MARGIN));
+        gainSlider.setBounds(inputSlidersArea.withTrimmedRight(MEDIUM_MARGIN));
         
         /* Dynamic geometry section */
         const int availableHeight = area.getHeight();
