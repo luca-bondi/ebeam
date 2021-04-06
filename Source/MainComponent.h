@@ -20,10 +20,8 @@
 class MainComponent  :
 public Component,
 private ValueTree::Listener,
-//private Slider::Listener,
 private Button::Listener,
 private ComboBox::Listener
-//private SceneComp::Callback
 {
 public:
     //==============================================================================
@@ -68,8 +66,8 @@ private:
     SingleChannelLedBar beam1Meter, beam2Meter;
     
     //==============================================================================
-    Label hpfLabel;
-    FrequencySlider hpfSlider;
+    const Identifier hpfIdentifier = Identifier("hpf");
+    HpfSlider hpfSlider;
     
     //==============================================================================
     Label gainLabel;
@@ -77,17 +75,17 @@ private:
     
     //==============================================================================
     /** CPU load component */
-    Identifier cpuIdentifier = Identifier("cpuLoad");
+    const Identifier cpuIdentifier = Identifier("cpuLoad");
     CpuLoad cpuLoad;
     
     //==============================================================================
     /** Swap side toggle component */
-    Identifier frontIdentifier = Identifier("frontFacing");
+    const Identifier frontIdentifier = Identifier("frontFacing");
     FrontToggle frontToggle;
     
     //==============================================================================
     /** Configuration selection combo */
-    Identifier configIdentifier = Identifier("config");
+    const Identifier configIdentifier = Identifier("config");
     ConfigComboBox configComboBox;
     
     
@@ -102,24 +100,17 @@ private:
     //==============================================================================
     /** OSC */
     
+    const float oscPollingFreq = 10;
+    
+    bool connected;
     OSCController oscController;
     
     const Identifier serversIdentifier = Identifier("servers");
     std::map<int,Server> servers;
     
-    //TODO: move to OSCController
-    OSCSender sender;
-    OSCReceiver receiver;
-    DatagramSocket socket;
-    
     Value serverIp;
     Value serverPort;
-    
-    bool connected = false;
-    
-    /** Local IP */
-    IPAddress localIp;
-    
+        
     ComboBox oscIp;
     Label oscIpLabel;
     
@@ -128,10 +119,6 @@ private:
     
     TextButton oscConnectButton;
     ActivityLed oscStatus;
-    
-    void sendOscMessage(const String& path, float value);
-    void sendOscMessage(const String& path, bool value);
-    void sendOscMessage(const String& path, MicConfig value);
     
     void oscConnect();
     void oscDisconnect();
@@ -150,30 +137,6 @@ private:
     
     void showConnectionErrorMessage (const String&);
     
-//    const std::atomic<float> *getConfigParam() const override{
-//        return &config;
-//    }
-//    const std::atomic<float> *getFrontFacingParam() const override{
-//        return &frontFacing;
-//    }
-//    const std::atomic<float> *getBeamMute(int idx) const override{
-//        return &(mute[idx]);
-//    }
-//    const std::atomic<float> *getBeamWidth(int idx) const override{
-//        return &(width[idx]);
-//    }
-//    const std::atomic<float> *getBeamSteerX(int idx) const override{
-//        return &(steerX[idx]);
-//    }
-//    const std::atomic<float> *getBeamSteerY(int idx) const override{
-//        return &(steerY[idx]);
-//    }
-//    void setBeamSteerX(int idx, float newVal) override;
-//    void setBeamSteerY(int idx, float newVal) override;
-//
-//    void getDoaEnergy(Mtx &en) const override{
-//        en = energy;
-//    }
     
     //==============================================================================
     /* ValueTree */
@@ -184,6 +147,7 @@ private:
     
     Identifier serverIpIdentifier = Identifier("serverIp");
     Identifier serverPortIdentifier = Identifier("serverPort");
+    
     
     void valueTreePropertyChanged (ValueTree& treeWhosePropertyHasChanged,
                                            const Identifier& property) override;

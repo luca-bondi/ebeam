@@ -40,9 +40,6 @@
 
 #define LED_SIZE 5
 
-#define CPULOAD_WIDTH 120
-#define CPULOAD_UPDATE_FREQ 10 //Hz
-
 #define OSC_IP_LABEL_WIDTH 30
 #define OSC_IP_WIDTH 150
 
@@ -54,21 +51,8 @@
 
 #define OSC_LED_MARGIN_LEFT 10
 
-#define FRONT_TOGGLE_LABEL_WIDTH 80
-#define FRONT_TOGGLE_WIDTH 25
-
-#define CONFIG_COMBO_LABEL_WIDTH 25
-#define CONFIG_COMBO_WIDTH 105
-
 #define CONTROLS_HEIGHT 30
 
-/** OSC timeout [s] */
-#define OSC_TIMEOUT 5
-
-/** OSC polling interval [Hz] */
-#define OSC_POLLING_FREQ 10
-
-#define OSC_BORADCAST_PORT 9011
 
 /* Colors */
 

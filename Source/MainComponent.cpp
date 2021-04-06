@@ -40,8 +40,11 @@ MainComponent::MainComponent()
     valueTreeSession.setProperty(frontIdentifier,false,nullptr);
     oscController.registerIdentifier(frontIdentifier);
     
-    valueTreeSession.setProperty(cpuIdentifier,false,nullptr);
+    valueTreeSession.setProperty(cpuIdentifier,0,nullptr);
     oscController.registerIdentifier(cpuIdentifier);
+    
+    valueTreeSession.setProperty(hpfIdentifier,20,nullptr);
+    oscController.registerIdentifier(hpfIdentifier);
     
     //==============================================================================
     setSize(GUI_WIDTH, GUI_HEIGHT);
@@ -212,15 +215,7 @@ MainComponent::MainComponent()
     
     //==============================================================================
     
-    hpfLabel.setText("HPF", NotificationType::dontSendNotification);
-    hpfLabel.setJustificationType(Justification::left);
-    hpfLabel.attachToComponent(&hpfSlider, true);
-    
-    hpfSlider.setSliderStyle(Slider::LinearHorizontal);
-    hpfSlider.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
-    hpfSlider.setRange(20,500,1);
-//    hpfSlider.addListener(this);
-    hpfSlider.setTextBoxIsEditable(false);
+    hpfSlider.init(valueTreeSession.getPropertyAsValue(hpfIdentifier, nullptr));
     addAndMakeVisible(hpfSlider);
     
     //==============================================================================
@@ -427,7 +422,7 @@ void MainComponent::resized()
         
         /* HPF slider */
         area.removeFromTop(largeMargin);
-        hpfSlider.setBounds(area.removeFromTop(horSliderHeight).withTrimmedLeft(LABEL_WIDTH));
+        hpfSlider.setBounds(area.removeFromTop(horSliderHeight));
 
         /* Input LED */
         inputMeter.setBounds(area.removeFromTop(LED_SIZE).withTrimmedLeft(LABEL_WIDTH).withTrimmedRight(LABEL_WIDTH));
@@ -694,7 +689,7 @@ void MainComponent::oscConnect(){
         oscStatus.setColours(Colours::green,Colours::grey);
         
         /* Start polling */
-        oscController.startPolling(srv, OSC_POLLING_FREQ);
+        oscController.startPolling(srv, oscPollingFreq);
 
     }else{
         std::ostringstream errMsg;
@@ -840,41 +835,41 @@ void MainComponent::showConnectionErrorMessage (const String& messageText){
 //    sendOscMessage(String("steerBeamY") + String(idx+1),newVal);
 //}
 
-void MainComponent::sendOscMessage(const String& tag, float value){
-    auto address = "/ebeamer/" + tag;
-    if (connected){
-        OSCMessage msg(address);
-        msg.addFloat32(value);
-        sender.send(msg);
-    }
-    // Toggle status even if not connect, to show that something should have happened
-    oscStatus.toggle();
-    
-}
-
-void MainComponent::sendOscMessage(const String& tag, bool value){
-    auto address = "/ebeamer/" + tag;
-    if (connected){
-        OSCMessage msg(address);
-        msg.addInt32(value);
-        sender.send(msg);
-    }
-    // Toggle status even if not connect, to show that something should have happened
-    oscStatus.toggle();
-    
-}
-
-void MainComponent::sendOscMessage(const String& tag, MicConfig value){
-    auto address = "/ebeamer/" + tag;
-    if (connected){
-        OSCMessage msg(address);
-        msg.addInt32(value);
-        sender.send(msg);
-    }
-    // Toggle status even if not connect, to show that something should have happened
-    oscStatus.toggle();
-    
-}
+//void MainComponent::sendOscMessage(const String& tag, float value){
+//    auto address = "/ebeamer/" + tag;
+//    if (connected){
+//        OSCMessage msg(address);
+//        msg.addFloat32(value);
+//        sender.send(msg);
+//    }
+//    // Toggle status even if not connect, to show that something should have happened
+//    oscStatus.toggle();
+//
+//}
+//
+//void MainComponent::sendOscMessage(const String& tag, bool value){
+//    auto address = "/ebeamer/" + tag;
+//    if (connected){
+//        OSCMessage msg(address);
+//        msg.addInt32(value);
+//        sender.send(msg);
+//    }
+//    // Toggle status even if not connect, to show that something should have happened
+//    oscStatus.toggle();
+//
+//}
+//
+//void MainComponent::sendOscMessage(const String& tag, MicConfig value){
+//    auto address = "/ebeamer/" + tag;
+//    if (connected){
+//        OSCMessage msg(address);
+//        msg.addInt32(value);
+//        sender.send(msg);
+//    }
+//    // Toggle status even if not connect, to show that something should have happened
+//    oscStatus.toggle();
+//
+//}
 
 void MainComponent::valueTreePropertyChanged (ValueTree& vt,
                                const Identifier& property){
