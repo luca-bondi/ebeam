@@ -40,6 +40,9 @@ MainComponent::MainComponent()
     valueTreeSession.setProperty(frontIdentifier,false,nullptr);
     oscController.registerIdentifier(frontIdentifier);
     
+    valueTreeSession.setProperty(cpuIdentifier,false,nullptr);
+    oscController.registerIdentifier(cpuIdentifier);
+    
     //==============================================================================
     setSize(GUI_WIDTH, GUI_HEIGHT);
     
@@ -239,6 +242,7 @@ MainComponent::MainComponent()
     
     //=====================================================
     // Add CPU Load
+    cpuLoad.init(valueTreeSession.getPropertyAsValue(cpuIdentifier, nullptr));
     addAndMakeVisible(cpuLoad);
     
     //=====================================================
@@ -566,7 +570,7 @@ void MainComponent::layoutConfigOsc(Rectangle<int>& area){
     
     Rectangle<int> oscArea,setupArea;
     const int oscWidth = OSC_IP_LABEL_WIDTH+OSC_IP_WIDTH+OSC_PORT_LABEL_WIDTH+OSC_PORT_WIDTH+OSC_CONNECT_MARGIN_LEFT+OSC_CONNECT_WIDTH+OSC_LED_MARGIN_LEFT+LED_SIZE;
-    const int configWidth = CPULOAD_WIDTH+MEDIUM_MARGIN+configComboBox.getMinWidth()+MEDIUM_MARGIN+frontToggle.getMinWidth();
+    const int configWidth = cpuLoad.getMinWidth()+MEDIUM_MARGIN+configComboBox.getMinWidth()+MEDIUM_MARGIN+frontToggle.getMinWidth();
     auto remainingWidth = area.getWidth() - (oscWidth+configWidth+SMALL_MARGIN);
     if (remainingWidth >= 0){
         auto oscControlArea = area.removeFromTop(CONTROLS_HEIGHT);
@@ -593,7 +597,7 @@ void MainComponent::layoutConfigOsc(Rectangle<int>& area){
     oscStatus.setBounds(oscArea.removeFromLeft(LED_SIZE));
     
     /* Set area for CPU Load */
-    cpuLoad.setBounds(setupArea.removeFromLeft(CPULOAD_WIDTH));
+    cpuLoad.setBounds(setupArea.removeFromLeft(cpuLoad.getMinWidth()));
     
     /* Set area for config combo */
     setupArea.removeFromLeft(MEDIUM_MARGIN);
@@ -713,7 +717,7 @@ void MainComponent::oscDisconnect(){
                 beam1Meter.reset();
                 beam2Meter.reset();
 //                energy.setConstant(-100);
-                cpuLoad.setLoad(0);
+                valueTreeSession.setProperty(cpuIdentifier, 0, nullptr);
             }else{
                 showConnectionErrorMessage ("Error: could not remove sender");
             }

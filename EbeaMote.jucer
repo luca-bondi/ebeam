@@ -533,8 +533,6 @@
             file="Source/MultiChannelLedBar.cpp"/>
       <FILE id="XPlFG5" name="MultiChannelLedBar.h" compile="0" resource="0"
             file="Source/MultiChannelLedBar.h"/>
-      <FILE id="XNEX1G" name="CpuLoadComp.cpp" compile="1" resource="0" file="Source/CpuLoadComp.cpp"/>
-      <FILE id="IRe9Wg" name="CpuLoadComp.h" compile="0" resource="0" file="Source/CpuLoadComp.h"/>
       <FILE id="sDjmb4" name="MuteButton.h" compile="0" resource="0" file="Source/MuteButton.h"/>
       <FILE id="WFMTRL" name="FrequencySlider.h" compile="0" resource="0"
             file="Source/FrequencySlider.h"/>

@@ -6,7 +6,6 @@
 #include "FrequencySlider.h"
 #include "DecibelSlider.h"
 #include "MuteButton.h"
-#include "CpuLoadComp.h"
 #include "SingleChannelLedBar.h"
 #include "MultiChannelLedBar.h"
 #include "SceneComp.h"
@@ -78,7 +77,8 @@ private:
     
     //==============================================================================
     /** CPU load component */
-    CpuLoadComp cpuLoad;
+    Identifier cpuIdentifier = Identifier("cpuLoad");
+    CpuLoad cpuLoad;
     
     //==============================================================================
     /** Swap side toggle component */
