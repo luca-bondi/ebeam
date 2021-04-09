@@ -48,6 +48,54 @@ MainComponent::MainComponent()
     
     valueTreeSession.setProperty(gainIdentifier,20,nullptr);
     oscController.registerIdentifier(gainIdentifier);
+
+    
+    valueTreeSession.setProperty(steerX1Identifier,-0.2,nullptr);
+    oscController.registerIdentifier(steerX1Identifier);
+    
+    valueTreeSession.setProperty(steerX2Identifier,0.2,nullptr);
+    oscController.registerIdentifier(steerX2Identifier);
+    
+    valueTreeSession.setProperty(steerY1Identifier,-0.2,nullptr);
+    oscController.registerIdentifier(steerY1Identifier);
+    
+    valueTreeSession.setProperty(steerY2Identifier,0.2,nullptr);
+    oscController.registerIdentifier(steerY2Identifier);
+    
+    valueTreeSession.setProperty(width1Identifier,0.2,nullptr);
+    oscController.registerIdentifier(width1Identifier);
+    
+    valueTreeSession.setProperty(width2Identifier,0.4,nullptr);
+    oscController.registerIdentifier(width2Identifier);
+    
+    valueTreeSession.setProperty(pan1Identifier,-0.5,nullptr);
+    oscController.registerIdentifier(pan1Identifier);
+    
+    valueTreeSession.setProperty(pan2Identifier,0.5,nullptr);
+    oscController.registerIdentifier(pan2Identifier);
+    
+    valueTreeSession.setProperty(level1Identifier,-4,nullptr);
+    oscController.registerIdentifier(level1Identifier);
+    
+    valueTreeSession.setProperty(level2Identifier,4,nullptr);
+    oscController.registerIdentifier(level2Identifier);
+    
+    valueTreeSession.setProperty(mute1Identifier,false,nullptr);
+    oscController.registerIdentifier(mute1Identifier);
+    
+    valueTreeSession.setProperty(mute2Identifier,true,nullptr);
+    oscController.registerIdentifier(mute2Identifier);
+    
+//    TODO: figure how to use MemoryBlock/ReferenceCountedObject
+//    valueTreeSession.setProperty(inMetersIdentifier,inMetersMemBlock,nullptr);
+    oscController.registerIdentifier(inMetersIdentifier);
+    
+//    valueTreeSession.setProperty(outMetersIdentifier,Array<double>(0,0),nullptr);
+    oscController.registerIdentifier(outMetersIdentifier);
+    
+//    valueTreeSession.setProperty(energyIdentifier,Array<double>(0,0,0,0,0,0,0,0),nullptr);
+    oscController.registerIdentifier(energyIdentifier);
+    
     
     //==============================================================================
     setSize(GUI_WIDTH, GUI_HEIGHT);
@@ -163,32 +211,14 @@ MainComponent::MainComponent()
     
     //==============================================================================
     levelLabel.setText("LEVEL", NotificationType::dontSendNotification);
-    levelLabel1.setText("LEVEL", NotificationType::dontSendNotification);
-    levelLabel2.setText("LEVEL", NotificationType::dontSendNotification);
     levelLabel.setJustificationType(Justification::centred);
-    levelLabel1.setJustificationType(Justification::left);
-    levelLabel2.setJustificationType(Justification::left);
-    levelLabel1.attachToComponent(&levelBeam1Knob, true);
-    levelLabel2.attachToComponent(&levelBeam2Knob, true);
     addAndMakeVisible(levelLabel);
-    addAndMakeVisible(levelLabel1);
-    addAndMakeVisible(levelLabel2);
     
-    levelBeam1Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    levelBeam1Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
-    levelBeam1Knob.setColour(Slider::thumbColourId, beamColours[0]);
-    levelBeam1Knob.setRange(-10,10,0.1);
-    levelBeam1Knob.setTextBoxIsEditable(false);
-//    levelBeam1Knob.addListener(this);
+    levelBeam1Knob.init(valueTreeSession.getPropertyAsValue(level1Identifier, nullptr),controlTextBoxEditable);
+    levelBeam2Knob.init(valueTreeSession.getPropertyAsValue(level2Identifier, nullptr),controlTextBoxEditable);
+    
     addAndMakeVisible(levelBeam1Knob);
-    
-    levelBeam2Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    levelBeam2Knob.setColour(Slider::thumbColourId, beamColours[1]);
-    levelBeam2Knob.setRange(-10,10,0.1);
-    levelBeam2Knob.setTextBoxIsEditable(false);
-//    levelBeam2Knob.addListener(this);
     addAndMakeVisible(levelBeam2Knob);
-    
     
     //==============================================================================
     muteLabel.setText("MUTE", NotificationType::dontSendNotification);
@@ -311,11 +341,13 @@ void MainComponent::resized()
         /* Landscape-only labels */
         widthLabel1.setVisible(false);
         panLabel1.setVisible(false);
-        levelLabel1.setVisible(false);
+        levelBeam1Knob.setLabelVisible(false);
+        levelBeam1Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
         muteLabel1.setVisible(false);
         widthLabel2.setVisible(false);
         panLabel2.setVisible(false);
-        levelLabel2.setVisible(false);
+        levelBeam2Knob.setLabelVisible(false);
+        levelBeam2Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxLeft);
         muteLabel2.setVisible(false);
         
         /* Portrait-only labels */
@@ -361,6 +393,8 @@ void MainComponent::resized()
         const int muteSize = MUTE_SIZE + knobMuteTotalIncrease/4;
         const int horSliderHeight = HOR_SLIDER_HEIGHT + horSliderTotalIncrease/4;
         
+        const int controlsSideMargin = area.getWidth()*0.03;
+        
         /* Allocate elements from top to bottom */
         
         /* Horizontal steering */
@@ -395,17 +429,13 @@ void MainComponent::resized()
         
         /* Levels and meters */
         area.removeFromTop(mediumMargin);
-        auto levelsArea = area.removeFromTop(knobSize);
+        auto levelsArea = area.removeFromTop(knobSize).withTrimmedLeft(controlsSideMargin).withTrimmedRight(controlsSideMargin);
         auto level1Area = levelsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
         auto level2Area = levelsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
-        levelBeam1Knob.setBounds(level1Area);
-        levelBeam2Knob.setTextBoxStyle(Slider::TextBoxLeft, false, LABEL_WIDTH, LABEL_HEIGHT);
-        levelBeam2Knob.setTextBoxIsEditable(false);
-        levelBeam2Knob.setBounds(level2Area);
-        level1Area.removeFromRight(LABEL_WIDTH+2*LARGE_MARGIN);
-        level2Area.removeFromLeft(LABEL_WIDTH+2*LARGE_MARGIN);
-        beam1Meter.setBounds(level1Area.removeFromRight(LED_SIZE));
-        beam2Meter.setBounds(level2Area.removeFromLeft(LED_SIZE));
+        levelBeam1Knob.setBounds(level1Area.removeFromLeft(levelBeam1Knob.getMinWidth()));
+        levelBeam2Knob.setBounds(level2Area.removeFromRight(levelBeam2Knob.getMinWidth()));
+        beam1Meter.setBounds(level1Area.withSizeKeepingCentre(LED_SIZE, level1Area.getHeight()));
+        beam2Meter.setBounds(level2Area.withSizeKeepingCentre(LED_SIZE, level2Area.getHeight()));
         levelLabel.setBounds(levelsArea);
         
         /* Mutes */
@@ -431,11 +461,13 @@ void MainComponent::resized()
         /* Landscape-only labels */
         widthLabel1.setVisible(true);
         panLabel1.setVisible(true);
-        levelLabel1.setVisible(true);
+        levelBeam1Knob.setLabelVisible(true);
+        levelBeam1Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
         muteLabel1.setVisible(true);
         widthLabel2.setVisible(true);
         panLabel2.setVisible(true);
-        levelLabel2.setVisible(true);
+        levelBeam2Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
+        levelBeam2Knob.setLabelVisible(true);
         muteLabel2.setVisible(true);
         
         /* Portrait-only labels */
@@ -519,7 +551,7 @@ void MainComponent::resized()
         beam1Meter.setBounds(levelMuteArea1.removeFromLeft(LED_SIZE));
         levelMuteArea1.removeFromLeft(LARGE_MARGIN);
         
-        levelBeam1Knob.setBounds(levelMuteArea1.withTrimmedLeft(LABEL_WIDTH));
+        levelBeam1Knob.setBounds(levelMuteArea1);
         
         /* Beam 2 */
         
@@ -546,9 +578,7 @@ void MainComponent::resized()
         beam2Meter.setBounds(levelMuteArea2.removeFromLeft(LED_SIZE));
         levelMuteArea2.removeFromLeft(LARGE_MARGIN);
         
-        levelBeam2Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
-        levelBeam2Knob.setTextBoxIsEditable(false);
-        levelBeam2Knob.setBounds(levelMuteArea2.withTrimmedLeft(LABEL_WIDTH));
+        levelBeam2Knob.setBounds(levelMuteArea2);
         
         
     }

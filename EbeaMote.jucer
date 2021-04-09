@@ -565,7 +565,8 @@
         <MODULEPATH id="ebeamer_common" path="../../juce_modules"/>
       </MODULEPATHS>
     </XCODE_IPHONE>
-    <XCODE_MAC targetFolder="Builds/MacOSX" iosDevelopmentTeamID="955EYEC7K8">
+    <XCODE_MAC targetFolder="Builds/MacOSX" iosDevelopmentTeamID="955EYEC7K8"
+               smallIcon="rvwEOW" bigIcon="rvwEOW">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug"/>
         <CONFIGURATION isDebug="0" name="Release"/>

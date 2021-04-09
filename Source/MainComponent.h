@@ -35,32 +35,47 @@ private:
     String appVersion;
     
     //==============================================================================
+    const Identifier energyIdentifier = Identifier("doaEnergy");
 //    SceneComp scene;
     
     //==============================================================================
     Label steerLabel;
     Label steerBeam1Label, steerBeam2Label;
+    const Identifier steerX1Identifier = Identifier("steerBeamX1");
+    const Identifier steerX2Identifier = Identifier("steerBeamX2");
+    const Identifier steerY1Identifier = Identifier("steerBeamY1");
+    const Identifier steerY2Identifier = Identifier("steerBeamY2");
     Slider steerBeamX1Slider, steerBeamX2Slider;
     Slider steerBeamY1Slider, steerBeamY2Slider;
     
     //==============================================================================
     Label widthLabel1,widthLabel2,widthLabel;
+    const Identifier width1Identifier = Identifier("widthBeam1");
+    const Identifier width2Identifier = Identifier("widthBeam2");
     Slider widthBeam1Knob, widthBeam2Knob;
     
     //==============================================================================
     Label panLabel1,panLabel2,panLabel;
+    const Identifier pan1Identifier = Identifier("panBeam1");
+    const Identifier pan2Identifier = Identifier("panBeam2");
     PanSlider panBeam1Knob, panBeam2Knob;
     
     //==============================================================================
-    Label levelLabel1,levelLabel2,levelLabel;
-    DecibelSlider levelBeam1Knob, levelBeam2Knob;
+    Label levelLabel;
+    const Identifier level1Identifier = Identifier("levelBeam1");
+    const Identifier level2Identifier = Identifier("levelBeam2");
+    LevelSlider levelBeam1Knob, levelBeam2Knob;
     
     //==============================================================================
     Label muteLabel1,muteLabel2,muteLabel;
+    const Identifier mute1Identifier = Identifier("muteBeam1");
+    const Identifier mute2Identifier = Identifier("muteBeam2");
     MuteButton muteBeam1Button, muteBeam2Button;
     
     //==============================================================================
+    const Identifier inMetersIdentifier = Identifier("inMeters");
     MultiChannelLedBar inputMeter;
+    const Identifier outMetersIdentifier = Identifier("outMeters");
     SingleChannelLedBar beam1Meter, beam2Meter;
     
     //==============================================================================
@@ -94,6 +109,11 @@ private:
     //==============================================================================
     const std::vector<Colour> beamColours = {Colours::orangered, Colours::royalblue};
     
+#ifdef TARGET_OS_IOS
+    const bool controlTextBoxEditable = false;
+#else
+    const bool controlTextBoxEditable = true;
+#endif
     
     //==============================================================================
     /** OSC */
