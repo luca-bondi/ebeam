@@ -48,7 +48,6 @@ MainComponent::MainComponent()
     
     valueTreeSession.setProperty(gainIdentifier,20,nullptr);
     oscController.registerIdentifier(gainIdentifier);
-
     
     valueTreeSession.setProperty(steerX1Identifier,-0.2,nullptr);
     oscController.registerIdentifier(steerX1Identifier);
@@ -110,103 +109,37 @@ MainComponent::MainComponent()
     steerLabel.setJustificationType(Justification::centred);
     addAndMakeVisible(steerLabel);
     
-    steerBeam1Label.setJustificationType(Justification::left);
-    steerBeam1Label.attachToComponent(&steerBeamX1Slider, true);
-    addAndMakeVisible(steerBeam1Label);
-    
-    steerBeam2Label.setJustificationType(Justification::left);
-    steerBeam2Label.attachToComponent(&steerBeamX2Slider, true);
-    addAndMakeVisible(steerBeam2Label);
-    
-    steerBeamX1Slider.setSliderStyle(Slider::LinearHorizontal);
-    steerBeamX1Slider.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
-    steerBeamX1Slider.setColour(Slider::thumbColourId, beamColours[0]);
-    steerBeamX1Slider.setRange(-1,1,0.01);
-    steerBeamX1Slider.setTextBoxIsEditable(false);
-    steerBeamX1Slider.setValue(-0.5);
-//    steerBeamX1Slider.addListener(this);
+    steerBeamX1Slider.init(valueTreeSession.getPropertyAsValue(steerX1Identifier, nullptr),beamColours[0],controlTextBoxEditable,false);
+    steerBeamX2Slider.init(valueTreeSession.getPropertyAsValue(steerX2Identifier, nullptr),beamColours[1],controlTextBoxEditable,false);
     addAndMakeVisible(steerBeamX1Slider);
-    
-    steerBeamX2Slider.setSliderStyle(Slider::LinearHorizontal);
-    steerBeamX2Slider.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
-    steerBeamX2Slider.setColour(Slider::thumbColourId, beamColours[1]);
-    steerBeamX2Slider.setRange(-1,1,0.01);
-    steerBeamX2Slider.setTextBoxIsEditable(false);
-    steerBeamX2Slider.setValue(0.5);
-//    steerBeamX2Slider.addListener(this);
     addAndMakeVisible(steerBeamX2Slider);
     
-    steerBeamY1Slider.setSliderStyle(Slider::LinearVertical);
-    steerBeamY1Slider.setTextBoxStyle(Slider::TextBoxAbove, false, LABEL_WIDTH, LABEL_HEIGHT);
-    steerBeamY1Slider.setColour(Slider::thumbColourId, beamColours[0]);
-    steerBeamY1Slider.setRange(-1,1,0.01);
-    steerBeamY1Slider.setTextBoxIsEditable(false);
-//    steerBeamY1Slider.addListener(this);
+    steerBeamY1Slider.init(valueTreeSession.getPropertyAsValue(steerY1Identifier, nullptr),beamColours[0],controlTextBoxEditable,true);
+    steerBeamY2Slider.init(valueTreeSession.getPropertyAsValue(steerY2Identifier, nullptr),beamColours[1],controlTextBoxEditable,true);
+    steerBeamY1Slider.setLabelVisible(false);
+    steerBeamY2Slider.setLabelVisible(false);
     addAndMakeVisible(steerBeamY1Slider);
-    
-    steerBeamY2Slider.setSliderStyle(Slider::LinearVertical);
-    steerBeamY2Slider.setTextBoxStyle(Slider::TextBoxAbove, false, LABEL_WIDTH, LABEL_HEIGHT);
-    steerBeamY2Slider.setColour(Slider::thumbColourId, beamColours[1]);
-    steerBeamY2Slider.setRange(-1,1,0.01);
-    steerBeamY2Slider.setTextBoxIsEditable(false);
-//    steerBeamY2Slider.addListener(this);
     addAndMakeVisible(steerBeamY2Slider);
     
     //==============================================================================
     widthLabel.setText("WIDTH", NotificationType::dontSendNotification);
-    widthLabel1.setText("WIDTH", NotificationType::dontSendNotification);
-    widthLabel2.setText("WIDTH", NotificationType::dontSendNotification);
     widthLabel.setJustificationType(Justification::centred);
-    widthLabel1.setJustificationType(Justification::left);
-    widthLabel2.setJustificationType(Justification::left);
-    widthLabel1.attachToComponent(&widthBeam1Knob, true);
-    widthLabel2.attachToComponent(&widthBeam2Knob, true);
     addAndMakeVisible(widthLabel);
-    addAndMakeVisible(widthLabel1);
-    addAndMakeVisible(widthLabel2);
-    
-    widthBeam1Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    widthBeam1Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
-    widthBeam1Knob.setColour(Slider::thumbColourId, beamColours[0]);
-    widthBeam1Knob.setRange(0,1,0.01);
-    widthBeam1Knob.setTextBoxIsEditable(false);
-//    widthBeam1Knob.addListener(this);
+
+    widthBeam1Knob.init(valueTreeSession.getPropertyAsValue(width1Identifier, nullptr),beamColours[0],controlTextBoxEditable);
+    widthBeam2Knob.init(valueTreeSession.getPropertyAsValue(width2Identifier, nullptr),beamColours[1],controlTextBoxEditable);
     addAndMakeVisible(widthBeam1Knob);
-    
-    widthBeam2Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    widthBeam2Knob.setColour(Slider::thumbColourId, beamColours[1]);
-    widthBeam2Knob.setRange(0,1,0.01);
-    widthBeam2Knob.setTextBoxIsEditable(false);
-//    widthBeam2Knob.addListener(this);
     addAndMakeVisible(widthBeam2Knob);
-    
     
     //==============================================================================
     panLabel.setText("PAN", NotificationType::dontSendNotification);
-    panLabel1.setText("PAN", NotificationType::dontSendNotification);
-    panLabel2.setText("PAN", NotificationType::dontSendNotification);
     panLabel.setJustificationType(Justification::centred);
-    panLabel1.setJustificationType(Justification::left);
-    panLabel2.setJustificationType(Justification::left);
-    panLabel1.attachToComponent(&panBeam1Knob, true);
-    panLabel2.attachToComponent(&panBeam2Knob, true);
     addAndMakeVisible(panLabel);
-    addAndMakeVisible(panLabel1);
-    addAndMakeVisible(panLabel2);
+
+    panBeam1Knob.init(valueTreeSession.getPropertyAsValue(pan1Identifier, nullptr),beamColours[0],controlTextBoxEditable);
+    panBeam2Knob.init(valueTreeSession.getPropertyAsValue(pan2Identifier, nullptr),beamColours[1],controlTextBoxEditable);
     
-    panBeam1Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    panBeam1Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
-    panBeam1Knob.setColour(Slider::thumbColourId, beamColours[0]);
-    panBeam1Knob.setRange(-1,1,0.01);
-    panBeam1Knob.setTextBoxIsEditable(false);
-//    panBeam1Knob.addListener(this);
     addAndMakeVisible(panBeam1Knob);
-    
-    panBeam2Knob.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    panBeam2Knob.setColour(Slider::thumbColourId, beamColours[1]);
-    panBeam2Knob.setRange(-1,1,0.01);
-    panBeam2Knob.setTextBoxIsEditable(false);
-//    panBeam2Knob.addListener(this);
     addAndMakeVisible(panBeam2Knob);
     
     //==============================================================================
@@ -214,32 +147,22 @@ MainComponent::MainComponent()
     levelLabel.setJustificationType(Justification::centred);
     addAndMakeVisible(levelLabel);
     
-    levelBeam1Knob.init(valueTreeSession.getPropertyAsValue(level1Identifier, nullptr),controlTextBoxEditable);
-    levelBeam2Knob.init(valueTreeSession.getPropertyAsValue(level2Identifier, nullptr),controlTextBoxEditable);
+    levelBeam1Knob.init(valueTreeSession.getPropertyAsValue(level1Identifier, nullptr),beamColours[0],controlTextBoxEditable);
+    levelBeam2Knob.init(valueTreeSession.getPropertyAsValue(level2Identifier, nullptr),beamColours[1],controlTextBoxEditable);
     
     addAndMakeVisible(levelBeam1Knob);
     addAndMakeVisible(levelBeam2Knob);
     
     //==============================================================================
     muteLabel.setText("MUTE", NotificationType::dontSendNotification);
-    muteLabel1.setText("MUTE", NotificationType::dontSendNotification);
-    muteLabel2.setText("MUTE", NotificationType::dontSendNotification);
     muteLabel.setJustificationType(Justification::centred);
-    muteLabel1.setJustificationType(Justification::centred);
-    muteLabel2.setJustificationType(Justification::centred);
     addAndMakeVisible(muteLabel);
-    addAndMakeVisible(muteLabel1);
-    addAndMakeVisible(muteLabel2);
     
-    muteBeam1Button.setButtonText("1");
-    muteBeam1Button.addListener(this);
+    muteBeam1Button.init(valueTreeSession.getPropertyAsValue(mute1Identifier, nullptr),"1");
+    muteBeam2Button.init(valueTreeSession.getPropertyAsValue(mute2Identifier, nullptr),"2");
+    
     addAndMakeVisible(muteBeam1Button);
-    
-    muteBeam2Button.setButtonText("2");
-    muteBeam2Button.addListener(this);
     addAndMakeVisible(muteBeam2Button);
-    
-    getLookAndFeel().setColour(MuteButton::buttonOnColourId, Colours::darkred);
     
     //==============================================================================
 
@@ -339,16 +262,23 @@ void MainComponent::resized()
     if (portrait){
         
         /* Landscape-only labels */
-        widthLabel1.setVisible(false);
-        panLabel1.setVisible(false);
+        steerBeamX1Slider.setLabelText("1");
+        steerBeamX2Slider.setLabelText("2");
+        widthBeam1Knob.setLabelVisible(false);
+        widthBeam1Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
+        panBeam1Knob.setLabelVisible(false);
+        panBeam1Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
         levelBeam1Knob.setLabelVisible(false);
         levelBeam1Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
-        muteLabel1.setVisible(false);
-        widthLabel2.setVisible(false);
-        panLabel2.setVisible(false);
+        muteBeam1Button.setLabelVisible(false);
+        
+        widthBeam2Knob.setLabelVisible(false);
+        widthBeam2Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxLeft);
+        panBeam2Knob.setLabelVisible(false);
+        panBeam2Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxLeft);
         levelBeam2Knob.setLabelVisible(false);
         levelBeam2Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxLeft);
-        muteLabel2.setVisible(false);
+        muteBeam2Button.setLabelVisible(false);
         
         /* Portrait-only labels */
         steerLabel.setVisible(true);
@@ -376,6 +306,16 @@ void MainComponent::resized()
 //            scene.setBounds(sceneArea);
         }
         
+        /* Gain slider */
+        area.removeFromBottom(MEDIUM_MARGIN);
+        gainSlider.setBounds(area.removeFromBottom(HOR_SLIDER_HEIGHT));
+        
+        /* Input LED */
+        inputMeter.setBounds(area.removeFromBottom(LED_SIZE).withTrimmedLeft(LABEL_WIDTH).withTrimmedRight(LABEL_WIDTH));
+        
+        /* HPF slider */
+        hpfSlider.setBounds(area.removeFromBottom(HOR_SLIDER_HEIGHT));
+        area.removeFromBottom(LARGE_MARGIN);
         
         /* Derive margins and sizes based on remaninig space */
         const int availableHeight = area.getHeight();
@@ -399,8 +339,6 @@ void MainComponent::resized()
         
         /* Horizontal steering */
         steerLabel.setVisible(true);
-        steerBeam1Label.setText("1", NotificationType::dontSendNotification);
-        steerBeam2Label.setText("2", NotificationType::dontSendNotification);
         
         area.removeFromTop(mediumMargin);
         steerBeamX1Slider.setBounds(area.removeFromTop(horSliderHeight).withTrimmedLeft(SMALL_LABEL_WIDTH));
@@ -411,64 +349,64 @@ void MainComponent::resized()
         
         /* Width knobs */
         area.removeFromTop(mediumMargin);
-        auto widthKnobsArea = area.removeFromTop(knobSize);
-        widthBeam1Knob.setBounds(widthKnobsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2));
-        widthBeam2Knob.setTextBoxStyle(Slider::TextBoxLeft, false, LABEL_WIDTH, LABEL_HEIGHT);
-        widthBeam2Knob.setTextBoxIsEditable(false);
-        widthBeam2Knob.setBounds(widthKnobsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2));
-        widthLabel.setBounds(widthKnobsArea);
-
+        auto widthKnobsArea = area.removeFromTop(knobSize).withTrimmedLeft(controlsSideMargin).withTrimmedRight(controlsSideMargin);
+        widthLabel.setBounds(widthKnobsArea.withSizeKeepingCentre(CENTRAL_LABEL_WIDTH, LABEL_HEIGHT));
+        auto width1Area = widthKnobsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
+        auto width2Area = widthKnobsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
+        widthBeam1Knob.setBounds(width1Area.removeFromLeft(widthBeam1Knob.getMinWidth()));
+        widthBeam2Knob.setBounds(width2Area.removeFromRight(widthBeam2Knob.getMinWidth()));
+        
         /* Pan knobs */
         area.removeFromTop(mediumMargin);
-        auto panKnobsArea = area.removeFromTop(knobSize);
-        panBeam1Knob.setBounds(panKnobsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2));
-        panBeam2Knob.setTextBoxStyle(Slider::TextBoxLeft, false, LABEL_WIDTH, LABEL_HEIGHT);
-        panBeam2Knob.setTextBoxIsEditable(false);
-        panBeam2Knob.setBounds(panKnobsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2));
-        panLabel.setBounds(panKnobsArea);
+        auto panKnobsArea = area.removeFromTop(knobSize).withTrimmedLeft(controlsSideMargin).withTrimmedRight(controlsSideMargin);
+        panLabel.setBounds(panKnobsArea.withSizeKeepingCentre(CENTRAL_LABEL_WIDTH, LABEL_HEIGHT));
+        auto pan1Area = panKnobsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
+        auto pan2Area = panKnobsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
+        panBeam1Knob.setBounds(pan1Area.removeFromLeft(panBeam1Knob.getMinWidth()));
+        panBeam2Knob.setBounds(pan2Area.removeFromRight(panBeam2Knob.getMinWidth()));
         
         /* Levels and meters */
         area.removeFromTop(mediumMargin);
         auto levelsArea = area.removeFromTop(knobSize).withTrimmedLeft(controlsSideMargin).withTrimmedRight(controlsSideMargin);
+        levelLabel.setBounds(levelsArea.withSizeKeepingCentre(CENTRAL_LABEL_WIDTH, LABEL_HEIGHT));
         auto level1Area = levelsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
         auto level2Area = levelsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
         levelBeam1Knob.setBounds(level1Area.removeFromLeft(levelBeam1Knob.getMinWidth()));
         levelBeam2Knob.setBounds(level2Area.removeFromRight(levelBeam2Knob.getMinWidth()));
         beam1Meter.setBounds(level1Area.withSizeKeepingCentre(LED_SIZE, level1Area.getHeight()));
         beam2Meter.setBounds(level2Area.withSizeKeepingCentre(LED_SIZE, level2Area.getHeight()));
-        levelLabel.setBounds(levelsArea);
+        
         
         /* Mutes */
         area.removeFromTop(largeMargin);
-        auto mutesArea = area.removeFromTop(muteSize);
-        muteBeam1Button.setBounds(mutesArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2).withTrimmedRight(LABEL_WIDTH).withSizeKeepingCentre(muteSize, muteSize));
-        muteBeam2Button.setBounds(mutesArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2).withTrimmedLeft(LABEL_WIDTH).withSizeKeepingCentre(muteSize, muteSize));
-        muteLabel.setBounds(mutesArea);
-        
-        /* HPF slider */
-        area.removeFromTop(largeMargin);
-        hpfSlider.setBounds(area.removeFromTop(horSliderHeight));
-
-        /* Input LED */
-        inputMeter.setBounds(area.removeFromTop(LED_SIZE).withTrimmedLeft(LABEL_WIDTH).withTrimmedRight(LABEL_WIDTH));
-        
-        /* Gain slider */
-        gainSlider.setBounds(area.removeFromTop(horSliderHeight));
+        auto mutesArea = area.removeFromTop(muteSize).withTrimmedLeft(controlsSideMargin).withTrimmedRight(controlsSideMargin);
+        muteLabel.setBounds(mutesArea.withSizeKeepingCentre(CENTRAL_LABEL_WIDTH, LABEL_HEIGHT));
+        auto mute1Area = mutesArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
+        auto mute2Area = mutesArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
+        muteBeam1Button.setBounds(mute1Area.removeFromLeft(muteSize));
+        muteBeam2Button.setBounds(mute2Area.removeFromRight(muteSize));
         
 
     }else{
         
         /* Landscape-only labels */
-        widthLabel1.setVisible(true);
-        panLabel1.setVisible(true);
+        steerBeamX1Slider.setLabelText("STEER 1");
+        steerBeamX2Slider.setLabelText("STEER 2");
+        widthBeam1Knob.setLabelVisible(true);
+        widthBeam1Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
+        panBeam1Knob.setLabelVisible(true);
+        panBeam1Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
         levelBeam1Knob.setLabelVisible(true);
         levelBeam1Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
-        muteLabel1.setVisible(true);
-        widthLabel2.setVisible(true);
-        panLabel2.setVisible(true);
-        levelBeam2Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
+        muteBeam1Button.setLabelVisible(true);
+        
+        widthBeam2Knob.setLabelVisible(true);
+        widthBeam2Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
+        panBeam2Knob.setLabelVisible(true);
+        panBeam2Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
         levelBeam2Knob.setLabelVisible(true);
-        muteLabel2.setVisible(true);
+        levelBeam2Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
+        muteBeam2Button.setLabelVisible(true);
         
         /* Portrait-only labels */
         steerLabel.setVisible(false);
@@ -533,19 +471,17 @@ void MainComponent::resized()
         /* Beam 1 */
         
         beam1Area.removeFromTop(smallMargin);
-        steerBeam1Label.setText("STEER 1", NotificationType::dontSendNotification);
-        steerBeamX1Slider.setBounds(beam1Area.removeFromTop(horSliderHeight).withTrimmedLeft(LABEL_WIDTH));
+        steerBeamX1Slider.setBounds(beam1Area.removeFromTop(horSliderHeight));
         
         beam1Area.removeFromTop(smallMargin);
         auto widthPanArea1 = beam1Area.removeFromTop(knobSize);
-        widthBeam1Knob.setBounds(widthPanArea1.removeFromLeft(beam1Area.getWidth()/2).withTrimmedLeft(LABEL_WIDTH));
-        panBeam1Knob.setBounds(widthPanArea1.withTrimmedLeft(LABEL_WIDTH));
+        widthBeam1Knob.setBounds(widthPanArea1.removeFromLeft(beam1Area.getWidth()/2));
+        panBeam1Knob.setBounds(widthPanArea1);
         
         beam1Area.removeFromTop(smallMargin);
         auto levelMuteArea1 = beam1Area.removeFromTop(knobSize);
-        muteLabel1.setBounds(levelMuteArea1.removeFromLeft(LABEL_WIDTH));
         
-        muteBeam1Button.setBounds(levelMuteArea1.removeFromLeft(beam1Area.getWidth()/2-LABEL_WIDTH-2*LARGE_MARGIN+LED_SIZE).withSizeKeepingCentre(muteSize, muteSize));
+        muteBeam1Button.setBounds(levelMuteArea1.removeFromLeft(beam1Area.getWidth()/2-LABEL_WIDTH-2*LARGE_MARGIN+LED_SIZE));
         
         levelMuteArea1.removeFromLeft(LARGE_MARGIN);
         beam1Meter.setBounds(levelMuteArea1.removeFromLeft(LED_SIZE));
@@ -556,23 +492,17 @@ void MainComponent::resized()
         /* Beam 2 */
         
         beam2Area.removeFromTop(smallMargin);
-        steerBeam2Label.setText("STEER 2", NotificationType::dontSendNotification);
-        steerBeamX2Slider.setBounds(beam2Area.removeFromTop(horSliderHeight).withTrimmedLeft(LABEL_WIDTH));
+        steerBeamX2Slider.setBounds(beam2Area.removeFromTop(horSliderHeight));
         
         beam2Area.removeFromTop(smallMargin);
         auto widthPanArea2 = beam2Area.removeFromTop(knobSize);
-        widthBeam2Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
-        widthBeam2Knob.setBounds(widthPanArea2.removeFromLeft(beam2Area.getWidth()/2).withTrimmedLeft(LABEL_WIDTH));
-        widthBeam2Knob.setTextBoxIsEditable(false);
-        panBeam2Knob.setTextBoxStyle(Slider::TextBoxRight, false, LABEL_WIDTH, LABEL_HEIGHT);
-        panBeam2Knob.setTextBoxIsEditable(false);
-        panBeam2Knob.setBounds(widthPanArea2.withTrimmedLeft(LABEL_WIDTH));
+        widthBeam2Knob.setBounds(widthPanArea2.removeFromLeft(beam2Area.getWidth()/2));
+        panBeam2Knob.setBounds(widthPanArea2);
         
         beam2Area.removeFromTop(smallMargin);
         auto levelMuteArea2 = beam2Area.removeFromTop(knobSize);
-        muteLabel2.setBounds(levelMuteArea2.removeFromLeft(LABEL_WIDTH));
         
-        muteBeam2Button.setBounds(levelMuteArea2.removeFromLeft(beam2Area.getWidth()/2-LABEL_WIDTH-2*LARGE_MARGIN+LED_SIZE).withSizeKeepingCentre(muteSize, muteSize));
+        muteBeam2Button.setBounds(levelMuteArea2.removeFromLeft(beam2Area.getWidth()/2-LABEL_WIDTH-2*LARGE_MARGIN+LED_SIZE));
         
         levelMuteArea2.removeFromLeft(LARGE_MARGIN);
         beam2Meter.setBounds(levelMuteArea2.removeFromLeft(LED_SIZE));

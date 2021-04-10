@@ -2,8 +2,6 @@
 
 #include <JuceHeader.h>
 #include "ebeamerDefs.h"
-#include "PanSlider.h"
-#include "MuteButton.h"
 #include "SingleChannelLedBar.h"
 #include "MultiChannelLedBar.h"
 #include "SceneComp.h"
@@ -40,22 +38,21 @@ private:
     
     //==============================================================================
     Label steerLabel;
-    Label steerBeam1Label, steerBeam2Label;
     const Identifier steerX1Identifier = Identifier("steerBeamX1");
     const Identifier steerX2Identifier = Identifier("steerBeamX2");
     const Identifier steerY1Identifier = Identifier("steerBeamY1");
     const Identifier steerY2Identifier = Identifier("steerBeamY2");
-    Slider steerBeamX1Slider, steerBeamX2Slider;
-    Slider steerBeamY1Slider, steerBeamY2Slider;
+    SteerSlider steerBeamX1Slider, steerBeamX2Slider;
+    SteerSlider steerBeamY1Slider, steerBeamY2Slider;
     
     //==============================================================================
-    Label widthLabel1,widthLabel2,widthLabel;
+    Label widthLabel;
     const Identifier width1Identifier = Identifier("widthBeam1");
     const Identifier width2Identifier = Identifier("widthBeam2");
-    Slider widthBeam1Knob, widthBeam2Knob;
+    WidthSlider widthBeam1Knob, widthBeam2Knob;
     
     //==============================================================================
-    Label panLabel1,panLabel2,panLabel;
+    Label panLabel;
     const Identifier pan1Identifier = Identifier("panBeam1");
     const Identifier pan2Identifier = Identifier("panBeam2");
     PanSlider panBeam1Knob, panBeam2Knob;
@@ -67,7 +64,7 @@ private:
     LevelSlider levelBeam1Knob, levelBeam2Knob;
     
     //==============================================================================
-    Label muteLabel1,muteLabel2,muteLabel;
+    Label muteLabel;
     const Identifier mute1Identifier = Identifier("muteBeam1");
     const Identifier mute2Identifier = Identifier("muteBeam2");
     MuteButton muteBeam1Button, muteBeam2Button;
