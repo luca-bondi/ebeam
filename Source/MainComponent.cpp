@@ -85,12 +85,15 @@ MainComponent::MainComponent()
     valueTreeSession.setProperty(mute2Identifier,true,nullptr);
     oscController.registerIdentifier(mute2Identifier);
     
-//    TODO: figure how to use MemoryBlock/ReferenceCountedObject
-//    valueTreeSession.setProperty(inMetersIdentifier,inMetersMemBlock,nullptr);
+    Array<var> zeros(0,0,0,0);
+    valueTreeSession.setProperty(inMetersIdentifier,zeros,nullptr);
     oscController.registerIdentifier(inMetersIdentifier);
     
-//    valueTreeSession.setProperty(outMetersIdentifier,Array<double>(0,0),nullptr);
-    oscController.registerIdentifier(outMetersIdentifier);
+    valueTreeSession.setProperty(outMeter1Identifier,0,nullptr);
+    oscController.registerIdentifier(outMeter1Identifier);
+    
+    valueTreeSession.setProperty(outMeter2Identifier,0,nullptr);
+    oscController.registerIdentifier(outMeter2Identifier);
     
 //    valueTreeSession.setProperty(energyIdentifier,Array<double>(0,0,0,0,0,0,0,0),nullptr);
     oscController.registerIdentifier(energyIdentifier);
@@ -165,7 +168,9 @@ MainComponent::MainComponent()
     addAndMakeVisible(muteBeam2Button);
     
     //==============================================================================
-
+    
+    beam1Meter.init(valueTreeSession.getPropertyAsValue(outMeter1Identifier, nullptr));
+    beam2Meter.init(valueTreeSession.getPropertyAsValue(outMeter2Identifier, nullptr));
     addAndMakeVisible(beam1Meter);
     addAndMakeVisible(beam2Meter);
     
@@ -176,6 +181,7 @@ MainComponent::MainComponent()
     
     //==============================================================================
 
+    inputMeter.init(valueTreeSession.getPropertyAsValue(inMetersIdentifier, nullptr));
     addAndMakeVisible(inputMeter);
     
     //==============================================================================

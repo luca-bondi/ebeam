@@ -2,11 +2,6 @@
 
 #include <JuceHeader.h>
 #include "ebeamerDefs.h"
-#include "SingleChannelLedBar.h"
-#include "MultiChannelLedBar.h"
-#include "SceneComp.h"
-#include "RoundLed.h"
-#include "ValueTreeFile.h"
 
 //==============================================================================
 /*
@@ -72,7 +67,8 @@ private:
     //==============================================================================
     const Identifier inMetersIdentifier = Identifier("inMeters");
     MultiChannelLedBar inputMeter;
-    const Identifier outMetersIdentifier = Identifier("outMeters");
+    const Identifier outMeter1Identifier = Identifier("outMeter1");
+    const Identifier outMeter2Identifier = Identifier("outMeter2");
     SingleChannelLedBar beam1Meter, beam2Meter;
     
     //==============================================================================
