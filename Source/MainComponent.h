@@ -29,7 +29,7 @@ private:
     
     //==============================================================================
     const Identifier energyIdentifier = Identifier("doaEnergy");
-//    SceneComp scene;
+    Scene scene;
     
     //==============================================================================
     Label steerLabel;
@@ -137,17 +137,9 @@ private:
     //==============================================================================
     /* Listeners and callbacks */
     
-//    void sliderValueChanged(Slider *) override;
     void buttonClicked (Button*) override;
-    
     void comboBoxChanged(ComboBox *) override;
-//    
-//    void oscMessageReceived (const OSCMessage&) override;
-//    
-//    void timerCallback() override;
-    
     void showConnectionErrorMessage (const String&);
-    
     
     //==============================================================================
     /* ValueTree */

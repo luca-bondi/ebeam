@@ -17,7 +17,6 @@
 #define GUI_WIDTH 540
 #define GUI_HEIGHT 860
 
-#define ULA_TILE_ROW_COUNT 7
 
 #define SMALL_MARGIN 5
 #define MEDIUM_MARGIN 10

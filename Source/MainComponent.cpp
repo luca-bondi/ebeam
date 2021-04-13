@@ -94,8 +94,8 @@ MainComponent::MainComponent()
     
     valueTreeSession.setProperty(outMeter2Identifier,0,nullptr);
     oscController.registerIdentifier(outMeter2Identifier);
-    
-//    valueTreeSession.setProperty(energyIdentifier,Array<double>(0,0,0,0,0,0,0,0),nullptr);
+
+    valueTreeSession.setProperty(energyIdentifier,zeros,nullptr);
     oscController.registerIdentifier(energyIdentifier);
     
     
@@ -103,9 +103,21 @@ MainComponent::MainComponent()
     setSize(GUI_WIDTH, GUI_HEIGHT);
     
     //==============================================================================
-//    scene.setCallback(this);
-//    scene.setBeamColors(beamColours);
-//    addAndMakeVisible(scene);
+    scene.init(
+               valueTreeSession.getPropertyAsValue(frontIdentifier, nullptr),
+               valueTreeSession.getPropertyAsValue(configIdentifier, nullptr),
+               valueTreeSession.getPropertyAsValue(energyIdentifier, nullptr),
+               valueTreeSession.getPropertyAsValue(steerX1Identifier, nullptr),
+               valueTreeSession.getPropertyAsValue(steerY1Identifier, nullptr),
+               valueTreeSession.getPropertyAsValue(width1Identifier, nullptr),
+               valueTreeSession.getPropertyAsValue(mute1Identifier, nullptr),
+               valueTreeSession.getPropertyAsValue(steerX2Identifier, nullptr),
+               valueTreeSession.getPropertyAsValue(steerY2Identifier, nullptr),
+               valueTreeSession.getPropertyAsValue(width2Identifier, nullptr),
+               valueTreeSession.getPropertyAsValue(mute2Identifier, nullptr)
+               );
+    scene.setBeamColors(beamColours);
+    addAndMakeVisible(scene);
     
     //==============================================================================
     steerLabel.setText("STEER", NotificationType::dontSendNotification);
@@ -299,7 +311,7 @@ void MainComponent::resized()
         if (isLinearArray(valueTreeSession[configIdentifier])){
             steerBeamY1Slider.setVisible(false);
             steerBeamY2Slider.setVisible(false);
-//            scene.setBounds(sceneArea);
+            scene.setBounds(sceneArea);
         }else{
             steerBeamY1Slider.setVisible(true);
             steerBeamY2Slider.setVisible(true);
@@ -309,7 +321,7 @@ void MainComponent::resized()
             steerBeamY2Slider.setBounds(sceneArea.removeFromRight(VER_SLIDER_WIDTH).withTrimmedTop(LARGE_MARGIN+SMALL_MARGIN));
             sceneArea.removeFromLeft(SMALL_MARGIN);
             sceneArea.removeFromRight(SMALL_MARGIN);
-//            scene.setBounds(sceneArea);
+            scene.setBounds(sceneArea);
         }
         
         /* Gain slider */
@@ -438,7 +450,7 @@ void MainComponent::resized()
         }
         
         /* Scene, aspect ratio 2:1 */
-//        scene.setBounds(sceneArea);
+        scene.setBounds(sceneArea);
         
         /* Input section */
         
@@ -845,5 +857,7 @@ void MainComponent::valueTreePropertyChanged (ValueTree& vt,
             servers[id] = Server({ip,port,now});
             oscIp.addItem(servers[id].toString(), id);
         }
+    }else if (property == configIdentifier){
+        resized();
     }
 }
