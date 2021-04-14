@@ -26,6 +26,8 @@ public:
 private:
     
     String appVersion;
+    String appName;
+    const String appManufacturer = "Eventide";
     
     //==============================================================================
     const Identifier energyIdentifier = Identifier("doaEnergy");

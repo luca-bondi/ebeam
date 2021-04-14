@@ -4,7 +4,9 @@
 MainComponent::MainComponent()
 {
     
-    appVersion = JUCEApplication::getInstance()->getApplicationVersion();
+    auto app = JUCEApplication::getInstance();
+    appVersion = app->getApplicationVersion();
+    appName = app->getApplicationName();
     
     //==============================================================================
     /* Value Tree for persistent parameters */
@@ -262,7 +264,7 @@ void MainComponent::paint (juce::Graphics& g)
     versionArea.removeFromBottom(2);
     g.setColour(Colours::lightgrey);
     g.setFont(12);
-    g.drawText(String("Eventide - EbeaMote v") + appVersion, versionArea, Justification::centredBottom, false);
+    g.drawText(appManufacturer + " - " + appName + " " + appVersion, versionArea, Justification::centredBottom, false);
 }
 
 void MainComponent::resized()
