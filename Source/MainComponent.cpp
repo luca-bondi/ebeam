@@ -43,7 +43,7 @@ MainComponent::MainComponent()
     valueTreeSession.setProperty(cpuIdentifier,0,nullptr);
     oscController.registerIdentifier(cpuIdentifier);
     
-    valueTreeSession.setProperty(hpfIdentifier,20,nullptr);
+    valueTreeSession.setProperty(hpfIdentifier,150,nullptr);
     oscController.registerIdentifier(hpfIdentifier);
     
     valueTreeSession.setProperty(gainIdentifier,20,nullptr);
@@ -85,8 +85,8 @@ MainComponent::MainComponent()
     valueTreeSession.setProperty(mute2Identifier,true,nullptr);
     oscController.registerIdentifier(mute2Identifier);
     
-    Array<var> zeros(0,0,0,0);
-    valueTreeSession.setProperty(inMetersIdentifier,zeros,nullptr);
+    Array<var> inMetersInit(0,0,0,0);
+    valueTreeSession.setProperty(inMetersIdentifier,inMetersInit,nullptr);
     oscController.registerIdentifier(inMetersIdentifier);
     
     valueTreeSession.setProperty(outMeter1Identifier,0,nullptr);
@@ -95,7 +95,10 @@ MainComponent::MainComponent()
     valueTreeSession.setProperty(outMeter2Identifier,0,nullptr);
     oscController.registerIdentifier(outMeter2Identifier);
 
-    valueTreeSession.setProperty(energyIdentifier,zeros,nullptr);
+    Array<var> energyInit;
+    energyInit.resize(1);
+    energyInit.set(0, Array<var>(0,0,0,0,0,0,0,0,0));
+    valueTreeSession.setProperty(energyIdentifier,energyInit,nullptr);
     oscController.registerIdentifier(energyIdentifier);
     
     
@@ -579,46 +582,6 @@ void MainComponent::layoutConfigOsc(Rectangle<int>& area){
 //====================================================================
 /* Callbacks and listeners */
 
-//void MainComponent::sliderValueChanged(Slider * slider){
-//    if (slider == &steerBeamX1Slider){
-//        steerX[0] = slider->getValue();
-////        setBeamSteerX(0,slider->getValue());
-////        scene.repaint();
-//    }else if(slider == &steerBeamX2Slider){
-//        steerX[1] = slider->getValue();
-////        setBeamSteerX(1,slider->getValue());
-////        scene.repaint();
-//    }else if (slider == &steerBeamY1Slider){
-//        steerY[0] = slider->getValue();
-////        setBeamSteerY(0,slider->getValue());
-////        scene.repaint();
-//    }else if(slider == &steerBeamY2Slider){
-//        steerY[1] = slider->getValue();
-////        setBeamSteerY(1,slider->getValue());
-////        scene.repaint();
-//    }else if(slider == &widthBeam1Knob){
-//        width[0] = slider->getValue();
-////        scene.repaint();
-//        if (connected) sendOscMessage("widthBeam1", width[0]);
-//    }else if(slider == &widthBeam2Knob){
-//        width[1] = slider->getValue();
-////        scene.repaint();
-//        if (connected) sendOscMessage("widthBeam2", width[1]);
-//    }else if(slider == &panBeam1Knob){
-//        if (connected) sendOscMessage("panBeam1", (float)panBeam1Knob.getValue());
-//    }else if(slider == &panBeam2Knob){
-//        if (connected) sendOscMessage("panBeam2", (float)panBeam2Knob.getValue());
-//    }else if(slider == &levelBeam1Knob){
-//        if (connected) sendOscMessage("levelBeam1", (float)levelBeam1Knob.getValue());
-//    }else if(slider == &levelBeam2Knob){
-//        if (connected) sendOscMessage("levelBeam2", (float)levelBeam2Knob.getValue());
-//    }else if(slider == &hpfSlider){
-//        if (connected) sendOscMessage("hpf", (float)hpfSlider.getValue());
-//    }else if(slider == &gainSlider){
-//        if (connected) sendOscMessage("gainMic", (float)gainSlider.getValue());
-//    }
-//}
-
 void MainComponent::buttonClicked (Button* button){
     if (button == &oscConnectButton){
         if (connected){
@@ -698,151 +661,12 @@ void MainComponent::oscDisconnect(){
 }
 
 
-//void MainComponent::oscMessageReceived (const OSCMessage& message){
-//    
-//    if (connected){
-//        if ((message.size() == 1) && (message[0].isFloat32())){
-//            auto val = message[0].getFloat32();
-//            if (message.getAddressPattern() == "/ebeamer/steerBeamX1"){
-//                steerBeamX1Slider.setValue(val,dontSendNotification);
-//                steerX[0] = val;
-//            }else if (message.getAddressPattern() == "/ebeamer/steerBeamX2"){
-//                steerBeamX2Slider.setValue(val,dontSendNotification);
-//                steerX[1] = val;
-//            }else if (message.getAddressPattern() == "/ebeamer/steerBeamY1"){
-//                steerBeamY1Slider.setValue(val,dontSendNotification);
-//                steerY[0] = val;
-//            }else if (message.getAddressPattern() == "/ebeamer/steerBeamY2"){
-//                steerBeamY2Slider.setValue(val,dontSendNotification);
-//                steerY[1] = val;
-//            }else if (message.getAddressPattern() == "/ebeamer/widthBeam1"){
-//                widthBeam1Knob.setValue(val,dontSendNotification);
-//                width[0] = val;
-//            }else if (message.getAddressPattern() == "/ebeamer/widthBeam2"){
-//                widthBeam2Knob.setValue(val,dontSendNotification);
-//                width[1] = val;
-//            }else if (message.getAddressPattern() == "/ebeamer/panBeam1"){
-//                panBeam1Knob.setValue(val,dontSendNotification);
-//            }else if (message.getAddressPattern() == "/ebeamer/panBeam2"){
-//                panBeam2Knob.setValue(val,dontSendNotification);
-//            }else if (message.getAddressPattern() == "/ebeamer/levelBeam1"){
-//                levelBeam1Knob.setValue(val,dontSendNotification);
-//            }else if (message.getAddressPattern() == "/ebeamer/levelBeam2"){
-//                levelBeam2Knob.setValue(val,dontSendNotification);
-//            }else if (message.getAddressPattern() == "/ebeamer/gainMic"){
-//                gainSlider.setValue(val,dontSendNotification);
-//            }else if (message.getAddressPattern() == "/ebeamer/hpf"){
-//                hpfSlider.setValue(val,dontSendNotification);
-//            }else if (message.getAddressPattern() == "/ebeamer/cpuLoad"){
-//                cpuLoad.setLoad(val);
-//            }
-//        }else if ((message.size() == 1) && (message[0].isInt32())){
-//            auto val = message[0].getInt32();
-//            if (message.getAddressPattern() == "/ebeamer/muteBeam1"){
-//                muteBeam1Button.setToggleState(val,dontSendNotification);
-//                mute[0] = val;
-//            }else if (message.getAddressPattern() == "/ebeamer/muteBeam2"){
-//                muteBeam2Button.setToggleState(val,dontSendNotification);
-//                mute[1] = val;
-//            }else if (message.getAddressPattern() == "/ebeamer/frontFacing"){
-//                if (val != frontToggle.getToggleState()){
-//                    frontToggle.setToggleState(val,dontSendNotification);
-//                    frontFacing = val;
-////                    scene.resized();
-//                }
-//            }else if (message.getAddressPattern() == "/ebeamer/config"){
-//                // TODO: migrate
-////                if (val != configCombo.getSelectedItemIndex()){
-////                    configCombo.setSelectedItemIndex(val,dontSendNotification);
-////                    config = val;
-////                    resized();
-////                }
-//            }
-//        }else if ((message.size() == 1) && (message[0].isBlob())){
-//            auto val = message[0].getBlob();
-//            if (message.getAddressPattern() == "/ebeamer/inMeters"){
-//                std::vector<float> values((float*)val.begin(),(float*)val.end());
-//                inputMeter.setValues(values);
-//            } else if (message.getAddressPattern() == "/ebeamer/outMeters"){
-//                beam1Meter.setValue(((float*)val.getData())[0]);
-//                beam2Meter.setValue(((float*)val.getData())[1]);
-//            }
-//        }else if ((message.size() == 3) && (message[0].isInt32()) && (message[1].isInt32()) && (message[2].isBlob())){
-//            auto nRows = message[0].getInt32();
-//            auto nCols = message[1].getInt32();
-//            auto val = message[2].getBlob();
-//            if (message.getAddressPattern() == "/ebeamer/doaEnergy"){
-//                Eigen::Map<Eigen::MatrixXf> newEnergy((float*)val.getData(),nRows,nCols);
-//                energy = newEnergy;
-//            }
-//        }
-//    }
-//        
-//}
-
 void MainComponent::showConnectionErrorMessage (const String& messageText){
     juce::AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
                                             "OSC error",
                                             messageText,
                                             "OK");
 }
-//
-//void MainComponent::setBeamSteerX(int idx, float newVal){
-//    steerX[idx] = newVal;
-//    if (idx==0){
-//        steerBeamX1Slider.setValue(newVal,dontSendNotification);
-//    }else{
-//        steerBeamX2Slider.setValue(newVal,dontSendNotification);
-//    }
-//    sendOscMessage(String("steerBeamX") + String(idx+1),newVal);
-//
-//}
-//
-//void MainComponent::setBeamSteerY(int idx, float newVal){
-//    steerY[idx] = newVal;
-//    if (idx==0){
-//        steerBeamY1Slider.setValue(newVal,dontSendNotification);
-//    }else{
-//        steerBeamY2Slider.setValue(newVal,dontSendNotification);
-//    }
-//    sendOscMessage(String("steerBeamY") + String(idx+1),newVal);
-//}
-
-//void MainComponent::sendOscMessage(const String& tag, float value){
-//    auto address = "/ebeamer/" + tag;
-//    if (connected){
-//        OSCMessage msg(address);
-//        msg.addFloat32(value);
-//        sender.send(msg);
-//    }
-//    // Toggle status even if not connect, to show that something should have happened
-//    oscStatus.toggle();
-//
-//}
-//
-//void MainComponent::sendOscMessage(const String& tag, bool value){
-//    auto address = "/ebeamer/" + tag;
-//    if (connected){
-//        OSCMessage msg(address);
-//        msg.addInt32(value);
-//        sender.send(msg);
-//    }
-//    // Toggle status even if not connect, to show that something should have happened
-//    oscStatus.toggle();
-//
-//}
-//
-//void MainComponent::sendOscMessage(const String& tag, MicConfig value){
-//    auto address = "/ebeamer/" + tag;
-//    if (connected){
-//        OSCMessage msg(address);
-//        msg.addInt32(value);
-//        sender.send(msg);
-//    }
-//    // Toggle status even if not connect, to show that something should have happened
-//    oscStatus.toggle();
-//
-//}
 
 void MainComponent::valueTreePropertyChanged (ValueTree& vt,
                                const Identifier& property){
