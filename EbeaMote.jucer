@@ -3,7 +3,8 @@
 <JUCERPROJECT id="GCRS6v" name="EbeaMote" projectType="guiapp" useAppConfig="0"
               displaySplashScreen="1" jucerFormatVersion="1" companyName="Eventide"
               companyWebsite="www.eventideaudio.com" companyEmail="info@eventide.com"
-              bundleIdentifier="com.eventide.EbeaMote" version="1.0.0" companyCopyright="Copyright &#169; 2021 Eventide Inc. All Rights Reserved.">
+              bundleIdentifier="com.eventide.EbeaMote" version="1.0.0" companyCopyright="Copyright &#169; 2021 Eventide Inc. All Rights Reserved."
+              cppLanguageStandard="17">
   <MAINGROUP id="iU4yLj" name="EbeaMote">
     <GROUP id="{0CD9154C-1BC5-9F57-9B69-78AB6E80DC03}" name="Resources">
       <FILE id="rvwEOW" name="icon.png" compile="0" resource="1" file="images/icon.png"/>
@@ -72,6 +73,6 @@
     <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
   </MODULES>
   <LIVE_SETTINGS>
-    <OSX/>
+    <OSX buildEnabled="0"/>
   </LIVE_SETTINGS>
 </JUCERPROJECT>

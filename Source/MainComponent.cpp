@@ -105,7 +105,7 @@ MainComponent::MainComponent()
     
     
     //==============================================================================
-    setSize(GUI_WIDTH, GUI_HEIGHT);
+    setSize(MIN_WIDTH, MIN_HEIGHT);
     
     //==============================================================================
     scene.init(
@@ -242,9 +242,6 @@ MainComponent::MainComponent()
     oscConnectButton.addListener(this);
     addAndMakeVisible(oscConnectButton);
     
-    oscStatus.setColours(Colours::red,Colours::grey);
-    addAndMakeVisible(oscStatus);
-    
 }
 
 MainComponent::~MainComponent()
@@ -311,7 +308,8 @@ void MainComponent::resized()
         levelLabel.setVisible(true);
         
         /* Scene, aspect ratio 2:1 */
-        auto sceneArea = area.removeFromTop(area.getWidth()/2);
+        auto sceneArea = area.removeFromTop(jmin(area.getWidth()/2,area.getHeight()/3));
+        sceneArea = sceneArea.withSizeKeepingCentre(sceneArea.getHeight()*2, sceneArea.getHeight());
         
         if (isLinearArray(valueTreeSession[configIdentifier])){
             steerBeamY1Slider.setVisible(false);
@@ -330,11 +328,13 @@ void MainComponent::resized()
         }
         
         /* Gain slider */
-        area.removeFromBottom(MEDIUM_MARGIN);
+        area.removeFromBottom(LARGE_MARGIN);
         gainSlider.setBounds(area.removeFromBottom(HOR_SLIDER_HEIGHT));
         
         /* Input LED */
+        area.removeFromBottom(MEDIUM_MARGIN);
         inputMeter.setBounds(area.removeFromBottom(LED_SIZE).withTrimmedLeft(LABEL_WIDTH).withTrimmedRight(LABEL_WIDTH));
+        area.removeFromBottom(MEDIUM_MARGIN);
         
         /* HPF slider */
         hpfSlider.setBounds(area.removeFromBottom(HOR_SLIDER_HEIGHT));
@@ -342,21 +342,23 @@ void MainComponent::resized()
         
         /* Derive margins and sizes based on remaninig space */
         const int availableHeight = area.getHeight();
-        const int usedHeight = MEDIUM_MARGIN+HOR_SLIDER_HEIGHT+SMALL_MARGIN+LABEL_HEIGHT+SMALL_MARGIN+HOR_SLIDER_HEIGHT+3*(MEDIUM_MARGIN+KNOB_SIZE)+LARGE_MARGIN+MUTE_SIZE+LARGE_MARGIN+HOR_SLIDER_HEIGHT+LED_SIZE+HOR_SLIDER_HEIGHT;
+        const int usedHeight = MEDIUM_MARGIN+HOR_SLIDER_HEIGHT+SMALL_MARGIN+LABEL_HEIGHT+SMALL_MARGIN+HOR_SLIDER_HEIGHT+
+        3*(MEDIUM_MARGIN+KNOB_SIZE)+LARGE_MARGIN+MUTE_SIZE;
         const int residualHeight = jmax(availableHeight - usedHeight,0);
         
         const int smallMargin = SMALL_MARGIN;
         const int mediumMargin = MEDIUM_MARGIN;
         const int largeMargin = LARGE_MARGIN;
         
-        const int knobMuteTotalIncrease = residualHeight/2;
+        const int knobMuteTotalIncrease = residualHeight/4*3;
         const int horSliderTotalIncrease = residualHeight - knobMuteTotalIncrease;
         
         const int knobSize = KNOB_SIZE + knobMuteTotalIncrease/4;
         const int muteSize = MUTE_SIZE + knobMuteTotalIncrease/4;
-        const int horSliderHeight = HOR_SLIDER_HEIGHT + horSliderTotalIncrease/4;
+        const int horSliderHeight = HOR_SLIDER_HEIGHT + horSliderTotalIncrease/2;
         
-        const int controlsSideMargin = area.getWidth()*0.03;
+        const int controlsSideMargin = area.getWidth()*0.05;
+        const int ledMeterWidth = area.getWidth()*0.15;
         
         /* Allocate elements from top to bottom */
         
@@ -376,8 +378,10 @@ void MainComponent::resized()
         widthLabel.setBounds(widthKnobsArea.withSizeKeepingCentre(CENTRAL_LABEL_WIDTH, LABEL_HEIGHT));
         auto width1Area = widthKnobsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
         auto width2Area = widthKnobsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
-        widthBeam1Knob.setBounds(width1Area.removeFromLeft(widthBeam1Knob.getMinWidth()));
-        widthBeam2Knob.setBounds(width2Area.removeFromRight(widthBeam2Knob.getMinWidth()));
+        width1Area.removeFromRight(ledMeterWidth);
+        width2Area.removeFromLeft(ledMeterWidth);
+        widthBeam1Knob.setBounds(width1Area);
+        widthBeam2Knob.setBounds(width2Area);
         
         /* Pan knobs */
         area.removeFromTop(mediumMargin);
@@ -385,8 +389,10 @@ void MainComponent::resized()
         panLabel.setBounds(panKnobsArea.withSizeKeepingCentre(CENTRAL_LABEL_WIDTH, LABEL_HEIGHT));
         auto pan1Area = panKnobsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
         auto pan2Area = panKnobsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
-        panBeam1Knob.setBounds(pan1Area.removeFromLeft(panBeam1Knob.getMinWidth()));
-        panBeam2Knob.setBounds(pan2Area.removeFromRight(panBeam2Knob.getMinWidth()));
+        pan1Area.removeFromRight(ledMeterWidth);
+        pan2Area.removeFromLeft(ledMeterWidth);
+        panBeam1Knob.setBounds(pan1Area);
+        panBeam2Knob.setBounds(pan2Area);
         
         /* Levels and meters */
         area.removeFromTop(mediumMargin);
@@ -394,20 +400,20 @@ void MainComponent::resized()
         levelLabel.setBounds(levelsArea.withSizeKeepingCentre(CENTRAL_LABEL_WIDTH, LABEL_HEIGHT));
         auto level1Area = levelsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
         auto level2Area = levelsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
-        levelBeam1Knob.setBounds(level1Area.removeFromLeft(levelBeam1Knob.getMinWidth()));
-        levelBeam2Knob.setBounds(level2Area.removeFromRight(levelBeam2Knob.getMinWidth()));
-        beam1Meter.setBounds(level1Area.withSizeKeepingCentre(LED_SIZE, level1Area.getHeight()));
-        beam2Meter.setBounds(level2Area.withSizeKeepingCentre(LED_SIZE, level2Area.getHeight()));
+        beam1Meter.setBounds(level1Area.removeFromRight(ledMeterWidth).withSizeKeepingCentre(LED_SIZE, level1Area.getHeight()));
+        beam2Meter.setBounds(level2Area.removeFromLeft(ledMeterWidth).withSizeKeepingCentre(LED_SIZE, level2Area.getHeight()));
+        levelBeam1Knob.setBounds(level1Area);
+        levelBeam2Knob.setBounds(level2Area);
         
         
         /* Mutes */
         area.removeFromTop(largeMargin);
         auto mutesArea = area.removeFromTop(muteSize).withTrimmedLeft(controlsSideMargin).withTrimmedRight(controlsSideMargin);
         muteLabel.setBounds(mutesArea.withSizeKeepingCentre(CENTRAL_LABEL_WIDTH, LABEL_HEIGHT));
-        auto mute1Area = mutesArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
-        auto mute2Area = mutesArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
-        muteBeam1Button.setBounds(mute1Area.removeFromLeft(muteSize));
-        muteBeam2Button.setBounds(mute2Area.removeFromRight(muteSize));
+        auto mute1Area = mutesArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2).withSizeKeepingCentre(muteSize, muteSize);
+        auto mute2Area = mutesArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2).withSizeKeepingCentre(muteSize, muteSize);
+        muteBeam1Button.setBounds(mute1Area);
+        muteBeam2Button.setBounds(mute2Area);
         
 
     }else{
@@ -462,14 +468,16 @@ void MainComponent::resized()
         /* Input LED */
         area.removeFromBottom(BOTTOM_MARGIN);
         inputMeter.setBounds(area.removeFromBottom(LED_SIZE).withTrimmedLeft(LABEL_WIDTH).withTrimmedRight(LABEL_WIDTH));
+        area.removeFromBottom(MEDIUM_MARGIN);
         
         /* HPF slider */
-        area.removeFromBottom(MEDIUM_MARGIN);
         auto inputSlidersArea = area.removeFromBottom(HOR_SLIDER_HEIGHT);
         hpfSlider.setBounds(inputSlidersArea.removeFromLeft(inputSlidersArea.getWidth()/2).withTrimmedRight(MEDIUM_MARGIN));
         
         /* Gain slider */
         gainSlider.setBounds(inputSlidersArea.withTrimmedRight(MEDIUM_MARGIN));
+        
+        area.removeFromBottom(LARGE_MARGIN);
         
         /* Dynamic geometry section */
         const int availableHeight = area.getHeight();
@@ -485,6 +493,8 @@ void MainComponent::resized()
         const int knobSize = KNOB_SIZE + knobMuteTotalIncrease/2;
         const int muteSize = MUTE_SIZE + knobMuteTotalIncrease/2;
         const int horSliderHeight = HOR_SLIDER_HEIGHT + horSliderTotalIncrease;
+        
+        const int ledMeterWidth = area.getWidth()*0.05;
         
         /* Beams section */
         
@@ -503,14 +513,10 @@ void MainComponent::resized()
         
         beam1Area.removeFromTop(smallMargin);
         auto levelMuteArea1 = beam1Area.removeFromTop(knobSize);
+        levelBeam1Knob.setBounds(levelMuteArea1.removeFromRight(levelMuteArea1.getWidth()/2));
+        beam1Meter.setBounds(levelMuteArea1.removeFromRight(ledMeterWidth).withSizeKeepingCentre(LED_SIZE, levelMuteArea1.getHeight()));
+        muteBeam1Button.setBounds(levelMuteArea1.withSizeKeepingCentre(levelMuteArea1.getWidth(), muteSize));
         
-        muteBeam1Button.setBounds(levelMuteArea1.removeFromLeft(beam1Area.getWidth()/2-LABEL_WIDTH-2*LARGE_MARGIN+LED_SIZE));
-        
-        levelMuteArea1.removeFromLeft(LARGE_MARGIN);
-        beam1Meter.setBounds(levelMuteArea1.removeFromLeft(LED_SIZE));
-        levelMuteArea1.removeFromLeft(LARGE_MARGIN);
-        
-        levelBeam1Knob.setBounds(levelMuteArea1);
         
         /* Beam 2 */
         
@@ -524,15 +530,9 @@ void MainComponent::resized()
         
         beam2Area.removeFromTop(smallMargin);
         auto levelMuteArea2 = beam2Area.removeFromTop(knobSize);
-        
-        muteBeam2Button.setBounds(levelMuteArea2.removeFromLeft(beam2Area.getWidth()/2-LABEL_WIDTH-2*LARGE_MARGIN+LED_SIZE));
-        
-        levelMuteArea2.removeFromLeft(LARGE_MARGIN);
-        beam2Meter.setBounds(levelMuteArea2.removeFromLeft(LED_SIZE));
-        levelMuteArea2.removeFromLeft(LARGE_MARGIN);
-        
-        levelBeam2Knob.setBounds(levelMuteArea2);
-        
+        levelBeam2Knob.setBounds(levelMuteArea2.removeFromRight(levelMuteArea2.getWidth()/2));
+        beam2Meter.setBounds(levelMuteArea2.removeFromRight(ledMeterWidth).withSizeKeepingCentre(LED_SIZE, levelMuteArea2.getHeight()));
+        muteBeam2Button.setBounds(levelMuteArea2.withSizeKeepingCentre(levelMuteArea2.getWidth(), muteSize));
         
     }
 
@@ -542,19 +542,19 @@ void MainComponent::resized()
 void MainComponent::layoutConfigOsc(Rectangle<int>& area){
     
     Rectangle<int> oscArea,setupArea;
-    const int oscWidth = OSC_IP_LABEL_WIDTH+OSC_IP_WIDTH+OSC_PORT_LABEL_WIDTH+OSC_PORT_WIDTH+OSC_CONNECT_MARGIN_LEFT+OSC_CONNECT_WIDTH+OSC_LED_MARGIN_LEFT+LED_SIZE;
-    const int configWidth = cpuLoad.getMinWidth()+MEDIUM_MARGIN+configComboBox.getMinWidth()+MEDIUM_MARGIN+frontToggle.getMinWidth();
+    const int oscWidth = OSC_IP_LABEL_WIDTH+OSC_IP_WIDTH+OSC_PORT_LABEL_WIDTH+OSC_PORT_WIDTH+OSC_CONNECT_MARGIN_LEFT+OSC_CONNECT_WIDTH;
+    const int configWidth = cpuLoad.getMinWidth()+SMALL_MARGIN+configComboBox.getMinWidth()+SMALL_MARGIN+frontToggle.getMinWidth();
     auto remainingWidth = area.getWidth() - (oscWidth+configWidth+SMALL_MARGIN);
     if (remainingWidth >= 0){
         auto oscControlArea = area.removeFromTop(CONTROLS_HEIGHT);
-        oscControlArea.removeFromLeft(remainingWidth/3);
-        setupArea = oscControlArea.removeFromLeft(configWidth);
-        oscControlArea.removeFromLeft(remainingWidth/3);
+        oscControlArea.removeFromLeft(remainingWidth/2);
         oscArea = oscControlArea.removeFromLeft(oscWidth);
+        oscControlArea.removeFromLeft(SMALL_MARGIN);
+        setupArea = oscControlArea.removeFromLeft(configWidth);
     }else{
-        oscArea = area.removeFromTop(CONTROLS_HEIGHT).withSizeKeepingCentre(oscWidth, CONTROLS_HEIGHT);
-        area.removeFromTop(MEDIUM_MARGIN);
         setupArea = area.removeFromTop(CONTROLS_HEIGHT).withSizeKeepingCentre(configWidth, CONTROLS_HEIGHT);
+        area.removeFromTop(MEDIUM_MARGIN);
+        oscArea = area.removeFromTop(CONTROLS_HEIGHT).withSizeKeepingCentre(oscWidth, CONTROLS_HEIGHT);
     }
     area.removeFromTop(SMALL_MARGIN);
     
@@ -566,18 +566,16 @@ void MainComponent::layoutConfigOsc(Rectangle<int>& area){
     oscPort.setBounds(oscArea.removeFromLeft(OSC_PORT_WIDTH));
     oscArea.removeFromLeft(OSC_CONNECT_MARGIN_LEFT);
     oscConnectButton.setBounds(oscArea.removeFromLeft(OSC_CONNECT_WIDTH));
-    oscArea.removeFromLeft(OSC_LED_MARGIN_LEFT);
-    oscStatus.setBounds(oscArea.removeFromLeft(LED_SIZE));
     
     /* Set area for CPU Load */
     cpuLoad.setBounds(setupArea.removeFromLeft(cpuLoad.getMinWidth()));
     
     /* Set area for config combo */
-    setupArea.removeFromLeft(MEDIUM_MARGIN);
+    setupArea.removeFromLeft(SMALL_MARGIN);
     configComboBox.setBounds(setupArea.removeFromLeft(configComboBox.getMinWidth()));
 
     /* Set area for front toggle */
-    setupArea.removeFromLeft(MEDIUM_MARGIN);
+    setupArea.removeFromLeft(SMALL_MARGIN);
     frontToggle.setBounds(setupArea.removeFromLeft(frontToggle.getMinWidth()));
 }
 
@@ -624,7 +622,6 @@ void MainComponent::oscConnect(){
         oscIp.setEnabled(false);
         oscPort.setEnabled(false);
         connected = true;
-        oscStatus.setColours(Colours::green,Colours::grey);
         
         /* Start polling */
         oscController.startPolling(srv, oscPollingFreq);
@@ -644,12 +641,10 @@ void MainComponent::oscDisconnect(){
                 oscIp.setEnabled(true);
                 oscPort.setEnabled(true);
                 connected = false;
-                oscStatus.setColours(Colours::red,Colours::grey);
                 /* Reset graphic components */
                 inputMeter.reset();
                 beam1Meter.reset();
                 beam2Meter.reset();
-//                energy.setConstant(-100);
                 valueTreeSession.setProperty(cpuIdentifier, 0, nullptr);
             }else{
                 showConnectionErrorMessage ("Error: could not remove sender");

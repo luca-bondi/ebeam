@@ -10,13 +10,11 @@
 
 #pragma once
 
-#define NUM_BEAMS 2
-#define NUM_DOAX 25
-#define NUM_DOAY 9
+#define MIN_HEIGHT 860
+#define MIN_WIDTH 540
 
-#define GUI_WIDTH 540
-#define GUI_HEIGHT 860
-
+#define MAX_HEIGHT 1366
+#define MAX_WIDTH 1366
 
 #define SMALL_MARGIN 5
 #define MEDIUM_MARGIN 10
@@ -39,16 +37,14 @@
 
 #define LED_SIZE 5
 
-#define OSC_IP_LABEL_WIDTH 30
+#define OSC_IP_LABEL_WIDTH 20
 #define OSC_IP_WIDTH 150
 
 #define OSC_PORT_LABEL_WIDTH 60
-#define OSC_PORT_WIDTH 60
+#define OSC_PORT_WIDTH 55
 
 #define OSC_CONNECT_WIDTH 100
 #define OSC_CONNECT_MARGIN_LEFT 15
-
-#define OSC_LED_MARGIN_LEFT 10
 
 #define CONTROLS_HEIGHT 30
 

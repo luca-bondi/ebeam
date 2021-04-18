@@ -131,7 +131,6 @@ private:
     Label oscPortLabel;
     
     TextButton oscConnectButton;
-    ActivityLed oscStatus;
     
     void oscConnect();
     void oscDisconnect();
