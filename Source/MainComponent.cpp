@@ -291,6 +291,8 @@ void MainComponent::resized()
         levelBeam1Knob.setLabelVisible(false);
         levelBeam1Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
         muteBeam1Button.setLabelVisible(false);
+        muteBeam1Button.setFakeTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
+        muteBeam1Button.setFakeTextBoxLineVisible(true);
         
         widthBeam2Knob.setLabelVisible(false);
         widthBeam2Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxLeft);
@@ -299,6 +301,8 @@ void MainComponent::resized()
         levelBeam2Knob.setLabelVisible(false);
         levelBeam2Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxLeft);
         muteBeam2Button.setLabelVisible(false);
+        muteBeam2Button.setFakeTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxLeft);
+        muteBeam2Button.setFakeTextBoxLineVisible(true);
         
         /* Portrait-only labels */
         steerLabel.setVisible(true);
@@ -320,8 +324,8 @@ void MainComponent::resized()
             steerBeamY2Slider.setVisible(true);
             sceneArea.removeFromLeft(SMALL_MARGIN);
             sceneArea.removeFromRight(SMALL_MARGIN);
-            steerBeamY1Slider.setBounds(sceneArea.removeFromLeft(VER_SLIDER_WIDTH).withTrimmedTop(LARGE_MARGIN+SMALL_MARGIN));
-            steerBeamY2Slider.setBounds(sceneArea.removeFromRight(VER_SLIDER_WIDTH).withTrimmedTop(LARGE_MARGIN+SMALL_MARGIN));
+            steerBeamY1Slider.setBounds(sceneArea.removeFromLeft(VER_SLIDER_WIDTH));
+            steerBeamY2Slider.setBounds(sceneArea.removeFromRight(VER_SLIDER_WIDTH));
             sceneArea.removeFromLeft(SMALL_MARGIN);
             sceneArea.removeFromRight(SMALL_MARGIN);
             scene.setBounds(sceneArea);
@@ -376,8 +380,8 @@ void MainComponent::resized()
         area.removeFromTop(mediumMargin);
         auto widthKnobsArea = area.removeFromTop(knobSize).withTrimmedLeft(controlsSideMargin).withTrimmedRight(controlsSideMargin);
         widthLabel.setBounds(widthKnobsArea.withSizeKeepingCentre(CENTRAL_LABEL_WIDTH, LABEL_HEIGHT));
-        auto width1Area = widthKnobsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
-        auto width2Area = widthKnobsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
+        auto width1Area = widthKnobsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2-controlsSideMargin);
+        auto width2Area = widthKnobsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2-controlsSideMargin);
         width1Area.removeFromRight(ledMeterWidth);
         width2Area.removeFromLeft(ledMeterWidth);
         widthBeam1Knob.setBounds(width1Area);
@@ -387,8 +391,8 @@ void MainComponent::resized()
         area.removeFromTop(mediumMargin);
         auto panKnobsArea = area.removeFromTop(knobSize).withTrimmedLeft(controlsSideMargin).withTrimmedRight(controlsSideMargin);
         panLabel.setBounds(panKnobsArea.withSizeKeepingCentre(CENTRAL_LABEL_WIDTH, LABEL_HEIGHT));
-        auto pan1Area = panKnobsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
-        auto pan2Area = panKnobsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
+        auto pan1Area = panKnobsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2-controlsSideMargin);
+        auto pan2Area = panKnobsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2-controlsSideMargin);
         pan1Area.removeFromRight(ledMeterWidth);
         pan2Area.removeFromLeft(ledMeterWidth);
         panBeam1Knob.setBounds(pan1Area);
@@ -398,8 +402,8 @@ void MainComponent::resized()
         area.removeFromTop(mediumMargin);
         auto levelsArea = area.removeFromTop(knobSize).withTrimmedLeft(controlsSideMargin).withTrimmedRight(controlsSideMargin);
         levelLabel.setBounds(levelsArea.withSizeKeepingCentre(CENTRAL_LABEL_WIDTH, LABEL_HEIGHT));
-        auto level1Area = levelsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
-        auto level2Area = levelsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2);
+        auto level1Area = levelsArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2-controlsSideMargin);
+        auto level2Area = levelsArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2-controlsSideMargin);
         beam1Meter.setBounds(level1Area.removeFromRight(ledMeterWidth).withSizeKeepingCentre(LED_SIZE, level1Area.getHeight()));
         beam2Meter.setBounds(level2Area.removeFromLeft(ledMeterWidth).withSizeKeepingCentre(LED_SIZE, level2Area.getHeight()));
         levelBeam1Knob.setBounds(level1Area);
@@ -410,8 +414,8 @@ void MainComponent::resized()
         area.removeFromTop(largeMargin);
         auto mutesArea = area.removeFromTop(muteSize).withTrimmedLeft(controlsSideMargin).withTrimmedRight(controlsSideMargin);
         muteLabel.setBounds(mutesArea.withSizeKeepingCentre(CENTRAL_LABEL_WIDTH, LABEL_HEIGHT));
-        auto mute1Area = mutesArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2).withSizeKeepingCentre(muteSize, muteSize);
-        auto mute2Area = mutesArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2).withSizeKeepingCentre(muteSize, muteSize);
+        auto mute1Area = mutesArea.removeFromLeft((area.getWidth()-CENTRAL_LABEL_WIDTH)/2-controlsSideMargin);
+        auto mute2Area = mutesArea.removeFromRight((area.getWidth()-CENTRAL_LABEL_WIDTH)/2-controlsSideMargin);
         muteBeam1Button.setBounds(mute1Area);
         muteBeam2Button.setBounds(mute2Area);
         
@@ -428,6 +432,8 @@ void MainComponent::resized()
         levelBeam1Knob.setLabelVisible(true);
         levelBeam1Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
         muteBeam1Button.setLabelVisible(true);
+        muteBeam1Button.setFakeTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
+        muteBeam1Button.setFakeTextBoxLineVisible(false);
         
         widthBeam2Knob.setLabelVisible(true);
         widthBeam2Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
@@ -436,6 +442,8 @@ void MainComponent::resized()
         levelBeam2Knob.setLabelVisible(true);
         levelBeam2Knob.setTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
         muteBeam2Button.setLabelVisible(true);
+        muteBeam2Button.setFakeTextBoxPosition(Slider::TextEntryBoxPosition::TextBoxRight);
+        muteBeam2Button.setFakeTextBoxLineVisible(false);
         
         /* Portrait-only labels */
         steerLabel.setVisible(false);
@@ -454,8 +462,8 @@ void MainComponent::resized()
             steerBeamY2Slider.setVisible(true);
             sceneArea.removeFromLeft(SMALL_MARGIN);
             sceneArea.removeFromRight(SMALL_MARGIN);
-            steerBeamY1Slider.setBounds(sceneArea.removeFromLeft(VER_SLIDER_WIDTH).withTrimmedTop(LARGE_MARGIN+SMALL_MARGIN));
-            steerBeamY2Slider.setBounds(sceneArea.removeFromRight(VER_SLIDER_WIDTH).withTrimmedTop(LARGE_MARGIN+SMALL_MARGIN));
+            steerBeamY1Slider.setBounds(sceneArea.removeFromLeft(VER_SLIDER_WIDTH));
+            steerBeamY2Slider.setBounds(sceneArea.removeFromRight(VER_SLIDER_WIDTH));
             sceneArea.removeFromLeft(SMALL_MARGIN);
             sceneArea.removeFromRight(SMALL_MARGIN);
         }
@@ -514,8 +522,8 @@ void MainComponent::resized()
         beam1Area.removeFromTop(smallMargin);
         auto levelMuteArea1 = beam1Area.removeFromTop(knobSize);
         levelBeam1Knob.setBounds(levelMuteArea1.removeFromRight(levelMuteArea1.getWidth()/2));
-        beam1Meter.setBounds(levelMuteArea1.removeFromRight(ledMeterWidth).withSizeKeepingCentre(LED_SIZE, levelMuteArea1.getHeight()));
         muteBeam1Button.setBounds(levelMuteArea1.withSizeKeepingCentre(levelMuteArea1.getWidth(), muteSize));
+        beam1Meter.setBounds(levelMuteArea1.removeFromRight(ledMeterWidth).withSizeKeepingCentre(LED_SIZE, levelMuteArea1.getHeight()));
         
         
         /* Beam 2 */
@@ -531,8 +539,8 @@ void MainComponent::resized()
         beam2Area.removeFromTop(smallMargin);
         auto levelMuteArea2 = beam2Area.removeFromTop(knobSize);
         levelBeam2Knob.setBounds(levelMuteArea2.removeFromRight(levelMuteArea2.getWidth()/2));
-        beam2Meter.setBounds(levelMuteArea2.removeFromRight(ledMeterWidth).withSizeKeepingCentre(LED_SIZE, levelMuteArea2.getHeight()));
         muteBeam2Button.setBounds(levelMuteArea2.withSizeKeepingCentre(levelMuteArea2.getWidth(), muteSize));
+        beam2Meter.setBounds(levelMuteArea2.removeFromRight(ledMeterWidth).withSizeKeepingCentre(LED_SIZE, levelMuteArea2.getHeight()));
         
     }
 

@@ -3,7 +3,7 @@
 <JUCERPROJECT id="GCRS6v" name="EbeaMote" projectType="guiapp" useAppConfig="0"
               displaySplashScreen="1" jucerFormatVersion="1" companyName="Eventide"
               companyWebsite="www.eventideaudio.com" companyEmail="info@eventide.com"
-              bundleIdentifier="com.eventide.EbeaMote" version="1.0.0" companyCopyright="Copyright &#169; 2021 Eventide Inc. All Rights Reserved."
+              bundleIdentifier="com.eventide.EbeaMote" version="1.1.0" companyCopyright="Copyright &#169; 2021 Eventide Inc. All Rights Reserved."
               cppLanguageStandard="17">
   <MAINGROUP id="iU4yLj" name="EbeaMote">
     <GROUP id="{0CD9154C-1BC5-9F57-9B69-78AB6E80DC03}" name="Resources">
