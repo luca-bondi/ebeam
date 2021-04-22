@@ -4,21 +4,17 @@
 MainComponent::MainComponent()
 {
     
-    auto app = JUCEApplication::getInstance();
-    auto appVersion = app->getApplicationVersion();
-    auto appName = app->getApplicationName();
-        
     
     //==============================================================================
-    /* Value Tree for persistent parameters */
+    /* Value Tree*/
     statusFile = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("EbeaMote.xml");
-    valueTree = ValueTree("EbeaMote");
-    valueTreeFile.init(valueTree, statusFile, true);
+    valueTreePersistent = ValueTree("EbeaMote");
+    valueTreeFile.init(valueTreePersistent, statusFile, true);
     
     if (!valueTreeFile.load()){
         /** Initialize value tree if not loaded */
-        valueTree.setProperty(serverIpIdentifier, "", nullptr);
-        valueTree.setProperty(serverPortIdentifier, 9001, nullptr);
+        valueTreePersistent.setProperty(serverIpIdentifier, "", nullptr);
+        valueTreePersistent.setProperty(serverPortIdentifier, 9001, nullptr);
         valueTreeFile.save();
     }
 
@@ -31,7 +27,7 @@ MainComponent::MainComponent()
     oscController.initBroadcastReceiver(serversIdentifier);
     
     //==============================================================================
-    /* Value Tree for session parameters */
+    /* Value Tree parameters */
     
     valueTree.setProperty(configIdentifier,ULA_1ESTICK,nullptr);
     oscController.registerIdentifier(configIdentifier);
@@ -100,7 +96,14 @@ MainComponent::MainComponent()
     valueTree.setProperty(energyIdentifier,energyInit,nullptr);
     oscController.registerIdentifier(energyIdentifier);
     
-    gui.init("Eventide",appName,appVersion,valueTree,CLIENT,this);
+    //==============================================================================
+    /* Init GUI */
+    auto app = JUCEApplication::getInstance();
+    auto appVersion = app->getApplicationVersion();
+    auto appName = app->getApplicationName();
+    
+    gui.init("Eventide",appName,appVersion,valueTree,valueTreePersistent,CLIENT,this);
+    addAndMakeVisible(gui);
     
     //==============================================================================
     setSize(MIN_WIDTH, MIN_HEIGHT);
@@ -109,6 +112,7 @@ MainComponent::MainComponent()
 
 MainComponent::~MainComponent()
 {
+    
 }
 
 //==============================================================================

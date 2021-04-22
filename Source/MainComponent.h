@@ -45,7 +45,7 @@ private:
     //==============================================================================
     /* ValueTree */
     File statusFile;
-    ValueTree valueTree;
+    ValueTree valueTree, valueTreePersistent;
     ValueTreeFile valueTreeFile;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
