@@ -10,7 +10,6 @@
       <FILE id="rvwEOW" name="icon.png" compile="0" resource="1" file="images/icon.png"/>
     </GROUP>
     <GROUP id="{ECC32FA5-AD80-9213-D87A-89C42AE3CB7A}" name="Source">
-      <FILE id="ZY5Pze" name="ebeamerDefs.h" compile="0" resource="0" file="Source/ebeamerDefs.h"/>
       <FILE id="E9475a" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="OK2Wfs" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="Gxy1PD" name="MainComponent.cpp" compile="1" resource="0"
