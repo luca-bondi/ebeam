@@ -25,7 +25,7 @@ MainComponent::MainComponent()
     //==============================================================================
     /* OSC controller */
     oscController.init(valueTree);
-    registerOscParameters(oscController);
+    registerCommonOscParameters(oscController);
     oscController.initBroadcastReceiver(serversIdentifier);
     
     //==============================================================================
