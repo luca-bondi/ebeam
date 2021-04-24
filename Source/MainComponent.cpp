@@ -102,7 +102,7 @@ MainComponent::MainComponent()
     auto appVersion = app->getApplicationVersion();
     auto appName = app->getApplicationName();
     
-    gui.init("Eventide",appName,appVersion,valueTree,valueTreePersistent,CLIENT,this);
+    gui.initClient("Eventide",appName,appVersion,valueTree,valueTreePersistent,this);
     addAndMakeVisible(gui);
     
     //==============================================================================
