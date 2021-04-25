@@ -75,7 +75,7 @@ bool MainComponent::oscConnect(const String& serverIp, int serverPort){
         /* Timer to check if connection still active */
         startTimerHz(1);
         
-        /* Subscribe to updates from the server server */
+        /* Subscribe to updates from the server */
         oscController.subscribe();
         
         return true;

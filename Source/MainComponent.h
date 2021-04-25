@@ -44,6 +44,7 @@ private:
     
     /** Timeout to autmatically disconnect [s] */
     const int timeout = 2;
+
     
     //==============================================================================
     /* ValueTree */
