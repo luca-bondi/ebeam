@@ -63,7 +63,7 @@ void MainComponent::resized()
 
 bool MainComponent::oscConnect(const String& serverIp, int serverPort){
     
-    const Server srv = {serverIp, serverPort};
+    const Server srv({serverIp,serverPort});
     if (oscController.addSender(srv)){
         
         if(!oscController.startReceiver())
@@ -71,6 +71,9 @@ bool MainComponent::oscConnect(const String& serverIp, int serverPort){
         
         /* Connection successful */
         connected = true;
+        
+        /* Timer to check if connection still active */
+        startTimerHz(1);
         
         /* Subscribe to updates from the server server */
         oscController.subscribe();
@@ -94,6 +97,7 @@ bool MainComponent::oscDisconnect(const String& serverIp, int serverPort){
         if (oscController.stopReceiver()){
             if (oscController.removeSender(srv)){
                 connected = false;
+                stopTimer();
                 /* Reset graphic components */
                 valueTree.setProperty(cpuIdentifier, 0, nullptr);
                 return true;
@@ -121,4 +125,12 @@ void MainComponent::showConnectionErrorMessage (const String& messageText){
 
 bool MainComponent::isConnected() const{
     return connected;
+}
+
+void MainComponent::timerCallback(){
+    
+    if ( (Time::getCurrentTime() - oscController.lastMessageReceivedAt()).inSeconds() > timeout  ){
+        gui.oscDisconnect();
+    }
+    
 }

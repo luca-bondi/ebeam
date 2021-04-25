@@ -9,7 +9,8 @@
  */
 class MainComponent  :
 public Component,
-public EbeamerGUI::Callback
+public EbeamerGUI::Callback,
+private Timer
 {
 public:
     //==============================================================================
@@ -35,11 +36,14 @@ private:
     
     //==============================================================================
     /** OSC */
-    
-    const float oscPollingFreq = 10;
     bool connected;
-    
     OSCController oscController;
+    
+    /** Timer callback for automatic disconnection  */
+    void timerCallback() override;
+    
+    /** Timeout to autmatically disconnect [s] */
+    const int timeout = 2;
     
     //==============================================================================
     /* ValueTree */

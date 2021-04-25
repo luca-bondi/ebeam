@@ -23,8 +23,9 @@
                   iosContentSharing="0" iosDevelopmentTeamID="955EYEC7K8" UIRequiresFullScreen="1"
                   UIStatusBarHidden="1" smallIcon="rvwEOW" bigIcon="rvwEOW" iosDeviceFamily="2">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug"/>
-        <CONFIGURATION isDebug="0" name="Release" customXcodeFlags="GCC_GENERATE_DEBUGGING_SYMBOLS = YES, STRIP_INSTALLED_PRODUCT = NO, COPY_PHASE_STRIP = NO"/>
+        <CONFIGURATION isDebug="1" name="Debug" iosCompatibility="11.0"/>
+        <CONFIGURATION isDebug="0" name="Release" customXcodeFlags="GCC_GENERATE_DEBUGGING_SYMBOLS = YES, STRIP_INSTALLED_PRODUCT = NO, COPY_PHASE_STRIP = NO"
+                       iosCompatibility="11.0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../../JUCE/modules"/>
