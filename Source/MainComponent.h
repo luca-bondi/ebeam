@@ -1,17 +1,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "ebeamerDefs.h"
-#include "PanSlider.h"
-#include "FrequencySlider.h"
-#include "DecibelSlider.h"
-#include "MuteButton.h"
-#include "CpuLoadComp.h"
-#include "SingleChannelLedBar.h"
-#include "MultiChannelLedBar.h"
-#include "SceneComp.h"
-#include "RoundLed.h"
-#include "ValueTreeFile.h"
 
 //==============================================================================
 /*
@@ -20,12 +9,8 @@
  */
 class MainComponent  :
 public Component,
-private OSCReceiver::Listener<OSCReceiver::MessageLoopCallback>,
-private Timer,
-private Slider::Listener,
-private Button::Listener,
-private ComboBox::Listener,
-private SceneComp::Callback
+public EbeamerGUI::Callback,
+private Timer
 {
 public:
     //==============================================================================
@@ -38,167 +23,34 @@ public:
     
 private:
     
-    String appVersion;
+    //==============================================================================
+    /* GUI instance and utilities */
+    EbeamerGUI gui;
+    void showConnectionErrorMessage (const String&);
     
     //==============================================================================
-    SceneComp scene;
-    
-    //==============================================================================
-    Label steerLabel;
-    Label steerBeam1Label, steerBeam2Label;
-    Slider steerBeamX1Slider, steerBeamX2Slider;
-    Slider steerBeamY1Slider, steerBeamY2Slider;
-    
-    //==============================================================================
-    Label widthLabel1,widthLabel2,widthLabel;
-    Slider widthBeam1Knob, widthBeam2Knob;
-    
-    //==============================================================================
-    Label panLabel1,panLabel2,panLabel;
-    PanSlider panBeam1Knob, panBeam2Knob;
-    
-    //==============================================================================
-    Label levelLabel1,levelLabel2,levelLabel;
-    DecibelSlider levelBeam1Knob, levelBeam2Knob;
-    
-    //==============================================================================
-    Label muteLabel1,muteLabel2,muteLabel;
-    MuteButton muteBeam1Button, muteBeam2Button;
-    
-    //==============================================================================
-    MultiChannelLedBar inputMeter;
-    SingleChannelLedBar beam1Meter, beam2Meter;
-    
-    //==============================================================================
-    Label hpfLabel;
-    FrequencySlider hpfSlider;
-    
-    //==============================================================================
-    Label gainLabel;
-    DecibelSlider gainSlider;
-    
-    //==============================================================================
-    /** CPU load component */
-    CpuLoadComp cpuLoad;
-    
-    //==============================================================================
-    /** Swap side toggle component */
-    Label frontToggleLabel;
-    ToggleButton frontToggle;
-    
-    //==============================================================================
-    /** Configuration selection combo */
-    
-    Label configComboLabel;
-    ComboBox configCombo;
-    
-    //==============================================================================
-    /* Layout functions */
-    void layoutConfigOsc(Rectangle<int>& );
-    
-    //==============================================================================
-    const std::vector<Colour> beamColours = {Colours::orangered, Colours::royalblue};
-    
-    //==============================================================================
-    /** State variables */
-    std::atomic<float> config;
-    std::atomic<float> frontFacing;
-    std::atomic<float> mute[NUM_BEAMS];
-    std::atomic<float> width[NUM_BEAMS];
-    std::atomic<float> steerX[NUM_BEAMS];
-    std::atomic<float> steerY[NUM_BEAMS];
-    
-    Mtx energy;
+    /* GUI callback */
+    bool oscConnect(const String& serverIp, int serverPort) override;
+    bool oscDisconnect(const String& serverIp, int serverPort) override;
+    bool isConnected() const override;
     
     //==============================================================================
     /** OSC */
-    OSCSender sender;
-    OSCReceiver receiver, broadcastReceiver;
-    DatagramSocket socket;
+    bool connected;
+    OSCController oscController;
     
-    Value serverIp;
-    Value serverPort;
-    
-    bool connected = false;
-    
-    /** Local IP */
-    IPAddress localIp;
-    
-    ComboBox oscIp;
-    Label oscIpLabel;
-    
-    TextEditor oscPort;
-    Label oscPortLabel;
-    
-    TextButton oscConnectButton;
-    ActivityLed oscStatus;
-    
-    /** Available servers */
-    std::map<ServerSpec,Time> serversMap;
-    std::map<int,ServerSpec> serversComboMap;
-    int lastServerId = 0;
-    SpinLock serversMapLock;
-    
-    Time lastOscMsgReceived = Time::getCurrentTime();
-    Time lastOscRequestSent = Time::getCurrentTime();
-    
-    void sendOscMessage(const String& path, float value);
-    void sendOscMessage(const String& path, bool value);
-    void sendOscMessage(const String& path, MicConfig value);
-    
-    void oscConnect();
-    void oscDisconnect();
-    
-    //==============================================================================
-    /* Listeners and callbacks */
-    
-    void sliderValueChanged(Slider *) override;
-    
-    void buttonClicked (Button*) override;
-    void buttonStateChanged(Button *) override;
-    
-    void comboBoxChanged(ComboBox *) override;
-    
-    void oscMessageReceived (const OSCMessage&) override;
-    
+    /** Timer callback for automatic disconnection  */
     void timerCallback() override;
     
-    void showConnectionErrorMessage (const String&);
-    
-    const std::atomic<float> *getConfigParam() const override{
-        return &config;
-    }
-    const std::atomic<float> *getFrontFacingParam() const override{
-        return &frontFacing;
-    }
-    const std::atomic<float> *getBeamMute(int idx) const override{
-        return &(mute[idx]);
-    }
-    const std::atomic<float> *getBeamWidth(int idx) const override{
-        return &(width[idx]);
-    }
-    const std::atomic<float> *getBeamSteerX(int idx) const override{
-        return &(steerX[idx]);
-    }
-    const std::atomic<float> *getBeamSteerY(int idx) const override{
-        return &(steerY[idx]);
-    }
-    void setBeamSteerX(int idx, float newVal) override;
-    void setBeamSteerY(int idx, float newVal) override;
-    
-    void getDoaEnergy(Mtx &en) const override{
-        en = energy;
-    }
+    /** Timeout to autmatically disconnect [s] */
+    const int timeout = 2;
+
     
     //==============================================================================
     /* ValueTree */
     File statusFile;
-    ValueTree valueTree;
+    ValueTree valueTree, valueTreePersistent;
     ValueTreeFile valueTreeFile;
-    
-    Identifier serverIpIdentifier = Identifier("serverIp");
-    Identifier serverPortIdentifier = Identifier("serverPort");
-    
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

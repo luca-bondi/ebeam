@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="GCRS6v" name="Ebeam" projectType="guiapp" useAppConfig="0"
+              displaySplashScreen="1" jucerFormatVersion="1" companyName="Eventide"
+              companyWebsite="www.eventideaudio.com" companyEmail="info@eventide.com"
+              bundleIdentifier="com.eventide.Ebeam" version="1.1.0" companyCopyright="Copyright &#169; 2021 Eventide Inc. All Rights Reserved."
+              cppLanguageStandard="17">
+  <MAINGROUP id="iU4yLj" name="Ebeam">
+    <GROUP id="{0CD9154C-1BC5-9F57-9B69-78AB6E80DC03}" name="Resources">
+      <FILE id="rvwEOW" name="icon.png" compile="0" resource="1" file="images/icon.png"/>
+    </GROUP>
+    <GROUP id="{ECC32FA5-AD80-9213-D87A-89C42AE3CB7A}" name="Source">
+      <FILE id="E9475a" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="OK2Wfs" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="Gxy1PD" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+  <EXPORTFORMATS>
+    <XCODE_IPHONE targetFolder="Builds/iOS" iosScreenOrientation="UIInterfaceOrientationLandscapeLeft,UIInterfaceOrientationLandscapeRight,UIInterfaceOrientationPortrait,UIInterfaceOrientationPortraitUpsideDown"
+                  iPadScreenOrientation="UIInterfaceOrientationLandscapeLeft,UIInterfaceOrientationLandscapeRight,UIInterfaceOrientationPortrait,UIInterfaceOrientationPortraitUpsideDown"
+                  iosContentSharing="0" iosDevelopmentTeamID="955EYEC7K8" UIRequiresFullScreen="1"
+                  UIStatusBarHidden="1" smallIcon="rvwEOW" bigIcon="rvwEOW" iosDeviceFamily="2">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" iosCompatibility="11.0"/>
+        <CONFIGURATION isDebug="0" name="Release" customXcodeFlags="GCC_GENERATE_DEBUGGING_SYMBOLS = YES, STRIP_INSTALLED_PRODUCT = NO, COPY_PHASE_STRIP = NO"
+                       iosCompatibility="11.0"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../JUCE/modules"/>
+        <MODULEPATH id="ebeamer_osc" path="../../juce_modules"/>
+        <MODULEPATH id="ebeamer_gui" path="../../juce_modules"/>
+        <MODULEPATH id="ebeamer_common" path="../../juce_modules"/>
+      </MODULEPATHS>
+    </XCODE_IPHONE>
+    <XCODE_MAC targetFolder="Builds/MacOSX" iosDevelopmentTeamID="955EYEC7K8"
+               smallIcon="rvwEOW" bigIcon="rvwEOW">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../JUCE/modules"/>
+        <MODULEPATH id="ebeamer_osc" path="../../juce_modules"/>
+        <MODULEPATH id="ebeamer_gui" path="../../juce_modules"/>
+        <MODULEPATH id="ebeamer_common" path="../../juce_modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="ebeamer_common" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="ebeamer_gui" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="ebeamer_osc" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <LIVE_SETTINGS>
+    <OSX buildEnabled="0"/>
+  </LIVE_SETTINGS>
+</JUCERPROJECT>
